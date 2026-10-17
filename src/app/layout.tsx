@@ -1,17 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { SiteHeader } from "@/app/_components/site-header";
+import { Inter } from "next/font/google";
+import { Header } from "@/app/_components/layout/header/header";
 import { APP_NAME } from "@/config/app";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -21,15 +17,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
+    <html lang="pt-BR" className={`${inter.variable} h-full antialiased`}>
       <body>
         <a className="skip-link" href="#conteudo">
           Ir para o conteúdo
         </a>
-        <SiteHeader />
+        <div className="site-header-shell">
+          <Header />
+        </div>
         <div id="conteudo">{children}</div>
       </body>
     </html>

@@ -7,15 +7,25 @@ export type ButtonProps = Omit<
 > & {
   children: ReactNode;
   loading?: boolean;
+  variant?: "primary" | "secondary";
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   function Button(
-    { children, className, disabled, loading = false, ...props },
+    {
+      children,
+      className,
+      disabled,
+      loading = false,
+      variant = "primary",
+      ...props
+    },
     ref,
   ) {
     const isUnavailable = disabled || loading;
-    const classes = ["ui-button", className].filter(Boolean).join(" ");
+    const classes = ["ui-button", `ui-button-${variant}`, className]
+      .filter(Boolean)
+      .join(" ");
 
     return (
       <button
@@ -27,7 +37,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         aria-busy={loading || undefined}
       >
         {loading && <span className="ui-button-spinner" aria-hidden="true" />}
-        <span>{children}</span>
+        <span className="ui-button-content">{children}</span>
       </button>
     );
   },

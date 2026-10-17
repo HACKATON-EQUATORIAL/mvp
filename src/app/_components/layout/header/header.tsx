@@ -9,7 +9,8 @@ export function Header({ className, ...props }: HeaderProps) {
     <header {...props} className={classes}>
       <span className="site-header-brand">Equatorial Energia</span>
       <abbr className="site-header-state" title="Maranhão">
-        MA
+        <span aria-hidden="true">MA</span>
+        <span className="sr-only">Maranhão</span>
       </abbr>
     </header>
   );

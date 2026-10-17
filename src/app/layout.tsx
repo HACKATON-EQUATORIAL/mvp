@@ -1,36 +1,29 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { SiteHeader } from "@/app/_components/site-header";
+import { Inter } from "next/font/google";
+import { AppShell } from "@/app/_components/layout/app-shell";
 import { APP_NAME } from "@/config/app";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: `${APP_NAME} | Teste de transcrição`,
-  description: "Grave um áudio e confira a transcrição em texto.",
+  title: { default: APP_NAME, template: `%s | ${APP_NAME}` },
+  description:
+    "Orientação e prática demonstrativas de segunda via, com gravação e transcrição opcionais.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
+    <html lang="pt-BR" className={`${inter.variable} h-full antialiased`}>
       <body>
         <a className="skip-link" href="#conteudo">
           Ir para o conteúdo
         </a>
-        <SiteHeader />
-        <div id="conteudo">{children}</div>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

@@ -1,6 +1,6 @@
 # Estrutura do Digitaliza Aí
 
-Este diretório descreve o código executável de `mvp`, em Next.js com App Router, React, TypeScript, Tailwind CSS, Zod e Bun. Este projeto reúne frontend e API do MVP Digitaliza Aí; áudio para texto com Groq é a primeira capacidade funcional. As quatro telas de serviços ainda são placeholders. Novas jornadas serão definidas separadamente.
+Este diretório descreve o código executável de `mvp`, em Next.js com App Router, React, TypeScript, Tailwind CSS, Zod e Bun. Este projeto reúne frontend e API do MVP Digitaliza Aí; áudio para texto com Groq é a primeira capacidade funcional. A jornada de segunda via oferece orientação, consulta e prática local demonstrativa; os outros três serviços permanecem como placeholders. O canal e o procedimento oficiais ainda precisam ser confirmados.
 
 Os documentos importados do Zappoint foram adaptados em 16/10/2026. Reaproveitamos separação de responsabilidades, validação de contratos e feedback acessível. Vite, TanStack, Better Auth, Stripe, organizações e agendamentos não pertencem à arquitetura deste MVP.
 

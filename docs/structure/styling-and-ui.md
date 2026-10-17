@@ -2,7 +2,7 @@
 
 A interface mantém CSS global e Tailwind v4 já presentes, sem introduzir biblioteca visual. Componentes funcionais:
 
-- `SiteHeader`: identidade e link inicial compartilhados.
+- `Header`: identidade Equatorial estática compartilhada, sem ação de navegação.
 - `ServiceList`: links semânticos do catálogo.
 - `ServicePage`: título e retorno das páginas vazias.
 - `AudioRecorder` em `app/_components`: apresenta estado e conecta botões ao hook, sem implementar transporte ou acesso à Groq.

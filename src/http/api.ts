@@ -6,14 +6,24 @@ const errorSchema = z.object({
   error: z.object({ code: z.string(), message: z.string() }),
 });
 
+// O ngrok free intercepta fetch entre domínios com uma página de aviso (sem
+// CORS); este header a dispensa. Só é enviado a hosts ngrok.
+function transportHeaders(url: string): HeadersInit {
+  const headers: Record<string, string> = { Accept: "application/json" };
+  if (new URL(url).hostname.includes("ngrok"))
+    headers["ngrok-skip-browser-warning"] = "1";
+  return headers;
+}
+
 export async function apiGet<T>(
   path: string,
   schema: z.ZodType<T>,
   signal?: AbortSignal,
 ): Promise<T> {
-  const response = await fetch(`${getApiUrl()}${path}`, {
+  const url = `${getApiUrl()}${path}`;
+  const response = await fetch(url, {
     method: "GET",
-    headers: { Accept: "application/json" },
+    headers: transportHeaders(url),
     credentials: "omit",
     cache: "no-store",
     signal: signal

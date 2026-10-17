@@ -104,8 +104,9 @@ consulta começa no navegador. NEXT_PUBLIC_API_URL inclui /api/v1, é validada e
 config/api.ts e incorporada ao bundle pelo Next. Reiniciar dev após alterar o
 ambiente; reconstruir produção. Nunca colocar credenciais nessa variável.
 
-Local: NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1. No celular, localhost
-aponta para o aparelho. Com front HTTPS/ngrok, configurar URL HTTPS pública do
+Local: NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1 (padrão). No celular, localhost
+aponta para o aparelho: defina NEXT_PUBLIC_API_TUNNEL_URL com o túnel do backend; ela só é
+usada quando o app abre por host não local, e em localhost vale a URL padrão. Com front HTTPS/ngrok, configurar URL HTTPS pública do
 backend e origem exata do front em CORS_ORIGINS do Python (ou CORS_ORIGIN_REGEX para ngrok), reiniciando a API.
 Não liberar CORS no Route Handler STT.
 

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { Header } from "@/app/_components/layout/header/header";
+import { AppShell } from "@/app/_components/layout/app-shell";
 import { APP_NAME } from "@/config/app";
 import "./globals.css";
 
@@ -11,8 +11,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: `${APP_NAME} | Teste de transcrição`,
-  description: "Grave um áudio e confira a transcrição em texto.",
+  title: { default: APP_NAME, template: `%s | ${APP_NAME}` },
+  description:
+    "Orientação e prática demonstrativas de segunda via, com gravação e transcrição opcionais.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -22,10 +23,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <a className="skip-link" href="#conteudo">
           Ir para o conteúdo
         </a>
-        <div className="site-header-shell">
-          <Header />
-        </div>
-        <div id="conteudo">{children}</div>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

@@ -7,6 +7,7 @@ O pedido do usuário define a fronteira do trabalho. O projeto `mvp` reúne fron
 | Trabalho | Pontos de entrada |
 | --- | --- |
 | Escopo e execução | [README](README.md), [AGENTS](AGENTS.md) e pedido atual |
+| Specs de telas e funcionalidades | [Specs centralizadas](../docs/specs/README.md) e documento relacionado ao pedido |
 | Estrutura Next.js | [Mapa de pastas](docs/structure/src-structure-and-conventions.md) e documentação da versão instalada em `node_modules/next/dist/docs` |
 | Captura e UI | `src/app/_components`, `src/app/_hooks` e `src/app/_lib` |
 | API de transcrição | [Contrato STT](../docs/stt/STT-API.md), `src/app/api/transcribe` e `src/server/stt` |

@@ -70,7 +70,7 @@ O arquivo deve ter de 1 byte a 4.000.000 bytes. A interface grava até 60 segund
 - `/servicos/falta-de-energia`: Informar falta de energia.
 - `/servicos/tarifa-social`: Cadastro de Tarifa Social.
 
-Segunda via contém explicação, prática guiada, conferência de conta fictícia, prática individual, encerramento, consulta contextual, dificuldades e limite de saída. Não coleta dados reais, emite fatura, avalia aprendizagem ou abre canal externo. O canal e o procedimento oficiais continuam a confirmar. A navegação e as adaptações do Figma estão na [spec de reconstrução](specs/frontend-reconstruction.md).
+Segunda via contém explicação, prática guiada, conferência de conta fictícia, prática individual, encerramento, consulta contextual, dificuldades e limite de saída. Não coleta dados reais, emite fatura, avalia aprendizagem ou abre canal externo. O canal e o procedimento oficiais continuam a confirmar. A navegação e as adaptações do Figma estão na [spec de reconstrução](../docs/specs/frontend-reconstruction.md).
 
 Os outros três serviços exibem título, aviso de indisponibilidade e retorno à home. O catálogo conceitual vem de [BR-EQT-003 no workspace](../docs/business-rules/BR-EQT-003-catalogo-e-recorte.md); não representa integração, emissão de fatura, consulta real ou cadastro oficial. A transcrição não interpreta intenção nem navega automaticamente.
 

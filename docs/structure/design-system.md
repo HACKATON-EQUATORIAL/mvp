@@ -3,7 +3,7 @@
 A interface atual parte da composição registrada em [design](../../../docs/stt/design/README.md). Seus tokens reais estão em `src/app/globals.css`.
 
 O contrato implementado está descrito na
-[SPECS de tokens CSS](../../specs/css-design-tokens.md). Os tokens e as 15 receitas
+[SPECS de tokens CSS](../../../docs/specs/css-design-tokens.md). Os tokens e as 15 receitas
 tipográficas estão em `src/app/globals.css`, disponíveis para o retrabalho do
 frontend. Os consumidores atuais já usam os novos aliases semânticos.
 

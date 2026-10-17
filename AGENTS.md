@@ -24,6 +24,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Estrutura e fronteiras
 
+- Specs de telas e funcionalidades ficam em [docs/specs do workspace](../docs/specs/README.md). Não recriar `mvp/specs`; manter aqui os guias técnicos de estrutura.
+
 - Ler [docs/structure/overview.md](docs/structure/overview.md) e o guia pertinente antes de alterar camadas. As referências foram adaptadas ao Digitaliza Aí; não importar stack, domínio ou convenções de rotas do Zappoint.
 - Código em `src/`; `@/*` aponta para `src/*`. Seguir a colocação do App Router: UI/hooks/auxiliares da tela em `app/_components`, `_hooks` e `_lib`; apresentação dos serviços em `app/servicos/_components`; auxiliares do endpoint em `app/api/transcribe/_lib`. Contratos públicos em `lib/stt`; ambiente e Groq em `server` com `server-only`. Não recriar camadas por funcionalidade sem necessidade concreta. Pastas com underscore não são uma proteção de importação client/servidor.
 - Manter módulos privados com `server-only`; o client chama apenas `/api/transcribe`, com o header do contrato. Não misturar exports de servidor/client em barrels. Tipos externos devem vir de schemas Zod.

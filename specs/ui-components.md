@@ -1,5 +1,13 @@
 # SPEC — componentes de UI do Digitaliza Aí
 
+> Atualização do usuário em 17/10/2026: todos os botões habilitados e links de
+> ação usam fundo branco e texto azul por padrão; no hover com ponteiro adequado,
+> fundo azul e texto branco. Isso inclui os controles do gravador. “Ajuda por voz”
+> permanece amarelo, com texto e ícone pretos, inclusive no hover, conforme
+> correção posterior do usuário. Disabled/loading conservam os estados de
+> indisponibilidade. Esta regra prevalece sobre as cores históricas de normal/hover.
+
+
 | Campo | Valor |
 | --- | --- |
 | Status | Implementada; verificação registrada ao final |

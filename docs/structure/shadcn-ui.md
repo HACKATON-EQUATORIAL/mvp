@@ -8,7 +8,8 @@
 A camada compartilhada usa shadcn/ui com Base UI, adaptada aos tokens, fonte
 Inter, variantes e composição do Digitaliza Aí. Manter essa identidade ao adicionar
 componentes, sem reaplicar defaults do preset sobre os estilos existentes.
-A região de voz continua expansível; Drawer é uma evolução separada.
+O assistente de voz usa o Drawer Base UI, adaptado a tokens e dimensões mobile;
+contrato e composição vigentes estão em [UI e acessibilidade](styling-and-ui.md#voz-e-captura).
 
 ## Fundação
 
@@ -18,6 +19,7 @@ A região de voz continua expansível; Drawer é uma evolução separada.
 | `mvp/src/components/ui/button.tsx` | Base UI Button, variantes CVA, tamanhos, loading e ref |
 | `mvp/src/components/ui/action-link.tsx` | Link Next semântico com a mesma receita de botão |
 | `mvp/src/components/ui/card.tsx` | Card, Header, Title, Description, Content, Action e Footer |
+| `mvp/src/components/ui/drawer.tsx` | Drawer Base UI com swipe, backdrop e composição controlada |
 | `mvp/src/lib/utils.ts` | Entrada local para `cn`, fornecido pelo pacote oficial `cn` |
 | `mvp/src/app/globals.css` | Tokens canônicos, aliases shadcn e receitas visuais preservadas |
 

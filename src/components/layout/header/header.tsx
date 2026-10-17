@@ -7,11 +7,19 @@ export function Header({ className, ...props }: HeaderProps) {
 
   return (
     <header {...props} className={classes}>
-      <span className="site-header-brand">Equatorial Energia</span>
-      <abbr className="site-header-state" title="Maranhão">
-        <span aria-hidden="true">MA</span>
-        <span className="sr-only">Maranhão</span>
-      </abbr>
+      <div className="site-header-content">
+        <span className="site-header-brand">Digitaliza Aí</span>
+        <span className="site-header-equatorial">
+          <span className="site-header-partner">Equatorial Energia</span>
+          <span className="site-header-separator" aria-hidden="true">
+            -
+          </span>
+          <abbr className="site-header-state" title="Maranhão">
+            <span aria-hidden="true">MA</span>
+            <span className="sr-only">Maranhão</span>
+          </abbr>
+        </span>
+      </div>
     </header>
   );
 }

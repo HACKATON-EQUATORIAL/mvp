@@ -2,6 +2,8 @@
 
 **Leitura atual:** esta spec preserva o planejamento e os registros da entrega. Para manter tokens, componentes e biblioteca, usar [design system](../structure/design-system.md), [UI](../structure/styling-and-ui.md) e [shadcn](../structure/shadcn-ui.md). Propostas de estrutura e caminhos do checkout original abaixo não substituem esses guias.
 
+O fluxo do assistente de voz foi ampliado depois desta reconstrução; ver o escopo e aceite vigentes em [Drawer com contexto por página](voice-assistant-drawer.md). As descrições de acesso ao gravador nesta spec são históricas.
+
 Local atual: `mvp/docs/specs`, desde 17/10/2026. Caminhos `src/` e comandos referem-se à raiz de `mvp`. Notas de indisponibilidade de `docs` descrevem o ambiente da execução original; ver [índice e contexto](../README.md).
 
 | Campo | Valor |

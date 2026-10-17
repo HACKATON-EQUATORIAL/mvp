@@ -12,7 +12,11 @@ export type VoiceHelpButtonProps = Omit<
 
 export function VoiceHelpButton({ children, ...props }: VoiceHelpButtonProps) {
   return (
-    <Button {...props} className={cn("voice-help-button", props.className)}>
+    <Button
+      title="Assistente"
+      {...props}
+      className={cn("voice-help-button", props.className)}
+    >
       <Image
         src="/icons/voice-help.svg"
         alt=""
@@ -21,7 +25,7 @@ export function VoiceHelpButton({ children, ...props }: VoiceHelpButtonProps) {
         aria-hidden="true"
         className="voice-help-button-icon"
       />
-      {children ?? "Ajuda por voz"}
+      <span className="sr-only">{children ?? "Assistente"}</span>
     </Button>
   );
 }

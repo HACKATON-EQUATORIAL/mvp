@@ -18,7 +18,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 - Este repositório `mvp` é a aplicação do Digitaliza Aí, com frontend e API em Next.js, conforme [DEC-EQT-012](../docs/DECISIONS.md#dec-eqt-012). STT é a primeira capacidade implementada, não o limite permanente do projeto. Novas jornadas devem seguir o pedido e as regras vigentes; não presumir funcionalidades entregues.
 - Registrar decisões relevantes no [DECISIONS central](../docs/DECISIONS.md), com novos IDs `DEC-EQT-*`. O histórico `DEC-STT-*` foi incorporado sem renumeração. Não recriar arquivo de decisões em `mvp/docs`.
-- Documentação específica de STT em [docs/stt](../docs/stt/README.md). Manter chave Groq no servidor. Interpretação por LLM, navegação e TTS ainda não estão implementados; exigir recorte próprio antes de acrescentá-los.
+- Documentação específica de STT em [docs/stt](../docs/stt/README.md). Manter chave Groq no servidor. Navegação por sugestões declaradas e confirmadas por botão pode ser usada no MVP; interpretação de intenção por LLM, navegação deduzida do áudio e TTS exigem recorte próprio antes de acrescentá-los.
 - Contrato implementado em [STT-API](../docs/stt/STT-API.md). Ambiente validado com Zod sob demanda em `src/server/env.ts`; usar `.env.example` sem expor chaves. Segunda via possui uma jornada demonstrativa; os outros três serviços são placeholders. Não há operação oficial integrada.
 - Distinguir proposta, implementação, verificação manual e evidência histórica. O MVP não presume produção autorizada ou avaliação de autonomia realizada.
 
@@ -34,6 +34,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Não adicionar biblioteca de estado, autenticação, cache de transcrição ou nova camada sem necessidade concreta do escopo. Limites de segurança da demonstração estão em [docs/structure/auth-and-api.md](docs/structure/auth-and-api.md).
 
 ## Instruções de execução
+
+- Validar o assistente de voz incrementalmente pelo fluxo real. A prévia `/dev/assistente-voz` foi removida a pedido do usuário; não recriar rotas de demonstração, cenários sintéticos ou componentes exclusivos de prévia sem novo pedido explícito.
 
 - Seguir [instructions.md](instructions.md) e [agent-workflow.md](agent-workflow.md), adaptados ao MVP Digitaliza Aí. A validação manual não exige nova infraestrutura de testes. Registros históricos de suítes removidas não definem requisitos atuais.
 

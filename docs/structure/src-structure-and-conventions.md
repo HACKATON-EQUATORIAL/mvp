@@ -21,8 +21,10 @@ src/
 ├── components/
 │   ├── ui/                             # Primitivas shadcn/Base UI
 │   ├── layout/                         # Shell, Header, telas e JourneyCard
-│   └── voice/                          # Acesso, gravador, controles e transcrição
+│   └── voice/                          # Drawer, contexto tipado, etapas e captura
 ├── hooks/use-speech-to-text.ts         # Captura e estado do client
+├── hooks/use-voice-assistant.ts        # Etapa, sugestão e transcrição em memória
+├── hooks/use-audio-spectrum.ts         # AnalyserNode/canvas do stream já capturado
 ├── config/app.ts                        # Identidade global
 ├── lib/
 │   ├── utils.ts                        # cn local para composição de classes
@@ -47,7 +49,7 @@ src/
 - `lib/stt/constants.ts` e `schemas.ts` são compartilhados entre client e servidor; `recording.ts` e `transcribe-client.ts` são auxiliares do navegador. Credenciais ficam em `server/env.ts`.
 - Primitivas visuais compartilhadas ficam em `components/ui`, no padrão shadcn com Base UI. Composições gerais ficam em `components/layout`; recursos de voz em `components/voice`; somente a prática permanece em `app/servicos/segunda-via/_components`. Não criar camadas vazias por antecipação.
 - Route groups `(grupo)` servem para organizar seções ou layouts sem mudar a URL. O MVP tem um único layout compartilhado e não precisa deles agora.
-- Páginas e layout continuam Server Components por padrão. `use client` fica no gravador/hook, no wrapper `VoiceHelp` e na escolha da prática, que precisam de interação ou APIs do navegador. Componentes de apresentação não precisam ampliar essa fronteira.
+- Páginas e layout continuam Server Components por padrão. `use client` fica no gravador/hooks, no wrapper interativo `VoiceHelp`, nas etapas reutilizáveis que recebem dados e callbacks e na escolha da prática. `useVoiceAssistant` controla a etapa, sugestão e transcrição; `useSpeechToText` permanece responsável pelo microfone e envio. Contextos de voz são dados serializáveis declarados por página; páginas que dependem de `searchParams` encaminham a composição interativa por slot dentro de `Suspense`.
 
 Configurações do framework, `.env*`, `public` e `docs` ficam na raiz. O alias `@/*` resolve `src/*`. Arquivos usam kebab-case, componentes PascalCase e hooks prefixo `use`. Tipos de contrato derivam dos schemas Zod. Manter TypeScript estrito e validar entradas externas como `unknown`, sem `any`.
 

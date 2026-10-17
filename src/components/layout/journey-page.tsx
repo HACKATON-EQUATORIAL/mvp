@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Eyebrow } from "@/components/layout/eyebrow";
 import { VoiceHelp } from "@/components/voice/voice-help";
+import type { VoicePageContext } from "@/components/voice/voice-page-context";
 import styles from "./journey.module.css";
 
 type JourneyPageProps = {
@@ -9,6 +10,8 @@ type JourneyPageProps = {
   intro: string;
   children?: ReactNode;
   actions: ReactNode;
+  voiceContext?: VoicePageContext;
+  voiceSlot?: ReactNode;
 };
 
 export function JourneyPage({
@@ -17,6 +20,8 @@ export function JourneyPage({
   intro,
   children,
   actions,
+  voiceContext,
+  voiceSlot,
 }: JourneyPageProps) {
   return (
     <main tabIndex={-1} className={`${styles.page} journey-page`}>
@@ -25,7 +30,8 @@ export function JourneyPage({
       <p className={styles.intro}>{intro}</p>
       {children && <div className={styles.content}>{children}</div>}
       <div className={styles.actions}>{actions}</div>
-      <VoiceHelp key={title} />
+      {voiceSlot ??
+        (voiceContext ? <VoiceHelp context={voiceContext} /> : null)}
     </main>
   );
 }

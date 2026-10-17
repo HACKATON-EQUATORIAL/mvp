@@ -1,48 +1,77 @@
-"use client";
+import { Button } from "@/components/ui/button";
+import type { SpeechPhase } from "@/hooks/use-speech-to-text";
+import { VoiceStep } from "./voice-step";
 
-import { useSpeechToText } from "@/hooks/use-speech-to-text";
-import { RecordingControls } from "./recording-controls";
-import { TranscriptionPanel } from "./transcription-panel";
-
-export function AudioRecorder() {
-  const {
-    phase,
-    seconds,
-    text,
-    error,
-    canRetry,
-    pending,
-    startRecording,
-    finishRecording,
-    cancel,
-    retry,
-  } = useSpeechToText();
+export function AudioRecorder({
+  phase,
+  error,
+  canRetry,
+  onBack,
+  onRetry,
+}: {
+  phase: SpeechPhase;
+  error: string;
+  canRetry: boolean;
+  onBack: () => void;
+  onRetry: () => void;
+}) {
   return (
-    <section
-      className="recorder"
-      aria-labelledby="recorder-heading"
-      aria-busy={phase === "transcribing"}
+    <VoiceStep
+      title={
+        phase === "requesting"
+          ? "Vamos começar?"
+          : phase === "recording"
+            ? "Estou ouvindo…"
+            : phase === "transcribing"
+              ? "Transcrevendo seu pedido…"
+              : phase === "error"
+                ? "Vamos tentar de novo?"
+                : "A gravação foi interrompida"
+      }
+      description={
+        phase === "requesting"
+          ? "Permita o microfone para contar o que você precisa."
+          : phase === "recording"
+            ? "Fale no seu ritmo. Quando terminar, toque em parar."
+            : phase === "transcribing"
+              ? "Em instantes, você poderá conferir o que foi identificado."
+              : "Você pode gravar outra mensagem ou voltar às opções."
+      }
     >
-      <h2 id="recorder-heading">Grave seu pedido</h2>
-      <p className="recorder-hint">
-        Até 1 minuto de áudio, convertido em texto.
-      </p>
-      <RecordingControls
-        phase={phase}
-        seconds={seconds}
-        pending={pending}
-        canRetry={canRetry}
-        onStart={startRecording}
-        onFinish={finishRecording}
-        onCancel={cancel}
-        onRetry={retry}
-      />
-      {error && (
-        <p className="error-message" role="alert">
+      {error ? (
+        <p className="voice-error" role="alert">
           {error}
         </p>
+      ) : (
+        <div className="voice-transcribing-panel" role="status">
+          <p>
+            {phase === "transcribing"
+              ? "Identificando sua fala"
+              : "Sua transcrição aparecerá aqui"}
+          </p>
+          <div
+            className="voice-transcript-placeholder"
+            data-pending={phase === "transcribing"}
+            aria-hidden="true"
+          >
+            <span />
+            <span />
+            <span />
+          </div>
+        </div>
       )}
-      <TranscriptionPanel phase={phase} text={text} />
-    </section>
+      {canRetry && (
+        <Button type="button" onClick={onRetry}>
+          Tentar enviar novamente
+        </Button>
+      )}
+      {phase !== "recording" &&
+        phase !== "requesting" &&
+        phase !== "transcribing" && (
+          <Button type="button" variant="secondary" onClick={onBack}>
+            Voltar às opções
+          </Button>
+        )}
+    </VoiceStep>
   );
 }

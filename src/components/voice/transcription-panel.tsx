@@ -1,3 +1,4 @@
+import { useId } from "react";
 import type { SpeechPhase } from "@/hooks/use-speech-to-text";
 
 export function TranscriptionPanel({
@@ -7,17 +8,18 @@ export function TranscriptionPanel({
   phase: SpeechPhase;
   text: string;
 }) {
+  const headingId = useId();
   return (
     <>
-      <h2 className="transcript-heading" id="transcript-heading">
+      <h4 className="transcript-heading" id={headingId}>
         Transcrição
-      </h2>
+      </h4>
       <div
         className={`transcript${text ? "" : " transcript-placeholder"}`}
         role="status"
         aria-live="polite"
         aria-atomic="true"
-        aria-labelledby="transcript-heading"
+        aria-labelledby={headingId}
       >
         {phase === "transcribing"
           ? "Aguarde, estamos identificando o que você disse."

@@ -9,6 +9,7 @@ Contratos atuais de tokens, componentes e configuração não são duplicados aq
 | Spec | Conteúdo |
 | --- | --- |
 | [Reconstrução do frontend](frontend-reconstruction.md) | Percursos, rotas propostas, limites, aceite e registros de execução |
+| [Drawer de ajuda por voz](voice-assistant-drawer.md) | Contexto por página, fluxo STT e ciclo de vida do assistente |
 
 ## Registros históricos
 

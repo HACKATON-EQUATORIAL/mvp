@@ -7,6 +7,29 @@ import styles from "@/components/layout/journey.module.css";
 import { JourneyCard } from "@/components/layout/journey-card";
 import { JourneyPage } from "@/components/layout/journey-page";
 import { ActionLink } from "@/components/ui/action-link";
+import type { VoicePageContext } from "@/components/voice/voice-page-context";
+
+const voiceContext: VoicePageContext = {
+  id: "segunda-via.pratica-conferencia",
+  description: "Posso explicar esta etapa ou levar você de volta à prática.",
+  suggestions: [
+    {
+      id: "explain",
+      label: "Explicação de conferência",
+      confirmation: "Você quer consultar como conferir o resultado.",
+      href: withContext(`${routes.etapas}/conferir`, {
+        origem: "pratica-conferencia",
+        etapa: "conferir",
+      }),
+    },
+    {
+      id: "practice",
+      label: "Voltar à prática",
+      confirmation: "Você quer voltar à prática guiada.",
+      href: routes["pratica-guiada"],
+    },
+  ],
+};
 
 export const metadata: Metadata = { title: "Confira o resultado" };
 
@@ -16,6 +39,7 @@ export default function Page() {
       eyebrow="PRÁTICA GUIADA"
       title="Confira o resultado"
       intro="Neste exemplo, a conta está disponível. Confira as informações antes de continuar."
+      voiceContext={voiceContext}
       actions={
         <>
           <ActionLink variant="primary" href={routes["pratica-individual"]}>

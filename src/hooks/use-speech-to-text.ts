@@ -20,6 +20,7 @@ export function useSpeechToText() {
   const [text, setText] = useState("");
   const [error, setError] = useState("");
   const [lastAudio, setLastAudio] = useState<File | null>(null);
+  const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
   const recorder = useRef<MediaRecorder | null>(null);
   const stream = useRef<MediaStream | null>(null);
   const interval = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -42,6 +43,7 @@ export function useSpeechToText() {
       track.stop();
     }
     stream.current = null;
+    setMediaStream(null);
   }, []);
 
   useEffect(() => {
@@ -80,6 +82,17 @@ export function useSpeechToText() {
     upload.current?.abort();
     upload.current = null;
     busy.current = false;
+    setPhase("idle");
+    setError("");
+  }
+
+  function dismissCapture() {
+    generation.current += 1;
+    releaseCapture();
+    upload.current?.abort();
+    upload.current = null;
+    busy.current = false;
+    setLastAudio(null);
     setPhase("idle");
     setError("");
   }
@@ -184,6 +197,7 @@ export function useSpeechToText() {
       };
       for (const track of media.getTracks()) track.onended = recordingFailed;
       current.start(1000);
+      setMediaStream(media);
       setPhase("recording");
       const started = Date.now();
       interval.current = setInterval(() => {
@@ -208,6 +222,7 @@ export function useSpeechToText() {
 
   return {
     phase,
+    mediaStream,
     seconds,
     text,
     error,
@@ -216,6 +231,7 @@ export function useSpeechToText() {
     startRecording,
     finishRecording,
     cancel,
+    dismissCapture,
     retry,
   };
 }

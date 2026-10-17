@@ -1,12 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getRecordingError, getRecordingMimeType } from "@/app/_lib/recording";
-import { requestTranscription } from "@/app/_lib/transcribe-client";
 import { MAX_AUDIO_BYTES, MAX_RECORDING_SECONDS } from "@/lib/stt/constants";
+import { getRecordingError, getRecordingMimeType } from "@/lib/stt/recording";
 import { audioFileSchema } from "@/lib/stt/schemas";
+import { requestTranscription } from "@/lib/stt/transcribe-client";
 
-type Phase =
+export type SpeechPhase =
   | "idle"
   | "requesting"
   | "recording"
@@ -15,7 +15,7 @@ type Phase =
   | "error";
 
 export function useSpeechToText() {
-  const [phase, setPhase] = useState<Phase>("idle");
+  const [phase, setPhase] = useState<SpeechPhase>("idle");
   const [seconds, setSeconds] = useState(0);
   const [text, setText] = useState("");
   const [error, setError] = useState("");

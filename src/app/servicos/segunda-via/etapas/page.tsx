@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { JourneyPage } from "@/app/_components/layout/journey-page";
 import {
   readContext,
   returnTo,
   routes,
   withContext,
 } from "@/app/servicos/segunda-via/_lib/navigation";
+import { JourneyPage } from "@/components/layout/journey-page";
 import { ActionLink } from "@/components/ui/action-link";
 
 export const metadata: Metadata = { title: "Qual parte você quer consultar?" };

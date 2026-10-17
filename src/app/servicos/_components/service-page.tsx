@@ -1,4 +1,4 @@
-import { JourneyPage } from "@/app/_components/layout/journey-page";
+import { JourneyPage } from "@/components/layout/journey-page";
 import { ActionLink } from "@/components/ui/action-link";
 
 export function ServicePage({ title }: { title: string }) {

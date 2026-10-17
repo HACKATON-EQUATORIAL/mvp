@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { JourneyPage } from "@/app/_components/layout/journey-page";
-import { JourneyCard } from "@/app/servicos/segunda-via/_components/journey-card";
 import { steps } from "@/app/servicos/segunda-via/_lib/content";
 import type { Step } from "@/app/servicos/segunda-via/_lib/navigation";
 import {
@@ -12,6 +10,8 @@ import {
   stepParamsSchema,
   withContext,
 } from "@/app/servicos/segunda-via/_lib/navigation";
+import { JourneyCard } from "@/components/layout/journey-card";
+import { JourneyPage } from "@/components/layout/journey-page";
 import { ActionLink } from "@/components/ui/action-link";
 
 export async function generateMetadata({

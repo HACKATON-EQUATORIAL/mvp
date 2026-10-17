@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { JourneyPage } from "@/app/_components/layout/journey-page";
-import { JourneyCard } from "@/app/servicos/segunda-via/_components/journey-card";
 import { PracticeChoice } from "@/app/servicos/segunda-via/_components/practice-choice";
+import { JourneyCard } from "@/components/layout/journey-card";
+import { JourneyPage } from "@/components/layout/journey-page";
 
 export const metadata: Metadata = { title: "Agora, tente você" };
 

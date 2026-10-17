@@ -2,10 +2,10 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
-import { AudioRecorder } from "@/app/_components/audio-recorder";
-import styles from "@/app/_components/layout/journey.module.css";
-import { VoiceHelpButton } from "@/app/_components/voice-help-button";
+import styles from "@/components/layout/journey.module.css";
 import { Button } from "@/components/ui/button";
+import { AudioRecorder } from "@/components/voice/audio-recorder";
+import { VoiceHelpButton } from "@/components/voice/voice-help-button";
 
 export function VoiceHelp() {
   const pathname = usePathname();

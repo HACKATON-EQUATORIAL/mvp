@@ -1,7 +1,8 @@
 # Componentes de UI e acessibilidade
 
 Guia vigente, conferido no código em **17/10/2026**. Primitivas visuais ficam em
-`src/components/ui`; composições específicas ficam junto às rotas. Tokens em
+`src/components/ui`; composições compartilhadas ficam em `src/components/layout`
+e `src/components/voice`, enquanto a prática exclusiva fica junto à rota. Tokens em
 [design system](design-system.md); instalação e atualizações em [shadcn](shadcn-ui.md).
 
 ## Camadas e consumidores
@@ -11,10 +12,10 @@ Guia vigente, conferido no código em **17/10/2026**. Primitivas visuais ficam e
 | Button | `components/ui/button.tsx` | Ações com Base UI e variantes CVA |
 | ActionLink | `components/ui/action-link.tsx` | Navegação Next com aparência de botão |
 | Card e suas partes | `components/ui/card.tsx` | Agrupamento informativo |
-| VoiceHelpButton | `app/_components/voice-help-button.tsx` | Botão de voz e asset local |
-| Header, AppShell, JourneyPage, Eyebrow | `app/_components/layout/` | Estrutura e identidade das telas |
-| VoiceHelp / AudioRecorder | `app/_components/` | Acesso opcional e apresentação da captura |
-| JourneyCard / PracticeChoice | `app/servicos/segunda-via/_components/` | Composição e interação da prática |
+| Header, AppShell, JourneyPage, Eyebrow, JourneyCard | `components/layout/` | Estrutura e composição compartilhada das telas |
+| VoiceHelpButton, VoiceHelp, AudioRecorder | `components/voice/` | Acesso opcional e apresentação da captura |
+| RecordingControls / TranscriptionPanel | `components/voice/` | Controles de gravação e região de transcrição |
+| PracticeChoice | `app/servicos/segunda-via/_components/` | Interação exclusiva da prática |
 
 Usar imports explícitos e `cn` de `@/lib/utils`; não recriar Button/Card em pastas
 de rota. Primitivas não importam servidor. Não adicionar `use client` a componentes
@@ -101,8 +102,9 @@ Na jornada, o controle se alinha à direita.
 fechar desmonta a sessão e devolve o foco ao acionador. Abrir não solicita microfone
 nem transcreve automaticamente. Não há Drawer implantado nesta base.
 
-`AudioRecorder` apresenta o estado do hook: início, permissão pendente, captura,
-envio, sucesso, erro e retry. Usa Button com tamanhos de gravação; durante
+`AudioRecorder` apresenta o estado do hook por `RecordingControls` e
+`TranscriptionPanel`: início, permissão pendente, captura, envio, sucesso, erro e
+retry. Usa Button com tamanhos de gravação; durante
 permissão/envio, preservar Cancelar e impedir início duplicado. Texto transcrito
 vai para região viva e erro usa `role=alert`; não inserir resposta como HTML.
 Ciclo de vida e contrato: [HTTP/estado](http-and-queries.md) e [STT](../../../docs/stt/STT-API.md).

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Header } from "@/app/_components/layout/header/header";
+import { Header } from "@/components/layout/header/header";
 import styles from "./journey.module.css";
 
 export function AppShell({ children }: { children: ReactNode }) {

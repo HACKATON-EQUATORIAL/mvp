@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { AppShell } from "@/app/_components/layout/app-shell";
+import { AppShell } from "@/components/layout/app-shell";
 import { APP_NAME } from "@/config/app";
 import "./globals.css";
 

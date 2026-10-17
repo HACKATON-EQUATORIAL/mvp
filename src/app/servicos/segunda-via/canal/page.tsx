@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import styles from "@/app/_components/layout/journey.module.css";
-import { JourneyPage } from "@/app/_components/layout/journey-page";
-import { JourneyCard } from "@/app/servicos/segunda-via/_components/journey-card";
 import {
   readContext,
   returnTo,
   routes,
 } from "@/app/servicos/segunda-via/_lib/navigation";
+import styles from "@/components/layout/journey.module.css";
+import { JourneyCard } from "@/components/layout/journey-card";
+import { JourneyPage } from "@/components/layout/journey-page";
 import { ActionLink } from "@/components/ui/action-link";
 
 export const metadata: Metadata = { title: "Continuar no canal oficial" };

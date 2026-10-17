@@ -1,6 +1,6 @@
 # Instruções do MVP Digitaliza Aí
 
-O pedido do usuário define a fronteira do trabalho. O projeto `mvp` reúne frontend e API do Digitaliza Aí e usa Next.js App Router, React, TypeScript, Bun, Biome e Zod. A primeira capacidade implementada é gravar áudio, transcrever com Groq e exibir texto; os quatro serviços ainda são placeholders. O repositório passa a abrigar o MVP completo, com evolução conforme o pedido e as decisões centrais.
+O pedido do usuário define a fronteira do trabalho. O projeto `mvp` reúne frontend e API do Digitaliza Aí e usa Next.js App Router, React, TypeScript, Bun, Biome e Zod. A primeira capacidade implementada é gravar áudio, transcrever com Groq e exibir texto. Segunda via tem uma jornada demonstrativa; os outros três serviços ainda são placeholders. O repositório abriga o MVP completo, com evolução conforme o pedido e as decisões centrais.
 
 ## Onde começar
 
@@ -10,7 +10,7 @@ O pedido do usuário define a fronteira do trabalho. O projeto `mvp` reúne fron
 | Entrega específica e evidência | [Specs e registros](docs/specs/README.md), sem duplicar padrões de manutenção |
 | Estrutura Next.js | [Mapa de pastas](docs/structure/src-structure-and-conventions.md) e documentação da versão instalada em `node_modules/next/dist/docs` |
 | Primitivas visuais | `src/components/ui`, `components.json` e [guia shadcn/Base UI](docs/structure/shadcn-ui.md) |
-| Captura e UI | `src/app/_components`, `src/app/_hooks` e `src/app/_lib` |
+| Captura e UI compartilhada | `src/components/layout`, `src/components/voice`, `src/hooks/use-speech-to-text.ts` e `src/lib/stt` |
 | API de transcrição | [Contrato STT](../docs/stt/STT-API.md), `src/app/api/transcribe` e `src/server/stt` |
 | Ambiente e segurança | `src/server/env.ts`, `.env.example` e [limites da API](docs/structure/auth-and-api.md) |
 | Configuração e comandos | [Execução](docs/structure/build-and-run.md), `package.json` e arquivo afetado |
@@ -21,7 +21,7 @@ Ler apenas os arquivos necessários e seguir imports quando houver dúvida concr
 ## Implementação
 
 - Preferir a menor mudança que entrega o pedido. Não acrescentar camadas, bibliotecas, autenticação, LLM, navegação por voz ou TTS por iniciativa própria.
-- Seguir a colocação do App Router: código exclusivo junto à rota em pastas privadas; integração e ambiente em `src/server` com `server-only`; contratos públicos em `src/lib/stt`.
+- Seguir a colocação do App Router: código exclusivo junto à rota em pastas privadas; componentes e hook usados por várias rotas fora de `app`; integração e ambiente em `src/server` com `server-only`; contratos e auxiliares client de STT em `src/lib/stt`.
 - Preservar identidade visual, acessibilidade, estados de carregamento/erro e liberação do microfone no cancelamento ou saída.
 - Validar entradas e respostas externas com Zod. Nunca expor, imprimir ou versionar a chave Groq; não registrar áudio ou transcrição em logs.
 - Alterações de contrato devem manter client, handler e documentação coerentes. Usar dados sintéticos na demonstração.

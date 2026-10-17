@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { Eyebrow } from "@/app/_components/layout/eyebrow";
-import { VoiceHelp } from "@/app/_components/voice-help";
+import { Eyebrow } from "@/components/layout/eyebrow";
+import { VoiceHelp } from "@/components/voice/voice-help";
 import styles from "./journey.module.css";
 
 type JourneyPageProps = {

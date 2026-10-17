@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import styles from "@/app/_components/layout/journey.module.css";
+import styles from "@/components/layout/journey.module.css";
 import { ActionLink } from "@/components/ui/action-link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";

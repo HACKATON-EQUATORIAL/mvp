@@ -21,9 +21,10 @@ A região de voz continua expansível; Drawer é uma evolução separada.
 | `mvp/src/lib/utils.ts` | Entrada local para `cn`, fornecido pelo pacote oficial `cn` |
 | `mvp/src/app/globals.css` | Tokens canônicos, aliases shadcn e receitas visuais preservadas |
 
-Composições como `JourneyCard`, `VoiceHelpButton`, `Header` e `Eyebrow` ficam
-junto às rotas; reutilizam as primitivas em vez de manter cópias próprias. O
-gravador usa Button, com lógica de captura e transporte em seus módulos locais.
+Composições compartilhadas como `JourneyCard`, `Header` e `Eyebrow` ficam em
+`src/components/layout`; `VoiceHelpButton` e o gravador ficam em
+`src/components/voice`. Reutilizam as primitivas em vez de manter cópias
+próprias. Captura e transporte ficam em `src/hooks` e `src/lib/stt`.
 
 ## Contratos e estilo
 

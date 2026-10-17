@@ -111,8 +111,9 @@ rígida ou desenhar uma moldura de celular na página.
 
 `VoiceHelpButton` reutiliza Button; botão circular amarelo de 60×60px, com sombra
 e borda inferior para relevo. O nome “Assistente” permanece acessível e no tooltip
-nativo. O ícone existente está em `public/icons/voice-help.svg`, exibido em 28×28px,
-com alternativa vazia por ser decorativo.
+nativo. O microfone usa `Mic` do lucide-react em 28×28px. Ícones decorativos usam
+aria-hidden; os nomes acessíveis ficam nos controles. Parar usa `Square` e
+carregamento usa `LoaderCircle`, sem desenhos SVG ou ícones CSS próprios.
 O controle usa `position: absolute` no canto inferior direito do AppShell, que
 define o contêiner relativo, com 16px de distância e respeito à área segura.
 Acompanha a página na rolagem, sobreposto ao layout, sem seção própria ou padding

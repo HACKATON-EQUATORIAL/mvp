@@ -1,8 +1,14 @@
 # Arquitetura do Digitaliza Aí
 
-O MVP Digitaliza Aí usa um único projeto Next.js para frontend e API. STT é a primeira capacidade implementada, com evolução de produto registrada no DECISIONS central. Client e servidor têm responsabilidades distintas dentro desse projeto, permitindo desenvolver o contrato da API e a tela separadamente.
+O frontend Digitaliza Aí usa Next.js App Router. O backend de domínio é Python/FastAPI
+em `../back`; consultas GET saem do navegador via React Query, sem proxy Next.
+Route Handlers do Next atendem apenas a integração STT com Groq. Ver
+[HTTP e queries](http-and-queries.md) e DEC-EQT-022 no registro central.
 
 ```text
+Home → useGetTracks → http/track/get-tracks → http/api → Python GET /api/v1/tracks
+                   ↘ queries/keys/tracks + schemas/http/track
+QueryProvider no layout raiz mantém o cache em memória
 Páginas explícitas → JourneyPage → ações semânticas + VoiceHelp(contexto)
 VoiceHelp → Drawer → VoiceConversation + etapas reutilizáveis
                   → VoiceAudioDock → useAudioSpectrum (AnalyserNode/canvas)
@@ -19,6 +25,9 @@ POST /api/transcribe → handleTranscription → readAudioForm + schemas
 - `hooks/use-voice-assistant.ts` controla etapa, sugestão selecionada e última transcrição revisada.
 - `hooks/use-speech-to-text.ts` coordena MediaRecorder, ciclo de vida, cancelamento e envio.
 - `hooks/use-audio-spectrum.ts` apenas observa o stream da captura. Motion anima a UI; o analisador não solicita outro microfone nem envia áudio.
+- `http/api.ts` contém o transporte GET; `http/<recurso>` reúne request privado, opções e hook por operação. `queries/keys` mantém keys e `lib/query-client.ts` configura o cache.
+- `schemas/http` mantém schemas Zod do contrato Python; `lib/error/api-error.ts` normaliza falhas HTTP.
+- `components/providers` mantém o provider React Query.
 - `lib/stt` contém contratos públicos e auxiliares client de captura e transporte.
 - `app/servicos/segunda-via` contém páginas explícitas, conteúdo estático, contexto de retorno validado com Zod e interação local de prática.
 - `app/servicos/_components` contém a apresentação comum dos placeholders.

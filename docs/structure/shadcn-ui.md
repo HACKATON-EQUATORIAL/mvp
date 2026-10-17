@@ -19,6 +19,7 @@ contrato e composição vigentes estão em [UI e acessibilidade](styling-and-ui.
 | `mvp/src/components/ui/button.tsx` | Base UI Button, variantes CVA, tamanhos, loading e ref |
 | `mvp/src/components/ui/action-link.tsx` | Link Next semântico com a mesma receita de botão |
 | `mvp/src/components/ui/card.tsx` | Card, Header, Title, Description, Content, Action e Footer |
+| `mvp/src/components/ui/skeleton.tsx` | Skeleton oficial, adaptado ao cn local e movimento reduzido |
 | `mvp/src/components/ui/drawer.tsx` | Drawer Base UI com swipe, backdrop e composição controlada |
 | `mvp/src/lib/utils.ts` | Entrada local para `cn`, fornecido pelo pacote oficial `cn` |
 | `mvp/src/app/globals.css` | Tokens canônicos, aliases shadcn e receitas visuais preservadas |
@@ -36,7 +37,9 @@ são a referência vigente; não duplicar variantes ou catálogo nesta página.
 
 O preset identifica a família do registro a instalar. O tema real é personalizado;
 valores de fonte/tema inferidos por `shadcn info` não substituem o CSS do projeto.
-Ícones futuros estão configurados para Tabler; o asset atual de voz foi preservado.
+Ícones usam `lucide-react`, com imports nomeados e `iconLibrary: lucide` no
+components.json. Reutilizar Mic, Square e LoaderCircle nos controles de voz e
+carregamento. Não desenhar SVG próprio para ícones cobertos pela biblioteca.
 
 ## Adicionar componentes depois
 
@@ -78,3 +81,5 @@ puramente visual. Evidência da migração original: [DEC-EQT-016](../../../docs
 shadcn/ui e Base UI são componentes de terceiros, com código aberto sob MIT.
 As versões efetivamente instaladas são registradas em `mvp/bun.lock`; atualização
 não deve sobrescrever as adaptações locais silenciosamente.
+
+Referência de ícones: [Lucide React](https://lucide.dev/guide/react).

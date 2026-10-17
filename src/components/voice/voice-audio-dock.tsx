@@ -1,5 +1,6 @@
 "use client";
 
+import { LoaderCircle, Mic, Square } from "lucide-react";
 import {
   motion,
   useMotionValue,
@@ -7,7 +8,6 @@ import {
   useSpring,
   useTransform,
 } from "motion/react";
-import Image from "next/image";
 import { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { useAudioSpectrum } from "@/hooks/use-audio-spectrum";
@@ -112,17 +112,16 @@ export function VoiceAudioDock({
             onClick={recording ? onFinish : onStart}
           >
             {recording ? (
-              <span className="voice-stop-icon" aria-hidden="true" />
-            ) : pending ? (
-              <span className="ui-button-spinner" aria-hidden="true" />
-            ) : (
-              <Image
-                src="/icons/voice-help.svg"
-                alt=""
-                width={28}
-                height={28}
+              <Square
+                size={24}
+                fill="currentColor"
+                strokeWidth={0}
                 aria-hidden="true"
               />
+            ) : pending ? (
+              <LoaderCircle className="ui-button-spinner" aria-hidden="true" />
+            ) : (
+              <Mic size={28} aria-hidden="true" />
             )}
           </Button>
         </motion.div>

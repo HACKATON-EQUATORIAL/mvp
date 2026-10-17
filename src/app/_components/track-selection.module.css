@@ -1,0 +1,61 @@
+.catalog {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+.list {
+  display: grid;
+  gap: var(--spacing-xs);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.item {
+  min-width: 0;
+}
+.item > :is(a, button) {
+  width: 100%;
+  min-height: 64px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-md);
+  text-align: left;
+  justify-content: flex-start;
+}
+.item button > span {
+  width: 100%;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.status {
+  font-size: var(--font-size-desktop-xs);
+  font-weight: var(--font-weight-regular);
+  white-space: nowrap;
+}
+.feedback {
+  display: grid;
+  gap: var(--spacing-xs);
+}
+.feedback p {
+  margin: 0;
+}
+
+.skeletonCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  min-height: 64px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+}
+.skeletonTitle {
+  width: 60%;
+  height: 16px;
+}
+.skeletonStatus {
+  width: 48px;
+  height: 12px;
+}
+.list[data-paused="true"] [data-slot="skeleton"] {
+  animation: none;
+}

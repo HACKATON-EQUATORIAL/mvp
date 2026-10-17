@@ -6,7 +6,8 @@ A organização separa código compartilhado de implementação exclusiva de uma
 src/
 ├── app/
 │   ├── layout.tsx                       # Layout raiz, fontes e metadados
-│   ├── page.tsx                         # Tela inicial, Server Component
+│   ├── page.tsx                         # Rota server; compõe seleção client de trilhas
+│   ├── _components/track-selection.tsx   # Primeiro consumidor React Query
 │   ├── globals.css
 │   ├── favicon.ico
 │   ├── servicos/
@@ -20,13 +21,19 @@ src/
 │       └── _lib/                        # Handler e leitura multipart
 ├── components/
 │   ├── ui/                             # Primitivas shadcn/Base UI
+│   ├── providers/query-provider.tsx     # Provider React Query do layout
 │   ├── layout/                         # Shell, Header, telas e JourneyCard
 │   └── voice/                          # Drawer, contexto tipado, etapas e captura
 ├── hooks/use-speech-to-text.ts         # Captura e estado do client
 ├── hooks/use-voice-assistant.ts        # Etapa, sugestão e transcrição em memória
 ├── hooks/use-audio-spectrum.ts         # AnalyserNode/canvas do stream já capturado
+├── http/                               # api.ts e operação/fábrica/hook por recurso
+├── queries/                            # Query client e keys/<recurso>/get-*.ts
+├── schemas/http/                       # Schemas Zod das respostas Python
+├── config/api.ts                       # URL pública do backend validada com Zod
 ├── config/app.ts                        # Identidade global
 ├── lib/
+│   ├── error/api-error.ts              # Erro HTTP normalizado
 │   ├── utils.ts                        # cn local para composição de classes
 │   └── stt/                            # Contrato público e auxiliares client
 │       ├── constants.ts
@@ -62,3 +69,7 @@ Neste MVP não manter pasta de testes, suítes ou dependências de teste; usar l
 A jornada em `app/servicos/segunda-via` mantém seus `_components` e `_lib` locais: conteúdo provisório e navegação validada com Zod. `JourneyPage` fornece um `main` focável por página, Eyebrow por tela, título, conteúdo, ações e acesso de voz. `AppShell` mantém o Header e o alvo focável `#conteudo` únicos, inclusive quando o Next preserva páginas ocultas. Estilos de composição ficam em CSS Module; o loader Tailwind exclui `*.module.css` para preservar os exports de classes do Next.
 
 Configuração e manutenção das primitivas: [shadcn com Base UI](shadcn-ui.md). Não recriar cópias de Button/Card em pastas de rotas.
+
+Consultas de domínio usam `http` por operação, `queries/keys` e `schemas/http`; provider compartilhado em
+`components/providers/query-provider.tsx`. O Route Handler Next permanece apenas
+para Groq. Ver [HTTP e estado](http-and-queries.md).

@@ -1,6 +1,6 @@
 # Instruções do MVP Digitaliza Aí
 
-O pedido do usuário define a fronteira do trabalho. O projeto `mvp` reúne frontend e API do Digitaliza Aí e usa Next.js App Router, React, TypeScript, Bun, Biome e Zod. A primeira capacidade implementada é gravar áudio, transcrever com Groq e exibir texto. Segunda via tem uma jornada demonstrativa; os outros três serviços ainda são placeholders. O repositório abriga o MVP completo, com evolução conforme o pedido e as decisões centrais.
+O pedido do usuário define a fronteira do trabalho. O projeto `mvp` usa Next.js App Router, React, TypeScript, Bun, Biome e Zod para frontend e STT. O domínio fica em Python/FastAPI em `../back`; consultas GET usam React Query diretamente no navegador. A primeira capacidade implementada é gravar áudio, transcrever com Groq e exibir texto. Segunda via tem uma jornada demonstrativa; os outros três serviços ainda são placeholders. O repositório abriga o MVP completo, com evolução conforme o pedido e as decisões centrais.
 
 ## Onde começar
 
@@ -11,6 +11,7 @@ O pedido do usuário define a fronteira do trabalho. O projeto `mvp` reúne fron
 | Estrutura Next.js | [Mapa de pastas](docs/structure/src-structure-and-conventions.md) e documentação da versão instalada em `node_modules/next/dist/docs` |
 | Primitivas visuais | `src/components/ui`, `components.json` e [guia shadcn/Base UI](docs/structure/shadcn-ui.md) |
 | Captura e UI compartilhada | `src/components/layout`, `src/components/voice`, `src/hooks/use-speech-to-text.ts` e `src/lib/stt` |
+| Consultas GET do domínio | `src/http`, `src/queries/keys`, `src/schemas/http` e [HTTP/queries](docs/structure/http-and-queries.md); backend Python em `../back` |
 | API de transcrição | [Contrato STT](../docs/stt/STT-API.md), `src/app/api/transcribe` e `src/server/stt` |
 | Ambiente e segurança | `src/server/env.ts`, `.env.example` e [limites da API](docs/structure/auth-and-api.md) |
 | Configuração e comandos | [Execução](docs/structure/build-and-run.md), `package.json` e arquivo afetado |

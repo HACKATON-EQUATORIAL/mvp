@@ -1,5 +1,6 @@
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
+import { LoaderCircle } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -60,7 +61,9 @@ function Button({
       disabled={disabled || loading}
       aria-busy={loading || props["aria-busy"] || undefined}
     >
-      {loading && <span className="ui-button-spinner" aria-hidden="true" />}
+      {loading && (
+        <LoaderCircle className="ui-button-spinner" aria-hidden="true" />
+      )}
       <span className="ui-button-content">{children}</span>
     </ButtonPrimitive>
   );

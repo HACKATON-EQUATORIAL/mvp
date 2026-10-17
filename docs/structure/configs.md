@@ -20,3 +20,9 @@ Configuração secreta ausente não bloqueia build ou renderização; a API resp
 [Execução e ngrok](../../README.md).
 
 Para adicionar ou atualizar componentes via CLI, seguir [shadcn/Base UI](shadcn-ui.md). Variantes e semântica dos componentes ficam em [UI](styling-and-ui.md); valores visuais ficam no [design system](design-system.md). Não manter essas regras duplicadas nesta lista de configuração.
+
+## URL pública do backend
+
+`NEXT_PUBLIC_API_URL` define o backend Python com `/api/v1`. Validada por Zod em
+`src/config/api.ts`; disponível no navegador e incorporada ao build, sem segredos.
+Para celular/ngrok e CORS, seguir [HTTP e queries](http-and-queries.md).

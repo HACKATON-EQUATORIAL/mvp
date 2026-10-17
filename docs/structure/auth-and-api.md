@@ -2,6 +2,10 @@
 
 O MVP é público e não possui login, sessão, cookies de autenticação ou autorização por usuário. A chave Groq é uma credencial do servidor, não uma identidade do cliente. Não importar a infraestrutura de acesso do projeto de referência.
 
+GETs de conteúdo vão diretamente ao backend Python com URL pública e sem credenciais.
+CORS de origens permitidas é configurado na API Python. As proteções de upload
+abaixo pertencem ao Route Handler STT, não aos GETs do domínio.
+
 ## Proteções implementadas
 
 - Ambiente privado validado com Zod sob demanda, em módulo `server-only`. Nunca usar `NEXT_PUBLIC_` para a chave.

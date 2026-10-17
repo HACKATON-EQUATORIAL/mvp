@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { ActionLink } from "@/app/_components/action-link";
 import { JourneyPage } from "@/app/_components/layout/journey-page";
 import { JourneyCard } from "@/app/servicos/segunda-via/_components/journey-card";
 import { steps } from "@/app/servicos/segunda-via/_lib/content";
@@ -13,6 +12,7 @@ import {
   stepParamsSchema,
   withContext,
 } from "@/app/servicos/segunda-via/_lib/navigation";
+import { ActionLink } from "@/components/ui/action-link";
 
 export async function generateMetadata({
   params,

@@ -19,3 +19,15 @@ Removidos `tests`, script de teste e dependência exclusiva da suíte por solici
 ## 16/10/2026: repositório do MVP
 
 A aplicação agora vive em `mvp` e abrange frontend e API do Digitaliza Aí. Decisões centralizadas em [docs/DECISIONS](../../../docs/DECISIONS.md); documentação e imagens de STT movidas para [docs/stt](../../../docs/stt/README.md). Guias técnicos permanecem neste projeto. Ver [DEC-EQT-012](../../../docs/DECISIONS.md#dec-eqt-012).
+
+## 17/10/2026: shadcn/ui com Base UI
+
+Configuração oficial criada em `components.json`; Button e Card gerados e personalizados para a identidade existente. Primitivas e ActionLink centralizados em `src/components/ui`, com consumidores migrados e cópias antigas removidas. Tokens semânticos shadcn reutilizam a paleta atual; Inter e variantes anteriores preservadas. Ver [spec](shadcn-ui.md) e [DEC-EQT-016](../../../docs/DECISIONS.md#dec-eqt-016).
+
+## 17/10/2026: specs locais do frontend
+
+Specs técnicas passaram a ficar em `mvp/docs/specs`, com índice próprio vinculado ao README técnico. Removida a pasta geral `docs/specs` e atualizados links/instruções. Decisões e regras do produto permanecem na documentação central. Ver [DEC-EQT-017](../../../docs/DECISIONS.md#dec-eqt-017).
+
+## 17/10/2026: manutenção consolidada
+
+Structure concentra os contratos vigentes de tokens, UI/Header e shadcn. Specs mantém a reconstrução como entrega e registros compactos de origem/verificação dos componentes iniciais. Removida duplicação de manutenção shadcn e atualizados os pontos de entrada. Nenhuma nova verificação funcional foi executada nesta reorganização documental. Ver [DEC-EQT-018](../../../docs/DECISIONS.md#dec-eqt-018).

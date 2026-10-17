@@ -6,7 +6,7 @@
 2. Identificar o resultado esperado e ler os arquivos diretamente envolvidos. Para APIs ou convenções Next, consultar a documentação da versão instalada.
 3. Implementar a menor solução que atende ao pedido, mantendo o recorte solicitado do MVP e as fronteiras de client/servidor.
 4. Revisar as mudanças e validar conforme a tabela abaixo. Não criar infraestrutura adicional para validar o MVP.
-5. Manter specs de interface e funcionalidades em [docs/specs](../docs/specs/README.md), sem duplicação no app. Atualizar os documentos afetados e registrar decisões importantes em [DECISIONS](../docs/DECISIONS.md). Relatar resultado, verificações executadas e limitações.
+5. Registrar escopo/aceite/evidências da entrega em [specs](docs/specs/README.md) e consolidar padrões técnicos vigentes em [structure](docs/structure/overview.md), vinculando os documentos sem duplicar contratos. Atualizar os documentos afetados e registrar decisões importantes em [DECISIONS](../docs/DECISIONS.md). Relatar resultado, verificações executadas e limitações.
 
 Não exigir cartões, quadros, checkpoints ou escolha de modelo para uma alteração direta. Se o usuário indicar uma tarefa documentada, atualizar somente os registros relacionados. Não executar commit, push, stash, staging ou sincronização sem pedido explícito para a operação, nem criar memória paralela. Resolução de conflito e implementação deixam mudanças para revisão.
 

@@ -1,5 +1,5 @@
-import { ActionLink } from "@/app/_components/action-link";
 import { JourneyPage } from "@/app/_components/layout/journey-page";
+import { ActionLink } from "@/components/ui/action-link";
 
 export default function NotFound() {
   return (

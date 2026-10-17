@@ -3,9 +3,9 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { AudioRecorder } from "@/app/_components/audio-recorder";
-import { Button } from "@/app/_components/button";
 import styles from "@/app/_components/layout/journey.module.css";
 import { VoiceHelpButton } from "@/app/_components/voice-help-button";
+import { Button } from "@/components/ui/button";
 
 export function VoiceHelp() {
   const pathname = usePathname();

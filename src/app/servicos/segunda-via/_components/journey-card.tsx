@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { InfoCard } from "@/app/_components/info-card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function JourneyCard({
   title,
@@ -11,9 +11,13 @@ export function JourneyCard({
   className?: string;
 }) {
   return (
-    <InfoCard className={className}>
-      <h2>{title}</h2>
-      {typeof children === "string" ? <p>{children}</p> : children}
-    </InfoCard>
+    <Card className={className}>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {typeof children === "string" ? <p>{children}</p> : children}
+      </CardContent>
+    </Card>
   );
 }

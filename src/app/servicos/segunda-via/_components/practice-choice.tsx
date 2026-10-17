@@ -2,10 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import { ActionLink } from "@/app/_components/action-link";
-import { Button } from "@/app/_components/button";
-import { InfoCard } from "@/app/_components/info-card";
 import styles from "@/app/_components/layout/journey.module.css";
+import { ActionLink } from "@/components/ui/action-link";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { practiceFeedback } from "../_lib/content";
 import { routes, withContext } from "../_lib/navigation";
 
@@ -50,11 +50,11 @@ export function PracticeChoice({ guided }: { guided: boolean }) {
         {feedback}
       </p>
       {hint && (
-        <InfoCard>
+        <Card>
           <p tabIndex={-1} ref={hintRef}>
             {practiceFeedback.hint}
           </p>
-        </InfoCard>
+        </Card>
       )}
       {guided ? [correct, alternative] : [alternative, correct]}
       {guided ? (

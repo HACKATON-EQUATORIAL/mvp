@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { ComponentProps, ReactNode } from "react";
-import { Button } from "@/app/_components/button";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export type VoiceHelpButtonProps = Omit<
   ComponentProps<typeof Button>,
@@ -11,10 +12,7 @@ export type VoiceHelpButtonProps = Omit<
 
 export function VoiceHelpButton({ children, ...props }: VoiceHelpButtonProps) {
   return (
-    <Button
-      {...props}
-      className={classNames("voice-help-button", props.className)}
-    >
+    <Button {...props} className={cn("voice-help-button", props.className)}>
       <Image
         src="/icons/voice-help.svg"
         alt=""
@@ -26,8 +24,4 @@ export function VoiceHelpButton({ children, ...props }: VoiceHelpButtonProps) {
       {children ?? "Ajuda por voz"}
     </Button>
   );
-}
-
-function classNames(...names: Array<string | undefined>) {
-  return names.filter(Boolean).join(" ");
 }

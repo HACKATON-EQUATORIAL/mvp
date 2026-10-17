@@ -28,3 +28,5 @@ Não há LLM, interpretação de intenção, navegação automática, TTS, banco
 O Next.js admite colocação e organização por funcionalidade. Para este MVP, escolhemos colocação para reduzir camadas. O underscore é uma convenção de roteamento; `server-only` é a proteção de importação. Ver [mapa e regras](src-structure-and-conventions.md).
 
 `VoiceHelp` mantém apenas abertura/fechamento e foco. Uma chave de pathname e a chave da etapa contextual separam as sessões de captura. A desmontagem executa o cleanup já existente no hook. As origens de retorno são identificadores de uma lista fechada; URLs arbitrárias são rejeitadas. Não há progresso global ou persistência local.
+
+Primitivas visuais reutilizáveis vivem em `components/ui` (shadcn com Base UI), enquanto composições educacionais continuam junto às rotas. `lib/utils.ts` expõe `cn`; os módulos públicos de UI não importam servidor. [Contrato da fundação](shadcn-ui.md).

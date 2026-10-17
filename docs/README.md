@@ -1,22 +1,42 @@
 # Documentação técnica · MVP Digitaliza Aí
 
-O projeto `mvp` reúne frontend e API do Digitaliza Aí em Next.js. A capacidade
-funcional de voz é transcrever áudio com Groq. O frontend oferece orientação,
-consulta e prática demonstrativas de segunda via; os outros três serviços
-permanecem como placeholders. O canal oficial continua a confirmar.
+O MVP reúne frontend e API em Next.js. A jornada de segunda via oferece
+orientação, consulta e prática demonstrativa; os outros três serviços são
+placeholders. Voz atualmente grava e transcreve com Groq, sem interpretação de
+intenção ou navegação automática. Canal e procedimento oficiais estão pendentes.
 
-| Necessidade | Documento |
+## Manter o projeto
+
+`structure` descreve a implementação vigente e orienta sua manutenção.
+
+| Necessidade | Guia |
 | --- | --- |
-| Executar o aplicativo | [README](../README.md) |
-| Consultar estrutura, UI, API e configuração | [Guias técnicos](structure/overview.md) |
-| Consultar o contrato de tokens CSS | [SPECS de tokens](../../docs/specs/css-design-tokens.md) |
-| Planejar componentes de UI mobile first | [SPEC de componentes](../../docs/specs/ui-components.md) |
-| Planejar o header e sua relação com a Eyebrow | [SPEC do Header](../../docs/specs/header.md) |
-| Reconstruir o frontend com telas provisórias e STT preservado | [SPEC de reconstrução](../../docs/specs/frontend-reconstruction.md) |
-| Entender produto e regras | [Documentação do produto](../../docs/README.md) |
-| Consultar ou registrar decisões | [DECISIONS central](../../docs/DECISIONS.md) |
-| Planejamento, provedores e contrato de transcrição | [STT](../../docs/stt/README.md) |
-| Instruções de execução para agentes | [instructions](../instructions.md) e [workflow](../agent-workflow.md) |
+| Executar o aplicativo | [README do projeto](../README.md) |
+| Entender arquitetura e fronteiras | [Visão geral](structure/overview.md) |
+| Alterar tokens, tipografia e receitas | [Design system](structure/design-system.md) |
+| Consumir componentes ou alterar Header/voz | [UI e acessibilidade](structure/styling-and-ui.md) |
+| Adicionar componentes shadcn/Base UI | [Configuração e manutenção](structure/shadcn-ui.md) |
+| Alterar configuração e ambiente | [Configurações](structure/configs.md) |
+| Alterar código com contexto | [instructions](../instructions.md) e [workflow](../agent-workflow.md) |
 
-Não manter um segundo arquivo de decisões neste projeto. Os links entre `mvp` e
-`docs` dependem de ambos os repositórios estarem lado a lado no workspace.
+## Planejar e consultar evidências
+
+`specs` registra entregas delimitadas: objetivo, escopo, critérios de aceite e
+resultados datados. Não é uma segunda documentação da API atual dos componentes.
+
+- [Spec de reconstrução do frontend](specs/frontend-reconstruction.md): escopo,
+  percursos, aceite e registros da implementação da jornada.
+- [Índice de specs e registros históricos](specs/README.md): origem e verificações
+  das entregas iniciais de tokens, componentes e Header.
+
+## Documentação do produto
+
+Decisões gerais ficam no [DECISIONS central](../../docs/DECISIONS.md), regras e
+fontes em [docs](../../docs/README.md), e estudos/contrato de voz em
+[STT](../../docs/stt/README.md). Não criar um segundo arquivo de decisões no app.
+Os links entre repositórios pressupõem `mvp` e `docs` lado a lado no workspace.
+
+Caminhos de código e comandos dos guias partem da raiz de `mvp`. Ao alterar uma
+regra técnica, atualizar seu guia em `structure`; ao registrar uma nova entrega,
+usar `specs` e vincular os guias, sem copiar contratos inteiros. Histórico não
+substitui verificação atual. Ver [DEC-EQT-018](../../docs/DECISIONS.md#dec-eqt-018).

@@ -1,0 +1,30 @@
+# Specs e registros de entregas
+
+Esta pasta mantém planejamento de entregas e suas evidências datadas. Para
+manutenção cotidiana, começar pelos [guias de structure](../structure/overview.md).
+Contratos atuais de tokens, componentes e configuração não são duplicados aqui.
+
+## Entrega com escopo e aceite
+
+| Spec | Conteúdo |
+| --- | --- |
+| [Reconstrução do frontend](frontend-reconstruction.md) | Percursos, rotas propostas, limites, aceite e registros de execução |
+
+## Registros históricos
+
+| Registro | Evidência preservada | Guia vigente |
+| --- | --- | --- |
+| [Tokens iniciais](css-design-tokens.md) | Origem da extração, adaptações e contraste registrado | [Design system](../structure/design-system.md) |
+| [Componentes iniciais](ui-components.md) | Fontes, recorte inicial e limitações da execução | [UI](../structure/styling-and-ui.md) |
+| [Header inicial](header.md) | Nós Figma, evidência e verificação daquela etapa | [Header e composição](../structure/styling-and-ui.md#header-e-composicao-da-pagina) |
+
+A migração shadcn tem sua evidência em [DEC-EQT-016](../../../docs/DECISIONS.md#dec-eqt-016)
+e sua manutenção em [structure/shadcn-ui](../structure/shadcn-ui.md).
+Não há spec duplicada dessa configuração.
+
+Novas specs devem explicar resultado esperado, escopo, critérios de aceite e
+pendências; vincular padrões existentes em vez de copiá-los. Ao implementar,
+registrar verificações com ambiente/data e consolidar orientações duráveis em
+`structure`. Preservar evidência sem tratá-la como garantia de comportamento atual.
+
+[Índice técnico](../README.md) · [Decisões gerais](../../../docs/DECISIONS.md)

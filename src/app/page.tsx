@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { ActionLink } from "@/app/_components/action-link";
 import { JourneyPage } from "@/app/_components/layout/journey-page";
 import { JourneyCard } from "@/app/servicos/segunda-via/_components/journey-card";
 import { entry } from "@/app/servicos/segunda-via/_lib/content";
@@ -7,6 +6,7 @@ import {
   routes,
   withContext,
 } from "@/app/servicos/segunda-via/_lib/navigation";
+import { ActionLink } from "@/components/ui/action-link";
 
 export const metadata: Metadata = { title: entry.title };
 

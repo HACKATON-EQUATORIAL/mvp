@@ -1,6 +1,7 @@
 "use client";
 
 import { useSpeechToText } from "@/app/_hooks/use-speech-to-text";
+import { Button } from "@/components/ui/button";
 
 export function AudioRecorder() {
   const {
@@ -32,9 +33,10 @@ export function AudioRecorder() {
           {String(seconds % 60).padStart(2, "0")}
         </p>
       )}
-      <button
+      <Button
         type="button"
-        className="primary-button"
+        variant="primary"
+        size="recording"
         disabled={pending}
         onClick={phase === "recording" ? finishRecording : startRecording}
       >
@@ -47,16 +49,26 @@ export function AudioRecorder() {
               : phase === "success" || phase === "error"
                 ? "Gravar novamente"
                 : "Gravar áudio"}
-      </button>
+      </Button>
       {(phase === "recording" || pending) && (
-        <button type="button" className="secondary-button" onClick={cancel}>
+        <Button
+          type="button"
+          variant="secondary"
+          size="recording-secondary"
+          onClick={cancel}
+        >
           Cancelar
-        </button>
+        </Button>
       )}
       {canRetry && (
-        <button type="button" className="secondary-button" onClick={retry}>
+        <Button
+          type="button"
+          variant="secondary"
+          size="recording-secondary"
+          onClick={retry}
+        >
           Tentar enviar novamente
-        </button>
+        </Button>
       )}
       {error && (
         <p className="error-message" role="alert">

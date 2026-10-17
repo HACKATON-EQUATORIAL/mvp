@@ -7,8 +7,9 @@ O pedido do usuário define a fronteira do trabalho. O projeto `mvp` reúne fron
 | Trabalho | Pontos de entrada |
 | --- | --- |
 | Escopo e execução | [README](README.md), [AGENTS](AGENTS.md) e pedido atual |
-| Specs de telas e funcionalidades | [Specs centralizadas](../docs/specs/README.md) e documento relacionado ao pedido |
+| Entrega específica e evidência | [Specs e registros](docs/specs/README.md), sem duplicar padrões de manutenção |
 | Estrutura Next.js | [Mapa de pastas](docs/structure/src-structure-and-conventions.md) e documentação da versão instalada em `node_modules/next/dist/docs` |
+| Primitivas visuais | `src/components/ui`, `components.json` e [guia shadcn/Base UI](docs/structure/shadcn-ui.md) |
 | Captura e UI | `src/app/_components`, `src/app/_hooks` e `src/app/_lib` |
 | API de transcrição | [Contrato STT](../docs/stt/STT-API.md), `src/app/api/transcribe` e `src/server/stt` |
 | Ambiente e segurança | `src/server/env.ts`, `.env.example` e [limites da API](docs/structure/auth-and-api.md) |
@@ -34,3 +35,5 @@ Para mudanças de código, executar `bun run lint` e `bun run build`. Complement
 Não automatizar chamadas reais à Groq nem exigir consumo da API em mudanças que não precisem disso. Registrar o que foi conferido e as limitações: lint/build não comprovam captura física em Android/iPhone ou transcrição real. Resultados de suítes removidas são históricos, não requisitos vigentes.
 
 Seguir o [workflow](agent-workflow.md) para execução e entrega.
+
+Para documentação técnica: manter padrões vigentes em `docs/structure` e planejamento/evidência de entregas em `docs/specs`. Ao implementar uma spec, consolidar orientações duráveis no guia correspondente e substituir cópias do contrato por links.

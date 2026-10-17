@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { ActionLink } from "@/app/_components/action-link";
 import styles from "@/app/_components/layout/journey.module.css";
 import { JourneyPage } from "@/app/_components/layout/journey-page";
 import { JourneyCard } from "@/app/servicos/segunda-via/_components/journey-card";
@@ -10,6 +9,7 @@ import {
   routes,
   withContext,
 } from "@/app/servicos/segunda-via/_lib/navigation";
+import { ActionLink } from "@/components/ui/action-link";
 
 export const metadata: Metadata = { title: "Onde você encontrou dificuldade?" };
 

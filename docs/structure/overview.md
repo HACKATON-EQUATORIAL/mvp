@@ -12,9 +12,14 @@ Os documentos importados do Zappoint foram adaptados em 16/10/2026. Reaproveitam
 | [HTTP e estado](http-and-queries.md) | Envio, cancelamento, validação e ausência de cache |
 | [Acesso e segurança da API](auth-and-api.md) | Proteções implementadas e limites da demonstração |
 | [Configuração](configs.md) | Ambiente e ferramentas reais |
-| [UI](styling-and-ui.md) | Componentes e estados de interação |
-| [Design system](design-system.md) | Tokens existentes do Digitaliza Aí |
+| [UI](styling-and-ui.md) | Contratos vigentes de componentes, Header, voz e acessibilidade |
+| [shadcn/Base UI](shadcn-ui.md) | Configuração, instalação e preservação das personalizações |
+| [Design system](design-system.md) | Catálogo de tokens, receitas, aliases e manutenção visual |
 | [Execução](build-and-run.md) | Comandos e verificação |
 | [Histórico](changelog.md) | Adaptação da referência |
 
 Produto e decisões: [índice local](../README.md), [contrato STT](../../../docs/stt/STT-API.md), [decisões do MVP](../../../docs/DECISIONS.md#dec-eqt-012).
+
+## Onde registrar cada informação
+
+Este diretório é a referência de manutenção do código atual. [Specs](../specs/README.md) definem entregas e preservam sua evidência; não copiar contratos técnicos completos para elas. Origem e decisões do produto permanecem na documentação central. Ao mudar um componente, atualizar seu guia e vincular a spec da entrega quando pertinente.

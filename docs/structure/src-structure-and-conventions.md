@@ -9,7 +9,7 @@ src/
 │   ├── page.tsx                         # Tela inicial, Server Component
 │   ├── globals.css
 │   ├── favicon.ico
-│   ├── _components/                     # Shell, composição, botões e gravador
+│   ├── _components/                     # Shell, composição e gravador
 │   ├── _hooks/use-speech-to-text.ts      # Captura e estado do client
 │   ├── _lib/                            # Captura e envio HTTP
 │   ├── servicos/
@@ -18,6 +18,8 @@ src/
 │   └── api/transcribe/
 │       ├── route.ts                     # Entrada POST e maxDuration
 │       └── _lib/                        # Handler e leitura multipart
+├── components/ui/                       # Primitivas shadcn/Base UI compartilhadas
+├── lib/utils.ts                         # cn local para composição de classes
 ├── config/app.ts                        # Identidade global
 ├── lib/stt/                             # Contrato usado pelo client e servidor
 │   ├── constants.ts
@@ -36,7 +38,7 @@ src/
 - O conteúdo de `app/api/transcribe/_lib` pertence ao endpoint. `server/stt` concentra integração reutilizável pelo servidor, sem depender de React ou de uma rota concreta.
 - `server` e auxiliares privados da API usam `server-only`. O underscore exclui uma pasta do roteamento, mas não impede importação no client. A fronteira de segurança depende de `server-only` e dos imports.
 - `lib/stt` contém apenas contratos e constantes públicos, usados nos dois ambientes. Credenciais ficam em `server/env.ts`.
-- Extrair um componente para uma pasta compartilhada fora da rota somente quando existir um segundo consumidor que justifique isso. Não criar `features`, `components/ui`, `services` ou outras camadas vazias por antecipação.
+- Primitivas visuais compartilhadas ficam em `components/ui`, no padrão shadcn com Base UI. `Button`, `ActionLink` e `Card` possuem consumidores reais nas jornadas. Composições específicas permanecem em `app/_components` ou junto ao segmento. Não criar camadas vazias por antecipação.
 - Route groups `(grupo)` servem para organizar seções ou layouts sem mudar a URL. O MVP tem um único layout compartilhado e não precisa deles agora.
 - Páginas e layout continuam Server Components por padrão. `use client` fica no gravador/hook, no wrapper `VoiceHelp` e na escolha da prática, que precisam de interação ou APIs do navegador.
 
@@ -49,3 +51,5 @@ Base consultada: documentação de estrutura e colocação da versão Next insta
 Neste MVP não manter pasta de testes, suítes ou dependências de teste; usar lint, build e verificação manual conforme [workflow](../../agent-workflow.md).
 
 A jornada em `app/servicos/segunda-via` mantém seus `_components` e `_lib` locais: conteúdo provisório e navegação validada com Zod. `JourneyPage` fornece um `main` focável por página, Eyebrow por tela, título, conteúdo, ações e acesso de voz. `AppShell` mantém o Header e o alvo focável `#conteudo` únicos, inclusive quando o Next preserva páginas ocultas. Estilos de composição ficam em CSS Module; o loader Tailwind exclui `*.module.css` para preservar os exports de classes do Next.
+
+Configuração e manutenção das primitivas: [shadcn com Base UI](shadcn-ui.md). Não recriar cópias de Button/Card em pastas de rotas.

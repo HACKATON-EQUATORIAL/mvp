@@ -1,6 +1,6 @@
 # Digitaliza Aí · MVP
 
-MVP web com foco em mobile, reunindo frontend e API em Next.js. A implementação inicial usa Groq e Zod para transcrever áudio; a página inicial lista quatro serviços do catálogo conceitual, ainda como páginas vazias. Novas jornadas serão desenvolvidas neste aplicativo conforme o recorte definido.
+MVP web com foco em mobile, reunindo frontend e API em Next.js. A home oferece orientação, consulta de etapas e prática demonstrativa de segunda via. O acesso opcional de voz abre o gravador existente, que usa Groq e Zod para transcrever áudio. Os outros três serviços permanecem como placeholders.
 
 Decisões ficam em [docs/DECISIONS.md do workspace](../docs/DECISIONS.md); a documentação específica de voz fica em [docs/stt](../docs/stt/README.md).
 
@@ -43,11 +43,11 @@ Reinicie `bun run dev`, abra a URL **HTTPS** diretamente no Chrome do celular e 
 
 ## Usar
 
-1. Clique em **Gravar áudio** e permita o microfone.
+1. Abra **Ajuda por voz** em qualquer tela e clique em **Gravar áudio** para solicitar o microfone.
 2. Fale e clique em **Parar e transcrever**. O envio começa ao parar.
 3. O texto devolvido pela Groq aparece em **Transcrição**.
 
-Cancelar descarta a captura/ignora a resposta pendente. Após falha de envio, é possível tentar enviar a mesma gravação novamente. A captura encerra e envia automaticamente ao atingir 60 segundos; ao colocar a aba em segundo plano ou sair da tela, a captura é cancelada e o microfone é liberado.
+Fechar a região descarta a sessão local e devolve o foco ao botão de voz. Abrir a região não solicita permissão nem envia áudio. Cancelar descarta a captura/ignora a resposta pendente. Após falha de envio, é possível tentar enviar a mesma gravação novamente. A captura encerra e envia automaticamente ao atingir 60 segundos; ao colocar a aba em segundo plano ou sair da tela, a captura é cancelada e o microfone é liberado.
 
 Uma mudança temporária de visibilidade durante o pedido de permissão não cancela esse pedido. Se o microfone for autorizado enquanto a página ainda estiver oculta, o app libera o dispositivo e pede para voltar à página e gravar novamente.
 
@@ -65,12 +65,14 @@ O arquivo deve ter de 1 byte a 4.000.000 bytes. A interface grava até 60 segund
 
 ## Páginas de serviços
 
-- `/servicos/segunda-via`: Segunda via da fatura.
+- `/servicos/segunda-via`: preparação para a prática de segunda via.
 - `/servicos/consultar-debitos`: Consultar débitos.
 - `/servicos/falta-de-energia`: Informar falta de energia.
 - `/servicos/tarifa-social`: Cadastro de Tarifa Social.
 
-São páginas vazias, com título e retorno. O catálogo vem de [BR-EQT-003 no workspace](../docs/business-rules/BR-EQT-003-catalogo-e-recorte.md); não representa integração, emissão de fatura, consulta real ou cadastro oficial. A transcrição não interpreta intenção nem navega automaticamente.
+Segunda via contém explicação, prática guiada, conferência de conta fictícia, prática individual, encerramento, consulta contextual, dificuldades e limite de saída. Não coleta dados reais, emite fatura, avalia aprendizagem ou abre canal externo. O canal e o procedimento oficiais continuam a confirmar. A navegação e as adaptações do Figma estão na [spec de reconstrução](specs/frontend-reconstruction.md).
+
+Os outros três serviços exibem título, aviso de indisponibilidade e retorno à home. O catálogo conceitual vem de [BR-EQT-003 no workspace](../docs/business-rules/BR-EQT-003-catalogo-e-recorte.md); não representa integração, emissão de fatura, consulta real ou cadastro oficial. A transcrição não interpreta intenção nem navega automaticamente.
 
 ## Verificação
 

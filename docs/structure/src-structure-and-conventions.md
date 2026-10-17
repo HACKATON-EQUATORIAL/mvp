@@ -9,12 +9,12 @@ src/
 │   ├── page.tsx                         # Tela inicial, Server Component
 │   ├── globals.css
 │   ├── favicon.ico
-│   ├── _components/                     # Cabeçalho, lista e gravador
+│   ├── _components/                     # Shell, composição, botões e gravador
 │   ├── _hooks/use-speech-to-text.ts      # Captura e estado do client
-│   ├── _lib/                            # Captura, envio HTTP e catálogo local
+│   ├── _lib/                            # Captura e envio HTTP
 │   ├── servicos/
 │   │   ├── _components/service-page.tsx  # Apresentação comum dos serviços
-│   │   └── <servico>/page.tsx            # Quatro páginas explícitas
+│   │   └── <servico>/page.tsx            # Jornada de segunda via e três placeholders
 │   └── api/transcribe/
 │       ├── route.ts                     # Entrada POST e maxDuration
 │       └── _lib/                        # Handler e leitura multipart
@@ -38,7 +38,7 @@ src/
 - `lib/stt` contém apenas contratos e constantes públicos, usados nos dois ambientes. Credenciais ficam em `server/env.ts`.
 - Extrair um componente para uma pasta compartilhada fora da rota somente quando existir um segundo consumidor que justifique isso. Não criar `features`, `components/ui`, `services` ou outras camadas vazias por antecipação.
 - Route groups `(grupo)` servem para organizar seções ou layouts sem mudar a URL. O MVP tem um único layout compartilhado e não precisa deles agora.
-- Páginas e layout continuam Server Components por padrão. `use client` fica no gravador e hook, que precisam de interação e APIs do navegador.
+- Páginas e layout continuam Server Components por padrão. `use client` fica no gravador/hook, no wrapper `VoiceHelp` e na escolha da prática, que precisam de interação ou APIs do navegador.
 
 Configurações do framework, `.env*`, `public` e `docs` ficam na raiz. O alias `@/*` resolve `src/*`. Arquivos usam kebab-case, componentes PascalCase e hooks prefixo `use`. Tipos de contrato derivam dos schemas Zod. Manter TypeScript estrito e validar entradas externas como `unknown`, sem `any`.
 
@@ -47,3 +47,5 @@ Usar imports explícitos, sem barrels misturando client e servidor. Ao alterar c
 Base consultada: documentação de estrutura e colocação da versão Next instalada, em `node_modules/next/dist/docs/01-app/01-getting-started/02-project-structure.md`.
 
 Neste MVP não manter pasta de testes, suítes ou dependências de teste; usar lint, build e verificação manual conforme [workflow](../../agent-workflow.md).
+
+A jornada em `app/servicos/segunda-via` mantém seus `_components` e `_lib` locais: conteúdo provisório e navegação validada com Zod. `JourneyPage` fornece um `main` focável por página, Eyebrow por tela, título, conteúdo, ações e acesso de voz. `AppShell` mantém o Header e o alvo focável `#conteudo` únicos, inclusive quando o Next preserva páginas ocultas. Estilos de composição ficam em CSS Module; o loader Tailwind exclui `*.module.css` para preservar os exports de classes do Next.

@@ -5,6 +5,9 @@ Guia vigente, conferido no código em **17/10/2026**. Primitivas visuais ficam e
 e `src/components/voice`, enquanto a prática exclusiva fica junto à rota. Tokens em
 [design system](design-system.md); instalação e atualizações em [shadcn](shadcn-ui.md).
 
+Rodapés e acionador externo do assistente revistos em **18/10/2026**;
+escopo e evidências em [rodapés e assistente](../specs/rodapes-assistente.md).
+
 ## Camadas e consumidores
 
 | Componente | Local | Responsabilidade |
@@ -101,23 +104,38 @@ sua altura.
 A Eyebrow fica fora do Header e pertence à tela. `JourneyPage` contém um `main`
 focável, Eyebrow, `h1`, introdução, conteúdo, ações e voz. `AppShell` mantém o
 cabeçalho e o alvo de pular conteúdo `#conteudo`. O shell é centralizado, limitado
-a `--app-content-max-width` (648px), e tem `min-height: 100dvh`
-e permite rolagem natural; o conteúdo permanece centralizado em até 648px, com
-padding de 16px. O CSS Module `journey.module.css` mantém a composição, separada
+a `--app-content-max-width` (648px), e tem `height: 100dvh`.
+Só o miolo rola, com respiro inferior para acessar o fim do conteúdo.
+O CSS Module `journey.module.css` mantém a composição, separada
 das receitas globais. Não usar dimensões da captura do Figma como largura mínima
 rígida ou desenhar uma moldura de celular na página.
 
+`JourneyPage` mantém a barra inferior `#journey-actions`; páginas usam `actions`
+ou o portal `PageActions` existente. A barra usa grid: as ações anteriores à última
+ocupam as duas colunas; a última ocupa a coluna esquerda, reservando a direita
+ao acionador independente do assistente. O último botão tem altura mínima igual
+à do acionador; textos podem aumentar a linha sem sobreposição. Padding inferior
+e laterais respeitam as áreas seguras. Sem ações, a barra fica oculta.
+
+Nas trilhas e lições, a ação principal mantém `primary` e a secundária
+“Consultar uma dúvida” usa `ghost`/`sm`. Na consulta rápida, “Voltar” usa
+`ghost`/`sm` com `ArrowLeft`, preservando `returnTo`. A lição mantém o destino de
+avanço da API com o rótulo “Próxima etapa”; o contexto de prática continua oferecendo
+“Voltar à prática”. Não criar outro rodapé nem outro estado para compor essas ações.
+
 ## Voz e captura
 
-`VoiceHelpButton` reutiliza Button; botão circular amarelo de 60×60px, com sombra
-e borda inferior para relevo. O nome “Assistente” permanece acessível e no tooltip
-nativo. O microfone usa `Mic` do lucide-react em 28×28px. Ícones decorativos usam
-aria-hidden; os nomes acessíveis ficam nos controles. Parar usa `Square` e
-carregamento usa `LoaderCircle`, sem desenhos SVG ou ícones CSS próprios.
+`VoiceHelpButton` reutiliza Button; acionador amarelo compacto com `MessageCircle`
+em 24px e texto visível “Assistente”, dispostos em coluna. Mantém sombra e raio da
+aplicação. As dimensões ficam no shell: largura pelo token `--spacing-6xl` (96px)
+e altura de 60px, compartilhadas com a reserva da barra de ações. O nome acessível
+“Abrir assistente” inclui o texto visível; ícones decorativos usam `aria-hidden`.
+Somente o acionador externo usa conversa: o botão interno de gravar mantém `Mic`,
+parar mantém `Square` e carregamento mantém `LoaderCircle`.
 O controle usa `position: absolute` no canto inferior direito do AppShell, que
-define o contêiner relativo, com 16px de distância e respeito à área segura.
-Acompanha a página na rolagem, sobreposto ao layout, sem seção própria ou padding
-inferior exclusivo na jornada.
+define o contêiner relativo. Usa `--spacing-sm` na lateral e `--spacing-xs` na base,
+somados às áreas seguras. Fica alinhado à última linha do rodapé; a reserva de coluna
+impede que cubra ações. Continua disponível nas telas sem barra de ações.
 O acionador fica abaixo da camada modal e mantém o contexto fornecido pela página.
 
 `VoiceHelp` coordena o Drawer Base UI em `components/ui/drawer.tsx`. O Drawer é

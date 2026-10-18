@@ -35,12 +35,18 @@ institucional nas partes de serviço real.
 
 - O shell ocupa exatamente `100dvh`; a página inteira não rola.
 - `JourneyPage` divide a tela em miolo rolável (`.scroll`, com 96px de respiro no fim) e
-  barra de ações fixa embaixo (`#journey-actions`), com 76px reservados à direita para o
-  microfone do assistente, que fica sempre visível no canto inferior direito.
+  barra de ações fixa embaixo (`#journey-actions`). Ações anteriores à última ocupam
+  a largura disponível; a última linha reserva uma coluna para o assistente,
+  sempre visível no canto inferior direito. Largura e altura do acionador são
+  compartilhadas pelo shell (`--assistant-trigger-width` e `--assistant-trigger-height`).
 - Botões principais vão para a barra: pelo prop `actions` (servidor) ou pelo
   `PageActions` (portal, para componentes de cliente e trechos dentro de `Suspense`).
   Limite de 1 a 2 botões na barra; escolhas e caminhos extras ficam no miolo.
-- Barra vazia some (`:empty`). Telas sem ações (ex.: home) mantêm só o microfone.
+- Barra vazia some (`:empty`). Telas sem ações (ex.: home) mantêm só o assistente.
+- Na trilha e nas lições, “Consultar uma dúvida” usa `ActionLink` com variante
+  `ghost` e tamanho `sm`, abaixo da ação principal. Na consulta rápida, só “Voltar”
+  com `ArrowLeft`, também discreto. O assistente tem ícone `MessageCircle` e texto
+  visível “Assistente”, em amarelo; seu microfone fica dentro do Drawer.
 - Rolagem: só vertical (`overflow-x: hidden`), barra fina arredondada em `--primary-200`,
   conteúdo esmaece ao passar sob a barra de ações (`mask-image`) e a barra tem sombra leve.
   Nova pergunta da prática e novo passo do simulador voltam ao topo (`scrollJourneyToTop`);
@@ -89,4 +95,5 @@ regra nova não aparecer, pare o servidor, apague `.next/dev/cache` e suba de no
 - A conclusão da trilha e o resultado da prática não oferecem certificado,
   geração de imagem, download ou compartilhamento de certificado (removido em 18/10/2026).
 - **Lições:** desafio de toque na ilustração antes do destaque.
-- **Eletriquinho no Drawer** com humor pelo estado; botão flutuante só com o microfone.
+- **Eletriquinho no Drawer** com humor pelo estado; acionador externo com conversa e
+  texto “Assistente”. O controle de gravação interno mantém o microfone.

@@ -1,4 +1,4 @@
-import { Mic } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -17,8 +17,12 @@ export function VoiceHelpButton({ children, ...props }: VoiceHelpButtonProps) {
       {...props}
       className={cn("voice-help-button", props.className)}
     >
-      <Mic size={28} aria-hidden="true" className="voice-help-button-icon" />
-      <span className="sr-only">{children ?? "Assistente"}</span>
+      <MessageCircle
+        size={24}
+        aria-hidden="true"
+        className="voice-help-button-icon"
+      />
+      <span>{children ?? "Assistente"}</span>
     </Button>
   );
 }

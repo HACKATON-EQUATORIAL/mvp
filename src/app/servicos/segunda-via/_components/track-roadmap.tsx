@@ -196,8 +196,12 @@ export function TrackRoadmap() {
               ? `Continuar: ${short(next.title)}`
               : "Ir para o canal oficial"}
         </ActionLink>
-        <ActionLink href={withContext(routes.etapas, { origem: "preparacao" })}>
-          Só quero tirar uma dúvida
+        <ActionLink
+          variant="ghost"
+          size="sm"
+          href={withContext(routes.etapas, { origem: "preparacao" })}
+        >
+          Consultar uma dúvida
         </ActionLink>
       </PageActions>
     </div>

@@ -1,4 +1,6 @@
 .shell {
+  --assistant-trigger-width: var(--spacing-6xl);
+  --assistant-trigger-height: 60px;
   position: relative;
   width: 100%;
   max-width: var(--app-content-max-width);
@@ -32,7 +34,7 @@
   min-height: 0;
   overflow-wrap: anywhere;
 }
-/* Só o miolo rola; o espaço final evita que o microfone cubra o conteúdo. */
+/* Só o miolo rola; o espaço final protege o conteúdo do acionador do assistente. */
 .scroll {
   display: flex;
   flex: 1;
@@ -89,17 +91,29 @@
 .content p {
   margin: 0;
 }
-/* Barra fixa de ações; à direita fica o microfone do assistente. */
+/* Ação principal na largura disponível; última linha compartilha espaço com o assistente. */
 .actions {
   flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--assistant-trigger-width);
   gap: var(--spacing-xxs);
-  padding: var(--spacing-xs) calc(var(--spacing-sm) + 76px)
-    calc(var(--spacing-xs) + env(safe-area-inset-bottom)) var(--spacing-sm);
+  padding: var(--spacing-xs)
+    calc(var(--spacing-sm) + env(safe-area-inset-right))
+    calc(var(--spacing-xs) + env(safe-area-inset-bottom))
+    calc(var(--spacing-sm) + env(safe-area-inset-left));
   border-top: 1px solid var(--border-default);
   background: var(--surface-page);
   box-shadow: 0 -6px 16px rgb(0 0 0 / 6%);
+}
+.actions > * {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+.actions > :last-child {
+  grid-column: 1;
+}
+.actions > :last-child[data-slot="button"] {
+  min-height: var(--assistant-trigger-height);
 }
 .actions:empty {
   display: none;

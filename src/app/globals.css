@@ -797,7 +797,7 @@ a {
 .voice-help-button {
   position: absolute;
   right: calc(var(--spacing-sm) + env(safe-area-inset-right));
-  bottom: calc(var(--spacing-sm) + env(safe-area-inset-bottom));
+  bottom: calc(var(--spacing-xs) + env(safe-area-inset-bottom));
   z-index: var(--z-index-sticky);
   --button-bg: var(--cta-bg);
   --button-border: var(--cta-bg);
@@ -805,21 +805,21 @@ a {
   --button-bg-hover: var(--highlight-400);
   --button-border-hover: var(--cta-bg-hover);
   --button-text-hover: var(--cta-text);
-  width: 60px;
-  height: 60px;
-  min-height: 60px;
+  width: var(--assistant-trigger-width);
+  height: var(--assistant-trigger-height);
+  min-height: var(--assistant-trigger-height);
   padding: 0;
-  border-radius: 50%;
+  border-radius: var(--radius-lg);
   border-bottom: 4px solid var(--highlight-600);
   box-shadow: var(--shadow-lg);
-  font-size: var(--font-size-desktop-base);
-  line-height: 22px;
+  font-size: var(--font-size-desktop-sm);
+  line-height: var(--line-height-xs);
   font-weight: var(--font-weight-bold);
 }
 .voice-help-button-icon {
-  width: 28px;
-  height: 28px;
-  flex: 0 0 28px;
+  width: var(--spacing-md);
+  height: var(--spacing-md);
+  flex: 0 0 var(--spacing-md);
 }
 .info-card {
   display: flex;
@@ -960,6 +960,10 @@ a {
   gap: var(--spacing-xxs);
   min-width: 0;
 }
+.voice-help-button .ui-button-content {
+  flex-direction: column;
+  gap: 0;
+}
 .sr-only {
   position: absolute;
   width: 1px;
@@ -980,7 +984,7 @@ a {
   font-weight: 800;
 }
 .journey-page .voice-help-button {
-  width: 60px;
+  width: var(--assistant-trigger-width);
   font-weight: var(--font-weight-bold);
 }
 
@@ -1106,7 +1110,7 @@ a {
   box-shadow: none;
 }
 
-/* Botões redondos do assistente seguem com o visual próprio. */
+/* Controles do assistente seguem com o visual próprio. */
 .voice-help-button.ui-button,
 .voice-microphone-button.ui-button,
 .ui-button.ui-button-size-icon {

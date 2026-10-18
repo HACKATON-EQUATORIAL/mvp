@@ -5,7 +5,7 @@ Next.js App Router em `src/app`. Todas as páginas atuais são públicas.
 | URL | Arquivo em `src/app` | Comportamento |
 | --- | --- | --- |
 | `/` | `page.tsx` | Entrada por intenção e acesso opcional ao gravador |
-| `/servicos/segunda-via` | `servicos/segunda-via/page.tsx` | Preparação da prática |
+| `/servicos/segunda-via` | `servicos/segunda-via/page.tsx` | Escolha do canal (WhatsApp; site em breve) |
 | `/servicos/consultar-debitos` | `servicos/consultar-debitos/page.tsx` | Título e retorno |
 | `/servicos/falta-de-energia` | `servicos/falta-de-energia/page.tsx` | Título e retorno |
 | `/servicos/tarifa-social` | `servicos/tarifa-social/page.tsx` | Título e retorno |
@@ -17,20 +17,16 @@ A gravação é descartada e o microfone liberado ao desmontar o gravador. Solic
 
 Implementação exclusiva fica em pastas privadas com underscore junto ao segmento consumidor. `servicos/_components` não gera um serviço adicional; `api/transcribe/_lib` não cria endpoints. Não há route groups porque todas as telas atuais compartilham o mesmo layout.
 
-## Jornada de segunda via
+## Jornada de segunda via (DEC-EQT-037)
 
-Sob `/servicos/segunda-via`, as rotas explícitas são `explicacao`,
-`pratica/guiada`, `pratica/conferencia`, `pratica/individual`,
-`pratica/concluida`, `etapas`, `etapas/encontrar`, `etapas/conferir`,
-`dificuldades` e `canal`. A home representa a entrada por intenção. O canal
-permanece interno, sem destino externo confirmado. Não há rota S10.
+Sob `/servicos/segunda-via`: escolha do canal na raiz e, no WhatsApp, `whatsapp` (mapa
+das 3 etapas), `whatsapp/demonstracao` (etapa 1), `whatsapp/licoes/[parte]` (etapa 2;
+`menu`, `documento`, `fatura`, `conferir`, gerados estaticamente; outra parte recebe
+not-found) e `whatsapp/simulacao` (etapa 3 e conclusão com o WhatsApp oficial). As rotas
+ficam em `_lib/navigation.ts` e as partes em `_lib/steps.ts`. Não há query de origem nem
+redirect de rotas antigas.
 
-`origem` e `etapa` são validadas por schemas Zod em `_lib/navigation.ts`.
-Origem inválida, ausente ou repetida usa fallback; nunca é uma URL de retorno.
-O segmento da etapa prevalece sobre query conflitante e uma etapa desconhecida
-recebe not-found. A origem inicial acompanha consulta e saída. As ações que
-leem `searchParams` ficam sob Suspense, mantendo o conteúdo estático da tela.
-
-Links navegam; botões da prática selecionam e mostram feedback local. A escolha
-correta avança a simulação com `router.push`, sem avaliar desempenho. Entradas
-diretas na conferência ou no encerramento continuam demonstrativas.
+Todas as telas leem o pacote do serviço do cache do React Query; a prática corrige na
+hora e envia a tentativa uma vez no fim. O Next pode manter telas anteriores montadas e
+ocultas: portais da barra e do Eletriquinho usam `findVisibleById`
+(`components/layout/journey-target.ts`).

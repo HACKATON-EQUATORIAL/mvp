@@ -19,7 +19,7 @@
 
 .list {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 6px;
   margin: 0;
   padding: 0;
@@ -60,50 +60,4 @@
 
 .badge[data-earned] .label {
   color: var(--text-heading);
-}
-
-.review {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  border: 2px solid var(--warning-200);
-  border-bottom-width: 5px;
-  border-radius: var(--radius-lg);
-  background: var(--warning-50);
-  color: var(--warning-800);
-  text-decoration: none;
-}
-
-.review:active {
-  transform: translateY(2px);
-}
-
-.review:focus-visible {
-  outline: 3px solid var(--primary-400);
-  outline-offset: 2px;
-}
-
-.review > span:last-child {
-  display: grid;
-  gap: 2px;
-}
-
-.review strong {
-  font-weight: 900;
-}
-
-.review > span:last-child > span {
-  font-size: 0.875rem;
-}
-
-.reviewIcon {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--surface-page);
-  color: var(--warning-600);
 }

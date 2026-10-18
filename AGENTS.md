@@ -35,7 +35,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Instruções de execução
 
-- Integração da jornada com o backend feita nesta frente em 17/10/2026 (ver [mega revisão](docs/specs/mega-revisao.md) e [handoff](docs/specs/backend-journey-handoff.md)); outra pessoa pode revisar e evoluir. Prática usa tentativas reais (`X-Session-Id` anônimo), sem gabarito no front.
+- Integração da jornada com o backend feita nesta frente em 17/10/2026 (ver [mega revisão](docs/specs/mega-revisao.md) e [handoff](docs/specs/backend-journey-handoff.md)); outra pessoa pode revisar e evoluir. Desde a DEC-EQT-037 a jornada é Serviços → canal → 3 etapas no WhatsApp: o conteúdo vem num pacote único (`/tracks/{id}/bundle`), o front corrige a prática na hora (o pacote traz a opção esperada) e envia tudo uma vez em `/practice/attempts/submit`, onde o backend refaz a correção (`X-Session-Id` anônimo).
 
 - Validar o assistente de voz incrementalmente pelo fluxo real. A prévia `/dev/assistente-voz` foi removida a pedido do usuário; não recriar rotas de demonstração, cenários sintéticos ou componentes exclusivos de prévia sem novo pedido explícito.
 

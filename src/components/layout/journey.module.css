@@ -47,7 +47,7 @@
   scroll-padding-bottom: 96px;
   /* Conteúdo esmaece ao passar por baixo da barra de ações. */
   mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
-  padding: var(--spacing-sm) var(--spacing-sm) 96px;
+  padding: var(--spacing-sm) var(--spacing-sm) 120px;
   -webkit-overflow-scrolling: touch;
 }
 .eyebrow {
@@ -91,11 +91,16 @@
 .content p {
   margin: 0;
 }
-/* Ação principal na largura disponível; última linha compartilha espaço com o assistente. */
+/* Âncora do Eletriquinho: canto inferior do conteúdo, logo acima da barra. */
+.dock {
+  position: relative;
+  z-index: var(--z-index-sticky);
+  height: 0;
+}
+/* Barra de ações: principal na largura toda; secundária logo abaixo, discreta. */
 .actions {
   flex-shrink: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) var(--assistant-trigger-width);
   gap: var(--spacing-xxs);
   padding: var(--spacing-xs)
     calc(var(--spacing-sm) + env(safe-area-inset-right))
@@ -106,14 +111,7 @@
   box-shadow: 0 -6px 16px rgb(0 0 0 / 6%);
 }
 .actions > * {
-  grid-column: 1 / -1;
   min-width: 0;
-}
-.actions > :last-child {
-  grid-column: 1;
-}
-.actions > :last-child[data-slot="button"] {
-  min-height: var(--assistant-trigger-height);
 }
 .actions:empty {
   display: none;

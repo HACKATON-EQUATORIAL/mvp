@@ -1,28 +1,23 @@
 "use client";
 
-import { useGetDifficulties } from "@/http/track/get-difficulties";
-import { useGetTrack } from "@/http/track/get-track";
+import { useGetBundle } from "@/http/track/get-bundle";
 import { useGetTracks } from "@/http/track/get-tracks";
 import type { InterpretationRequest } from "@/lib/assistant/schemas";
 
+// Catálogo do assistente a partir dos dados já em cache (lista de serviços e o
+// pacote único da segunda via), sem requisições extras.
 export function useVoiceCatalog(enabled: boolean) {
   const tracks = useGetTracks({ enabled });
-  const secondCopyAvailable =
+  const available =
     tracks.data?.some(
       (track) => track.id === "segunda-via" && track.status === "available",
     ) ?? false;
-  const detail = useGetTrack("segunda-via", {
-    enabled: enabled && secondCopyAvailable,
-  });
-  // Dificuldades enriquecem o contexto, mas não bloqueiam o catálogo.
-  const difficulties = useGetDifficulties("segunda-via", {
-    enabled: enabled && secondCopyAvailable,
-  });
+  const bundle = useGetBundle("segunda-via", { enabled: enabled && available });
   const catalog: InterpretationRequest["catalog"] = {
     state:
-      tracks.isError || (secondCopyAvailable && detail.isError)
+      tracks.isError || (available && bundle.isError)
         ? "error"
-        : !tracks.data || (secondCopyAvailable && !detail.data)
+        : !tracks.data || (available && !bundle.data)
           ? "loading"
           : "ready",
     tracks: (tracks.data ?? [])
@@ -30,23 +25,23 @@ export function useVoiceCatalog(enabled: boolean) {
         (track) => track.id === "segunda-via" && track.status === "available",
       )
       .map(({ id, title, status }) => ({ id, title, status })),
-    secondCopy:
-      secondCopyAvailable && detail.data?.status === "available"
-        ? {
-            title: detail.data.title,
-            objective: detail.data.objective,
-            steps: detail.data.steps.map(({ id, title }) => ({ id, title })),
-            difficulties: (difficulties.data?.items ?? []).map(
-              ({ id, label }) => ({ id, label }),
-            ),
-          }
-        : null,
+    secondCopy: bundle.data
+      ? {
+          title: bundle.data.title,
+          objective: bundle.data.objective,
+          steps: bundle.data.steps.map(({ id, title }) => ({ id, title })),
+          difficulties: bundle.data.difficulties.map(({ id, label }) => ({
+            id,
+            label,
+          })),
+        }
+      : null,
   };
   return {
     catalog,
     retry: () => {
       void tracks.refetch();
-      if (secondCopyAvailable) void detail.refetch();
+      if (available) void bundle.refetch();
     },
   };
 }

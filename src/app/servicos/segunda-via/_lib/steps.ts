@@ -1,15 +1,27 @@
-import type { Step } from "./navigation";
+import { routes } from "./navigation";
 
 export const TRACK_ID = "segunda-via";
 
-// As URLs mantêm os aliases curtos; a API usa os IDs do conteúdo versionado.
-// A tradução acontece só aqui, nunca no transporte HTTP.
-export const apiStepIds: Record<Step, string> = {
-  encontrar: "encontrar-servico",
-  conferir: "conferir-resultado",
-};
+// Partes da etapa 2: slug curto na URL ↔ ID da etapa no conteúdo da API.
+export const PARTS = [
+  {
+    slug: "menu",
+    stepId: "encontrar-servico",
+    label: "Escolher a segunda via",
+  },
+  {
+    slug: "documento",
+    stepId: "informar-documento",
+    label: "Informar o documento",
+  },
+  { slug: "fatura", stepId: "escolher-fatura", label: "Escolher a fatura" },
+  { slug: "conferir", stepId: "conferir-resultado", label: "Conferir e pagar" },
+] as const;
 
-export function localStep(apiStepId: string | null | undefined): Step | null {
-  const entry = Object.entries(apiStepIds).find(([, id]) => id === apiStepId);
-  return entry ? (entry[0] as Step) : null;
+export type PartSlug = (typeof PARTS)[number]["slug"];
+
+export const partHref = (slug: PartSlug) => `${routes.licoes}/${slug}`;
+
+export function partBySlug(slug: string) {
+  return PARTS.find((part) => part.slug === slug) ?? null;
 }

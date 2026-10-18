@@ -3,10 +3,13 @@
 import { Volume2, VolumeX } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   Eletriquinho,
   type EletriquinhoMood,
 } from "@/components/brand/eletriquinho";
+import { ASSISTANT_DOCK_ID } from "@/components/layout/journey-page";
+import { findVisibleById } from "@/components/layout/journey-target";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -28,6 +31,7 @@ import {
   localVoiceOptions,
   type VoiceAction,
 } from "@/lib/assistant/journey";
+import { useMascotSpeech } from "@/lib/assistant/mascot-speech";
 import {
   type ConversationTurn,
   type InterpretationRequest,
@@ -43,11 +47,11 @@ import {
   getPracticeActivity,
   usePracticeActivity,
 } from "@/lib/practice/activity";
+import { MascotButton, MascotCorner } from "./assistant-mascot";
 import { AudioRecorder } from "./audio-recorder";
 import { useVoicePage } from "./voice-assistant-provider";
 import { VoiceAudioDock } from "./voice-audio-dock";
 import { VoiceConversation } from "./voice-conversation";
-import { VoiceHelpButton } from "./voice-help-button";
 import { VoiceInterpretationStep } from "./voice-interpretation-step";
 import { VoiceStep } from "./voice-step";
 import { VoiceSuggestionConfirmation } from "./voice-suggestion-confirmation";
@@ -73,8 +77,15 @@ const activeSpeechPhases = new Set(["requesting", "recording", "transcribing"]);
 
 export function VoiceAssistantHost() {
   const { context } = useVoicePage();
+  const mascotSpeech = useMascotSpeech();
   const router = useRouter();
   const pathname = usePathname();
+  // Âncora do Eletriquinho na tela atual (criada por JourneyPage).
+  const [dock, setDock] = useState<HTMLElement | null>(null);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: reavalia a cada tela/contexto
+  useEffect(() => {
+    setDock(findVisibleById(ASSISTANT_DOCK_ID));
+  }, [pathname, context?.id]);
   const [open, setOpen] = useState(false);
   const [used, setUsed] = useState(false);
   const [history, setHistory] = useState<ConversationTurn[]>([]);
@@ -101,7 +112,7 @@ export function VoiceAssistantHost() {
   currentActions.current = actions;
   currentPending.current = pendingActionId;
   const selected = actions.find((item) => item.id === pendingActionId);
-  const locationKey = `${pathname}:${context?.id}:${JSON.stringify(context?.navigation)}`;
+  const locationKey = `${pathname}:${context?.id}`;
   const previousLocation = useRef(locationKey);
 
   const transcriptionHandler = useRef<((text: string) => void) | null>(null);
@@ -365,7 +376,7 @@ export function VoiceAssistantHost() {
         ? catalog.tracks
             .flatMap((track) => {
               const action = actions.find(
-                (item) => item.id === `${track.id}.preparacao`,
+                (item) => item.id === `${track.id}.canal`,
               );
               return track.status === "available" && action ? [action.id] : [];
             })
@@ -441,14 +452,23 @@ export function VoiceAssistantHost() {
       showSwipeHandle
       swipeDirection="down"
     >
-      <DrawerTrigger
-        render={
-          <VoiceHelpButton
-            aria-label="Abrir Assistente Digitaliza Aí"
-            aria-expanded={open}
-          />
-        }
-      />
+      {(() => {
+        // O Eletriquinho fica no canto do conteúdo (âncora da tela) e fala pelo balão.
+        const corner = (
+          <MascotCorner text={mascotSpeech?.text ?? context.tip} hidden={open}>
+            <DrawerTrigger
+              render={
+                <MascotButton
+                  aria-label="Abrir assistente Eletriquinho"
+                  aria-expanded={open}
+                  mood={mascotSpeech?.mood ?? "happy"}
+                />
+              }
+            />
+          </MascotCorner>
+        );
+        return dock ? createPortal(corner, dock) : corner;
+      })()}
       <DrawerContent className="voice-drawer-popup">
         <DrawerHeader className="voice-drawer-header">
           <DrawerTitle>Assistente Digitaliza Aí</DrawerTitle>
@@ -512,7 +532,7 @@ export function VoiceAssistantHost() {
               ) : null}
               {catalog.state === "error" ? (
                 <VoiceStep
-                  title="Não consegui atualizar as trilhas"
+                  title="Não consegui atualizar os serviços"
                   description="Você ainda pode usar os caminhos conhecidos desta tela."
                 >
                   <Button variant="secondary" onClick={retry}>

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { HTMLAttributes } from "react";
 import styles from "./header.module.css";
-import { TracksLink } from "./tracks-link";
+import { ServicesLink } from "./services-link";
 
 export type HeaderProps = HTMLAttributes<HTMLElement>;
 
@@ -24,7 +24,7 @@ export function Header({ className, ...props }: HeaderProps) {
             </abbr>
           </span>
         </Link>
-        <TracksLink />
+        <ServicesLink />
       </div>
     </header>
   );

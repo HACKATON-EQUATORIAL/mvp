@@ -88,7 +88,7 @@ const bodyMotion: Record<
 };
 
 /**
- * Eletriquinho: guia da trilha. Construído só com formas arredondadas
+ * Eletriquinho: guia dos serviços. Construído só com formas arredondadas
  * (pílula, círculo e triângulo arredondado), olhos grandes com brilho e pés
  * soltos. Animações em camadas (corpo, respiração, raio, faíscas, olhos e
  * braços) que mudam com o humor. Decorativo; parado com movimento reduzido.

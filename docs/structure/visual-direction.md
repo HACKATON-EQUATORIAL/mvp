@@ -7,8 +7,8 @@ institucional nas partes de serviço real.
 
 | Área | Tom | Elementos |
 | --- | --- | --- |
-| Home, mapa da trilha, lições, prática, resultado | Aprendizagem (lúdico) | Eletriquinho, energia em kWh, passos que acendem, celebração, botões 3D |
-| Canal oficial, dificuldades, simulador, avisos | Institucional (calmo) | Sem mascote, selo “Atendimento oficial”, azul claro, aviso de simulação |
+| Serviços, mapa, demonstração, lições, simulação | Aprendizagem (lúdico) | Eletriquinho, energia em kWh, passos que acendem, celebração, botões 3D |
+| Escolha do canal, folha de ajuda, avisos | Institucional (calmo) | Aviso de simulação, sem celebração |
 
 ## Peças
 
@@ -19,8 +19,8 @@ institucional nas partes de serviço real.
   `cheer` e `think`; `FaiscaTip` mostra uma dica em balão. Decorativa (`aria-hidden`).
 - **Celebração** (`components/brand/celebration.tsx`): faíscas curtas no acerto e na
   conclusão. Desligada com `prefers-reduced-motion`.
-- **Energia** (`_lib/progress.ts` `energyOf`, `EnergyMeter`): 10 kWh por lição, 20 pela
-  prática com apoio, 30 pela prática sozinho e 20 pelo simulador (máx. 90). É só visual e
+- **Energia** (`_lib/progress.ts` `energyOf`, `EnergyMeter`): 10 kWh pela demonstração,
+  10 por parte da etapa 2 e 40 pela conversa inteira (máx. 90). É só visual e
   local; a prova de realização continua sendo a tentativa no backend.
   No card da trilha, o cabeçalho mostra “Energia de Aprendizado” e o status; a
   pontuação usa o texto “kWh virtuais”, seguido da mesma barra e de uma mensagem
@@ -52,8 +52,8 @@ institucional nas partes de serviço real.
   Nova pergunta da prática e novo passo do simulador voltam ao topo (`scrollJourneyToTop`);
   no WhatsApp simulado, a conversa rola até a mensagem mais nova. O feedback da prática é
   revelado com rolagem suave (`revealInJourney`).
-- Cabeçalho: “Digitaliza Aí” leva à home e o botão “Trilhas” (oculto na home) permite
-  trocar de trilha de qualquer tela.
+- Cabeçalho: “Digitaliza Aí” leva à home e o botão “Serviços” (oculto na home) permite
+  trocar de serviço de qualquer tela.
 
 Verificado a 375×812 em home, trilha, lições, visão geral, consulta, dificuldades,
 canal, conta de exemplo, prática (pergunta e conclusão), resultado e simulador: a página
@@ -91,9 +91,27 @@ regra nova não aparecer, pare o servidor, apague `.next/dev/cache` e suba de no
   revisados e acertos). Tempo e ofensiva foram removidos em 18/10/2026.
 - **Celebrações** (`components/brand/badge-moment.tsx`): fila de avisos de novos selos
   no topo; só comemoram. Não há avisos de ofensiva nem contagem diária de avanços.
-- **Selos** (`badge-shelf.tsx`) e **revisão** (`review-card.tsx`) no mapa da trilha.
+- **Selos** (`badge-shelf.tsx`, 6 em grade 3×2) no mapa; a revisão de erros saiu (DEC-EQT-037).
 - A conclusão da trilha e o resultado da prática não oferecem certificado,
   geração de imagem, download ou compartilhamento de certificado (removido em 18/10/2026).
 - **Lições:** desafio de toque na ilustração antes do destaque.
 - **Eletriquinho no Drawer** com humor pelo estado; acionador externo com o mascote e
   texto “Assistente”. O controle de gravação interno mantém o microfone.
+
+## Jornada em 3 etapas e Eletriquinho acionador (DEC-EQT-037)
+
+- **Chat do WhatsApp** (`_components/whatsapp-chat.tsx`): moldura com cabeçalho da Clara,
+  aviso fixo de treino, balões animados, “digitando…”, respostas rápidas e cartão de
+  resultado. Cores próprias do mensageiro, sem logo.
+- **Etapa 1** (`demo-scene.tsx`): máquina de fases por passo (digitando → narração → toque).
+  O Eletriquinho fala a `instruction` no balão (humor `talk`) e, com som, em voz (TTS
+  nativo); o dedo 👆 toca a resposta certa. Avança sozinho após a fala; pausar, voltar,
+  “Próximo passo” e “Repetir do início”. Com movimento reduzido, só avança no toque.
+- **Etapas 2 e 3** (`practice-chat.tsx`): parte com “Como funciona”, contexto das partes
+  anteriores esmaecido e dica/explicação no balão do Eletriquinho; conversa inteira com
+  feedback neutro, “N seguidas!” e ajuda sob pedido. Faixa de feedback na barra.
+- **Eletriquinho acionador:** botão redondo de 72px só com o mascote, no canto do
+  conteúdo acima da barra (`#assistant-dock`), com balão de fala fechável que reabre quando
+  a fala muda. A rolagem automática deixa a mensagem nova acima do balão
+  (`scroll-margin-bottom`). O `EletriquinhoTip` do topo das telas saiu.
+- Verificado a 320 e 375 px: sem rolagem horizontal; mascote não cobre botões da barra.

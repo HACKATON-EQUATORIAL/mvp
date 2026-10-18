@@ -72,9 +72,7 @@ export function VoiceInterpretationStep({
     result.type === "confirmation_request" ? result.actionId : null;
   const options = result.showCatalog
     ? catalog.tracks.flatMap((track) => {
-        const action = actions.find(
-          (item) => item.id === `${track.id}.preparacao`,
-        );
+        const action = actions.find((item) => item.id === `${track.id}.canal`);
         return track.status === "available" && action
           ? [{ ...action, label: track.title }]
           : [];

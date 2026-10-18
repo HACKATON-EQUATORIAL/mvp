@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
-/** Estados de carregamento e falha das consultas da trilha. */
+/** Estados de carregamento e falha das consultas do serviço. */
 export function LoadState({
   error,
   onRetry,

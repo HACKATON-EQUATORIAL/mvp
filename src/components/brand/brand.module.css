@@ -96,3 +96,82 @@
   color: var(--text-muted);
   font-size: 0.875rem;
 }
+
+/* Canto do Eletriquinho: acima da barra, no canto direito do conteúdo. */
+.mascotCorner {
+  position: absolute;
+  right: calc(var(--spacing-sm) + env(safe-area-inset-right));
+  bottom: 12px;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: calc(100% - 32px);
+  pointer-events: none;
+}
+
+.mascotCorner > * {
+  pointer-events: auto;
+}
+
+.mascotButton {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  padding: 0;
+  border: 3px solid var(--primary-200);
+  border-bottom-width: 6px;
+  border-radius: 50%;
+  background: var(--primary-50);
+  box-shadow: 0 8px 20px rgb(4 20 161 / 18%);
+  cursor: pointer;
+  overflow: visible;
+}
+
+.mascotButton:active {
+  transform: translateY(2px);
+  border-bottom-width: 3px;
+}
+
+.mascotButton:focus-visible {
+  outline: 3px solid var(--primary-400);
+  outline-offset: 3px;
+}
+
+.speech {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  max-width: 260px;
+  margin-bottom: 18px;
+  padding: 10px 8px 10px 14px;
+  border: 2px solid var(--primary-100);
+  border-radius: 16px 16px 4px 16px;
+  background: var(--surface-page);
+  color: var(--primary-600);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 10%);
+  font-size: 0.9375rem;
+  line-height: 1.35rem;
+  font-weight: 700;
+}
+
+.speech p {
+  margin: 0;
+}
+
+.speechClose {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin: -8px -4px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}

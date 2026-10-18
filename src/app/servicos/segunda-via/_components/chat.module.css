@@ -1,0 +1,267 @@
+/* Chat simulado do WhatsApp (etapas 1 a 3). Cores próprias do mensageiro, sem logo. */
+.device {
+  display: grid;
+  overflow: hidden;
+  border: 6px solid var(--neutral-900, #1a1a1a);
+  border-radius: 24px;
+  background: #efeae2;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: #075e54;
+  color: #fff;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #25d366;
+  color: #fff;
+  font-weight: 900;
+}
+
+.header strong {
+  display: block;
+  font-size: 0.9375rem;
+  line-height: 1.25rem;
+}
+
+.header small {
+  display: block;
+  opacity: 0.85;
+  font-size: 0.75rem;
+}
+
+.notice {
+  margin: 0;
+  padding: 4px 12px;
+  background: #fff3c4;
+  color: #6b5200;
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-medium);
+  text-align: center;
+}
+
+.body {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-height: 260px;
+  padding: 14px 12px 16px;
+}
+
+.bubble {
+  justify-self: start;
+  max-width: 85%;
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 4px 12px 12px;
+  background: #fff;
+  color: #111b21;
+  font-size: 0.9375rem;
+  line-height: 1.375rem;
+  box-shadow: 0 1px 0 rgb(0 0 0 / 8%);
+}
+
+.user {
+  justify-self: end;
+  border-radius: 12px 4px 12px 12px;
+  background: #d9fdd3;
+}
+
+.past {
+  opacity: 0.7;
+}
+
+.typing {
+  display: flex;
+  gap: 4px;
+  padding: 12px 14px;
+}
+
+.typing span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #8696a0;
+  animation: dot 1s infinite ease-in-out;
+}
+
+.typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes dot {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+.replies {
+  display: grid;
+  gap: 6px;
+  margin: 4px 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.reply {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 48px;
+  padding: 8px 14px;
+  border: 2px solid #25d366;
+  border-radius: var(--radius-full);
+  background: #fff;
+  color: #075e54;
+  font: inherit;
+  font-weight: var(--font-weight-bold);
+  text-align: center;
+  cursor: pointer;
+}
+
+.reply:focus-visible {
+  outline: 3px solid var(--primary-400);
+  outline-offset: 2px;
+}
+
+.reply:disabled {
+  cursor: default;
+}
+
+.reply[data-state="correct"] {
+  border-color: var(--success-500);
+  background: var(--success-50);
+  color: var(--success-700);
+}
+
+.reply[data-state="wrong"] {
+  border-color: var(--warning-300, #f5c26b);
+  background: var(--warning-50);
+  color: var(--warning-800);
+  opacity: 0.85;
+}
+
+.reply[data-state="pointed"] {
+  border-color: var(--highlight-600);
+  background: var(--highlight-50);
+}
+
+.finger {
+  position: absolute;
+  right: 14%;
+  bottom: -18px;
+  font-size: 1.75rem;
+  line-height: 1;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 2px rgb(0 0 0 / 25%));
+}
+
+.result {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 4px 12px 12px;
+  background: #fff;
+  justify-self: stretch;
+}
+
+.result div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm, 6px);
+}
+
+.result div[data-highlight] {
+  outline: 2px solid var(--highlight-500);
+  background: var(--highlight-50);
+}
+
+.result dt {
+  flex: none;
+  color: #54656f;
+  font-size: 0.875rem;
+}
+
+.result dd {
+  margin: 0;
+  color: #111b21;
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-bold);
+  text-align: right;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.controls p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-bold);
+}
+
+.controls div {
+  display: flex;
+  gap: 4px;
+}
+
+.lesson {
+  display: grid;
+  gap: 6px;
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-md);
+  background: var(--primary-50);
+  color: var(--text-heading);
+}
+
+.lesson p {
+  margin: 0;
+}
+
+.lesson strong {
+  color: var(--primary-500);
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typing span {
+    animation: none;
+  }
+}
+
+/* A rolagem automática deixa a mensagem nova acima do balão do Eletriquinho. */
+.replies,
+.result {
+  scroll-margin-bottom: 150px;
+}

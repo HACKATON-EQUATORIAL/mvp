@@ -50,3 +50,13 @@ destino (`channel_exit.destinations`: rótulo, descrição, tipo, região e mens
 links ficam em `CHANNEL_EXIT_LINKS` no `.env` do backend (regra do conteúdo sem URL nem
 telefone). Destinos atuais: Agência Virtual (Pagamento Simplificado) e WhatsApp da Clara
 (MA), que abre com “Olá, Clara! Quero a segunda via da fatura.” já escrito.
+
+## Jornada só no WhatsApp (18/10/2026, DEC-EQT-037)
+
+O conteúdo ficou só com a simulação `whatsapp-clara` (passos `menu`, `documento`,
+`faturas`, `link`, cada um com a `instruction` narrada pelo Eletriquinho na etapa 1) e só
+com o destino `clara-whatsapp-ma`. A Agência Virtual aparece como canal “Em breve” em
+`channels`; o simulador e a página do canal foram apagados. A conclusão da etapa 3 abre o
+WhatsApp oficial direto, com “Olá, Clara! Quero a segunda via da fatura.” já escrito.
+O pacote `GET /tracks/{id}/bundle` entrega simulação, itens e destino com link numa só
+requisição.

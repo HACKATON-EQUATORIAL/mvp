@@ -1,52 +1,36 @@
 import type { Metadata } from "next";
-import { TrackRoadmap } from "@/app/servicos/segunda-via/_components/track-roadmap";
-import {
-  routes,
-  withContext,
-} from "@/app/servicos/segunda-via/_lib/navigation";
+import { ChannelChoice } from "@/app/servicos/segunda-via/_components/channel-choice";
+import { routes } from "@/app/servicos/segunda-via/_lib/navigation";
 import { JourneyPage } from "@/components/layout/journey-page";
 import type { VoicePageContext } from "@/components/voice/voice-page-context";
 
 const voiceContext: VoicePageContext = {
-  id: "segunda-via.preparacao",
+  id: "segunda-via.canal",
   description:
-    "Mapa da trilha: duas lições, prática com apoio, prática sozinho e, por fim, o canal oficial. Posso começar a primeira lição ou abrir a prática.",
+    "Escolha do canal para aprender a segunda via: WhatsApp da Clara (disponível) ou site (em breve).",
+  tip: "Por onde você quer aprender? O WhatsApp da Clara já está pronto.",
   suggestions: [
     {
-      id: "first-lesson",
-      label: "Começar a primeira lição",
-      confirmation: "Você quer abrir a lição sobre como encontrar o serviço.",
-      href: `${routes.etapas}/encontrar`,
-    },
-    {
-      id: "practice",
-      label: "Praticar com apoio",
-      confirmation: "Você quer iniciar a prática com apoio.",
-      href: routes["pratica-guiada"],
-    },
-    {
-      id: "steps",
-      label: "Tirar uma dúvida",
-      confirmation: "Você quer escolher uma etapa para consultar.",
-      href: withContext(routes.etapas, { origem: "preparacao" }),
+      id: "whatsapp",
+      label: "Aprender pelo WhatsApp",
+      confirmation: "Você quer aprender a segunda via pelo WhatsApp?",
+      href: routes.whatsapp,
     },
   ],
 };
 
-export const metadata: Metadata = {
-  title: "Aprenda a obter outra via da conta",
-};
+export const metadata: Metadata = { title: "Segunda via: escolha o canal" };
 
 export default function Page() {
   return (
     <JourneyPage
-      eyebrow="TRILHA · SEGUNDA VIA"
-      title="Aprenda a obter outra via da conta"
-      intro="Siga os passos no seu ritmo: aprenda, pratique com apoio e depois tente sozinho."
+      eyebrow="SERVIÇO · SEGUNDA VIA"
+      title="Por onde você quer aprender?"
+      intro="Escolha o canal. Você vai ver como funciona, praticar e depois fazer de verdade."
       voiceContext={voiceContext}
       actions={null}
     >
-      <TrackRoadmap />
+      <ChannelChoice />
     </JourneyPage>
   );
 }

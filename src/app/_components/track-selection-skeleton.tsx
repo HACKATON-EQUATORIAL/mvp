@@ -6,8 +6,8 @@ export function TrackSelectionSkeleton({ paused }: { paused: boolean }) {
     <div>
       <p role="status" className={paused ? undefined : "sr-only"}>
         {paused
-          ? "Você está sem conexão. As trilhas serão carregadas quando ela voltar."
-          : "Carregando trilhas…"}
+          ? "Você está sem conexão. Os serviços serão carregados quando ela voltar."
+          : "Carregando serviços…"}
       </p>
       <div className={styles.list} aria-hidden="true" data-paused={paused}>
         {["first", "second", "third", "fourth"].map((id) => (

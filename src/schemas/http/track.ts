@@ -107,3 +107,79 @@ export type ChannelSimulation = z.infer<
   typeof channelSimulationListSchema
 >["items"][number];
 export type SimulationStep = ChannelSimulation["steps"][number];
+
+// Pacote único da jornada (GET /tracks/{id}/bundle). Itens de prática vêm com
+// a opção esperada para feedback imediato; o backend corrige de novo no envio.
+const bundleOptionSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+  is_expected: z.boolean(),
+  feedback: z.string(),
+});
+export const bundleItemSchema = z.object({
+  id: z.string(),
+  step_id: z.string(),
+  prompt: z.string(),
+  options: z.array(bundleOptionSchema).min(2),
+  neutral_feedback: z.string(),
+  hint: z.string(),
+  explanation: z.object({ text: z.string(), reveals_solution: z.boolean() }),
+  accessibility: z.string(),
+});
+export const trackBundleSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  content_version: z.number().int().positive(),
+  objective: z.string(),
+  simulated_notice: z.string(),
+  channels: z.array(
+    z.object({
+      id: z.string(),
+      label: z.string(),
+      description: z.string(),
+      status: z.enum(["available", "coming_soon"]),
+    }),
+  ),
+  steps: z.array(
+    z.object({
+      id: z.string(),
+      order: z.number().int(),
+      title: z.string(),
+      consult_title: z.string(),
+      explanation: z.object({ text: z.string() }),
+    }),
+  ),
+  difficulties: z.array(
+    z.object({
+      id: z.string(),
+      label: z.string(),
+      classification: z.enum(["teachable", "external_block"]),
+      guidance: z.string(),
+      destination: z.object({
+        kind: z.enum(["step", "overview", "channel_exit"]),
+        step_id: z.string().nullable(),
+      }),
+    }),
+  ),
+  simulations: channelSimulationListSchema.shape.items,
+  practice: z.object({
+    intro: z.string(),
+    outcome_label: z.string(),
+    items: z.array(bundleItemSchema),
+  }),
+  channel_exit: z.object({
+    label: z.string(),
+    requirements_notice: z.string(),
+    destinations: z.array(
+      z.object({
+        id: z.string(),
+        kind: z.string(),
+        label: z.string(),
+        description: z.string(),
+        url: z.url(),
+      }),
+    ),
+  }),
+});
+export type TrackBundle = z.infer<typeof trackBundleSchema>;
+export type BundleItem = z.infer<typeof bundleItemSchema>;

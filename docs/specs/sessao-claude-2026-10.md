@@ -205,3 +205,31 @@ Verificações desta alteração em 18/10/2026:
   - `CORS_ORIGINS` e `CORS_ORIGIN_REGEX`;
   - `CHANNEL_EXIT_LINKS` (links oficiais por destino).
 - **Banco:** `uv run alembic upgrade head` (migration `0002`).
+
+## Jornada Serviço → Canal → 3 etapas (18/10/2026, DEC-EQT-037)
+
+O que mudou:
+- **Fluxo:** Serviços → Segunda via (escolha do canal: WhatsApp; site “Em breve”) → mapa
+  do WhatsApp → etapa 1 (demonstração narrada pelo Eletriquinho) → etapa 2 (4 partes no
+  chat simulado) → etapa 3 (conversa inteira) → WhatsApp oficial com a mensagem pronta.
+  As 12 rotas antigas, o simulador, a revisão e a página do canal foram apagados.
+- **Nome:** “Trilhas” virou “Serviços” na interface, no cabeçalho, no assistente e no
+  prompt da LLM (no código, `track` continua).
+- **Performance:** um pacote (`GET /tracks/{id}/bundle`), correção local, um envio por
+  etapa (`POST /practice/attempts/submit`, recorrigido pelo motor do backend), fila de
+  reenvio para falhas de rede/5xx e eventos em lote.
+- **Assistente:** Eletriquinho redondo como acionador no canto do conteúdo, com balão de
+  fala (dica da tela, narração da etapa 1, dicas da prática e comemoração).
+
+Verificações:
+- `bun run lint`, `bunx tsc --noEmit` e `bun run build` aprovados; backend com
+  `validate_content.py` e 173 testes aprovados.
+- Navegador (375 e 320 px, API local): percurso completo da escolha do canal à conclusão;
+  demonstração tocando sozinha até o fim com selo; erro, dica e acerto na etapa 2; feedback
+  neutro e ajuda na etapa 3; link `wa.me/...?text=...` em nova aba; folha de Ajuda.
+- Rede: nenhuma busca de conteúdo ao navegar entre as partes (só nas cargas completas da
+  página), nenhuma requisição durante a prática, 1 envio ao fim da etapa 2 e 1 da etapa 3.
+- Envio com rede derrubada: conclusão aparece normalmente, o envio fica na fila e é
+  reenviado uma única vez ao voltar.
+- **Não verificado:** movimento reduzido real (só pelo código), narração com voz em
+  celular físico e abertura real do WhatsApp no aparelho.

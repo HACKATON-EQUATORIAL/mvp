@@ -2,11 +2,12 @@
 
 import {
   Award,
+  Eye,
   FileCheck,
   Lock,
   type LucideIcon,
   Search,
-  Smartphone,
+  ShieldCheck,
   Star,
 } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
@@ -18,10 +19,11 @@ const icons: Record<string, LucideIcon> = {
   conferi: FileCheck,
   perfeita: Star,
   sozinho: Award,
-  canal: Smartphone,
+  vi: Eye,
+  seguro: ShieldCheck,
 };
 
-/** Faixa de selos da trilha: conquistados coloridos, os demais com cadeado. */
+/** Faixa de selos do serviço: conquistados coloridos, os demais com cadeado. */
 export function BadgeShelf() {
   const badges = badgesOf(useJourneyProgress());
   const reduced = useReducedMotion();

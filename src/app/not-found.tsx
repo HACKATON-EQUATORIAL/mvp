@@ -4,13 +4,13 @@ import type { VoicePageContext } from "@/components/voice/voice-page-context";
 
 const voiceContext: VoicePageContext = {
   id: "not-found",
-  description: "Posso levar você de volta ao início ou à lista de etapas.",
+  description: "Posso levar você de volta aos serviços ou à segunda via.",
   suggestions: [
     {
-      id: "steps",
-      label: "Consultar etapas",
-      confirmation: "Você quer ver as etapas disponíveis.",
-      href: "/servicos/segunda-via/etapas",
+      id: "second-copy",
+      label: "Segunda via pelo WhatsApp",
+      confirmation: "Você quer abrir a segunda via pelo WhatsApp?",
+      href: "/servicos/segunda-via/whatsapp",
     },
     {
       id: "home",
@@ -25,12 +25,12 @@ export default function NotFound() {
   return (
     <JourneyPage
       eyebrow="PÁGINA NÃO ENCONTRADA"
-      title="Esta etapa não está disponível"
-      intro="Escolha uma etapa da orientação para continuar."
+      title="Esta tela não está disponível"
+      intro="Volte à escolha de serviços para continuar."
       voiceContext={voiceContext}
       actions={
-        <ActionLink variant="primary" href="/servicos/segunda-via/etapas">
-          Consultar uma etapa
+        <ActionLink variant="primary" href="/">
+          Ver os serviços
         </ActionLink>
       }
     />

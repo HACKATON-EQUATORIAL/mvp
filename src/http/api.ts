@@ -12,6 +12,8 @@ type RequestOptions = {
   body?: unknown;
   /** Envia o X-Session-Id anônimo (prática e eventos). */
   session?: boolean;
+  /** Mantém o envio mesmo se a página fechar (eventos ao sair). */
+  keepalive?: boolean;
   signal?: AbortSignal;
 };
 
@@ -39,6 +41,7 @@ export async function apiRequest<T>(
     body: options.body === undefined ? undefined : JSON.stringify(options.body),
     credentials: "omit",
     cache: "no-store",
+    keepalive: options.keepalive,
     signal: options.signal
       ? AbortSignal.any([options.signal, timeout])
       : timeout,

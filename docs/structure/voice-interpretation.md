@@ -19,18 +19,20 @@ sugestões locais. Não descobrir telas varrendo URLs nem importar componentes d
 páginas no assistente. Declarar novas capacidades explicitamente.
 
 VoicePageContext continua serializável e declarado pela página: id, description,
-até três suggestions e navigation opcional com origem/etapa. VoiceHelp registra
+até três suggestions e `tip` (dica mostrada no balão do Eletriquinho). VoiceHelp registra
 esse contexto no provider; não cria outra sessão nem outro Drawer. Sugestões
 locais recebem o ID canônico do destino e preservam rótulos/href de retorno.
 Os descritores são usados para reconhecer o contexto pelos IDs declarados, não
 para deduzir conteúdo a partir do pathname.
 
-A jornada mapeia preparação, explicação geral, lista e duas explicações de etapas,
-prática guiada/individual, conferência, conclusão, dificuldades e canal interno.
+A jornada mapeia (DEC-EQT-037) escolha do canal, mapa do WhatsApp, demonstração,
+as 4 partes da etapa 2 e a conversa inteira (`segunda-via.canal`, `.whatsapp`,
+`.demonstracao`, `.parte.{menu,documento,fatura,conferir}`, `.simulacao`). O catálogo
+vem de `GET /tracks` e do pacote único já em cache.
 Todas permitem acesso direto com uma escolha clara. Abrir conclusão não conclui uma
 tentativa, atribui progresso ou comprova aprendizagem. Os exercícios atuais são
-de escolha, não um jogo de ordenar passos. O canal oficial não tem URL confirmada.
-O assistente recebe somente a trilha disponível e implementada de segunda via. Outras entradas do backend não são anunciadas, nem há promessas de recursos futuros.
+de escolha, não um jogo de ordenar passos. A saída oficial é o WhatsApp da Clara, aberto pela conclusão da etapa 3.
+O assistente recebe somente o serviço disponível e implementada de segunda via. Outras entradas do backend não são anunciadas, nem há promessas de recursos futuros.
 
 A composição considera os auxiliares existentes de origem/etapa e o navigation
 explicitamente fornecido. IDs locais encontrar/conferir correspondem a

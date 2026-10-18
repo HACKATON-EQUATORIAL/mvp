@@ -1,120 +1,92 @@
 "use client";
 
 import {
-  BookOpen,
   Check,
-  Hand,
+  Eye,
   type LucideIcon,
-  ShieldCheck,
-  Smartphone,
+  MessageCircle,
+  MessageSquareText,
   Target,
 } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
-import { useEffect } from "react";
-import { EletriquinhoTip } from "@/components/brand/eletriquinho";
+import { useEffect, useState } from "react";
 import { PageActions } from "@/components/layout/page-actions";
 import { ActionLink } from "@/components/ui/action-link";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { postEvent } from "@/http/events/post-events";
-import { useGetTrack } from "@/http/track/get-track";
-import { routes, withContext } from "../_lib/navigation";
+import { useGetBundle } from "@/http/track/get-bundle";
+import { routes } from "../_lib/navigation";
 import { useJourneyProgress } from "../_lib/progress";
-import { localStep, TRACK_ID } from "../_lib/steps";
+import { PARTS, partHref, TRACK_ID } from "../_lib/steps";
 import { BadgeShelf } from "./badge-shelf";
 import { EnergyMeter } from "./energy-meter";
+import { HelpSheet } from "./help-sheet";
 import { LoadState } from "./load-state";
-import { ReviewCard } from "./review-card";
 import styles from "./roadmap.module.css";
 
 type Node = {
   id: string;
+  stage: string;
   title: string;
-  detail: string;
   href: string;
   done: boolean;
   icon: LucideIcon;
 };
 
-// Zigue-zague da trilha, como um caminho de lições.
+// Zigue-zague do caminho, como uma sequência de lições.
 const offsets = [0, 48, 0, -48];
 
-/** Trilha de energia: cada passo concluído “acende”; a meta é o canal oficial. */
+/** Mapa das 3 etapas no WhatsApp: ver, praticar por partes e fazer sozinho. */
 export function TrackRoadmap() {
-  const track = useGetTrack(TRACK_ID);
+  const bundle = useGetBundle(TRACK_ID);
   const progress = useJourneyProgress();
   const reduced = useReducedMotion();
+  const [help, setHelp] = useState(false);
 
   useEffect(() => {
     postEvent({ type: "journey_entered", payload: { intent: "learn" } });
   }, []);
 
-  if (!track.data)
+  if (!bundle.data)
     return (
-      <LoadState error={track.isError} onRetry={() => void track.refetch()} />
+      <LoadState error={bundle.isError} onRetry={() => void bundle.refetch()} />
     );
 
-  const lessons: Node[] = track.data.steps.flatMap((step) => {
-    const local = localStep(step.id);
-    return local
-      ? [
-          {
-            id: step.id,
-            title: `Lição ${step.order}: ${step.title}`,
-            detail: step.consult_title,
-            href: `${routes.etapas}/${local}`,
-            done: progress.learned.includes(local),
-            icon: BookOpen,
-          },
-        ]
-      : [];
-  });
   const nodes: Node[] = [
-    ...lessons,
     {
-      id: "guided",
-      title: "Praticar com apoio",
-      detail: "3 perguntas com dica e explicação.",
-      href: routes["pratica-guiada"],
-      done: progress.guidedDone,
-      icon: Hand,
+      id: "demo",
+      stage: "Etapa 1",
+      title: "Ver como funciona",
+      href: routes.demonstracao,
+      done: progress.demoDone,
+      icon: Eye,
     },
+    ...PARTS.map((part, index) => ({
+      id: part.slug,
+      stage: `Etapa 2 · parte ${index + 1}`,
+      title: part.label,
+      href: partHref(part.slug),
+      done: progress.partsDone.includes(part.stepId),
+      icon: MessageSquareText,
+    })),
     {
-      id: "independent",
-      title: "Tentar sozinho",
-      detail: "As mesmas perguntas, sem dica automática.",
-      href: routes["pratica-individual"],
-      done: progress.independentDone,
+      id: "full",
+      stage: "Etapa 3",
+      title: "Fazer tudo sozinho",
+      href: routes.simulacao,
+      done: progress.fullDone,
       icon: Target,
-    },
-    {
-      id: "simulator",
-      title: "Treinar no canal",
-      detail: "Agência Virtual ou WhatsApp da Clara, simulados.",
-      href: routes.simulador,
-      done: progress.simulated.length > 0,
-      icon: Smartphone,
     },
   ];
   const next = nodes.find((node) => !node.done);
-  const doneCount = nodes.filter((node) => node.done).length;
-  const channel = withContext(routes.canal, { origem: "preparacao" });
-  const short = (title: string) => title.replace(/^Lição \d+: /, "");
+  const started = nodes.some((node) => node.done);
+  const official = bundle.data.channel_exit.destinations[0];
 
   return (
     <div className={styles.roadmap}>
       <EnergyMeter completed={!next} />
-      <EletriquinhoTip
-        mood={doneCount === 0 ? "wave" : next ? "happy" : "cheer"}
-      >
-        {doneCount === 0
-          ? "Oi! Eu sou o Eletriquinho. Vamos acender a sua primeira lição?"
-          : next
-            ? `${nodes.length - doneCount === 1 ? "Falta 1 passo" : `Faltam ${nodes.length - doneCount} passos`}. Próximo: ${short(next.title)}.`
-            : "Trilha completa! Agora é hora de usar o canal oficial."}
-      </EletriquinhoTip>
-
-      <ReviewCard />
-      <ol className={styles.path} aria-label="Passos da trilha">
+      <ol className={styles.path} aria-label="Etapas do aprendizado">
         {nodes.map((node, index) => {
           const state = node.done
             ? "done"
@@ -155,11 +127,11 @@ export function TrackRoadmap() {
                 <span className={styles.label}>
                   {state === "current" && (
                     <span className={styles.start}>
-                      {doneCount === 0 ? "Começar" : "Próximo"}
+                      {started ? "Próximo" : "Começar"}
                     </span>
                   )}
+                  <span>{node.stage}</span>
                   <strong>{node.title}</strong>
-                  <span>{node.detail}</span>
                   <span className="sr-only">
                     {node.done ? "(concluído)" : ""}
                   </span>
@@ -172,36 +144,53 @@ export function TrackRoadmap() {
           data-state="goal"
           style={{ "--offset": "0px" } as React.CSSProperties}
         >
-          <Link href={channel} className={`${styles.node} ${styles.goal}`}>
+          <Link
+            href={routes.simulacao}
+            className={`${styles.node} ${styles.goal}`}
+          >
             <span className={styles.badge} aria-hidden="true">
-              <ShieldCheck size={28} />
+              <MessageCircle size={28} />
             </span>
             <span className={styles.label}>
-              <strong>Meta: usar o canal oficial</strong>
-              <span>Faça o pedido real com segurança.</span>
+              <strong>Meta: WhatsApp oficial</strong>
+              <span>Tirar a segunda via de verdade.</span>
             </span>
           </Link>
         </li>
       </ol>
 
       <BadgeShelf />
-      {track.data.simulated_notice && (
-        <p className={styles.notice}>{track.data.simulated_notice}</p>
-      )}
+      <p className={styles.notice}>{bundle.data.simulated_notice}</p>
+      <HelpSheet open={help} onOpenChange={setHelp} />
       <PageActions>
-        <ActionLink variant="primary" href={next?.href ?? channel}>
-          {doneCount === 0
-            ? "Começar a trilha"
-            : next
-              ? `Continuar: ${short(next.title)}`
-              : "Ir para o canal oficial"}
-        </ActionLink>
-        <ActionLink
-          variant="secondary"
-          href={withContext(routes.etapas, { origem: "preparacao" })}
-        >
-          Consultar uma dúvida
-        </ActionLink>
+        {next || !official ? (
+          <ActionLink variant="primary" href={next?.href ?? routes.simulacao}>
+            {!started
+              ? "Começar"
+              : next
+                ? `Continuar: ${next.title.toLocaleLowerCase("pt-BR")}`
+                : "Refazer a simulação"}
+          </ActionLink>
+        ) : (
+          <a
+            href={official.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-slot="button"
+            className={buttonVariants({ variant: "primary" })}
+            onClick={() =>
+              postEvent({
+                type: "channel_exit_clicked",
+                payload: { origin: "practice_completed" },
+              })
+            }
+          >
+            Abrir o WhatsApp oficial
+          </a>
+        )}
+        <Button variant="secondary" onClick={() => setHelp(true)}>
+          Ajuda
+        </Button>
       </PageActions>
     </div>
   );

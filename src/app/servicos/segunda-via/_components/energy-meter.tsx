@@ -4,7 +4,7 @@ import { Zap } from "lucide-react";
 import { ENERGY_MAX, energyOf, useJourneyProgress } from "../_lib/progress";
 import styles from "./roadmap.module.css";
 
-/** Energia acumulada na trilha (kWh de conhecimento). */
+/** Energia acumulada no serviço (kWh de conhecimento). */
 export function EnergyMeter({ completed }: { completed: boolean }) {
   const progress = useJourneyProgress();
   const energy = energyOf(progress);
@@ -28,7 +28,7 @@ export function EnergyMeter({ completed }: { completed: boolean }) {
       <p className={styles.energyMessage}>
         {completed
           ? "Você completou sua jornada de aprendizado!"
-          : "Ganhe energia ao concluir as lições."}
+          : "Ganhe energia a cada etapa concluída."}
       </p>
     </div>
   );

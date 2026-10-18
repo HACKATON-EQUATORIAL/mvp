@@ -1,29 +1,29 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import type { Step } from "./navigation";
+import { PARTS } from "./steps";
 
-// Progresso didático só deste navegador (conveniência visual da trilha). A
-// prova de realização é a tentativa no backend, nunca este registro.
+// Progresso didático só deste navegador (conveniência visual do serviço). A
+// prova de realização é a tentativa enviada ao backend, nunca este registro.
 export type JourneyProgress = {
-  learned: Step[];
-  guidedDone: boolean;
-  independentDone: boolean;
-  /** Simulações de canal concluídas (IDs da API). */
-  simulated: string[];
+  /** Etapa 1: viu a demonstração narrada. */
+  demoDone: boolean;
+  /** Etapa 2: partes concluídas (IDs das etapas da API). */
+  partsDone: string[];
+  /** Etapa 3: fez a conversa inteira sozinho. */
+  fullDone: boolean;
   /** Alguma prática concluída sem nenhum erro. */
   perfect: boolean;
-  /** Prática individual concluída sem pedir ajuda. */
+  /** Etapa 3 concluída sem pedir ajuda. */
   unassisted: boolean;
 };
 
-const KEY = "digitaliza:segunda-via:progress";
+const KEY = "digitaliza:segunda-via:journey";
 export const BADGE_EVENT = "digitaliza:badge";
 const empty: JourneyProgress = {
-  learned: [],
-  guidedDone: false,
-  independentDone: false,
-  simulated: [],
+  demoDone: false,
+  partsDone: [],
+  fullDone: false,
   perfect: false,
   unassisted: false,
 };
@@ -41,19 +41,18 @@ function read(): JourneyProgress {
   return cache as JourneyProgress;
 }
 
+/** Só acrescenta: etapas e conquistas nunca são perdidas. */
 export function updateProgress(change: Partial<JourneyProgress>) {
   const current = read();
-  const next = {
-    ...current,
-    ...change,
-    learned: [...new Set([...current.learned, ...(change.learned ?? [])])],
-    simulated: [
-      ...new Set([...current.simulated, ...(change.simulated ?? [])]),
+  const next: JourneyProgress = {
+    demoDone: current.demoDone || !!change.demoDone,
+    partsDone: [
+      ...new Set([...current.partsDone, ...(change.partsDone ?? [])]),
     ],
+    fullDone: current.fullDone || !!change.fullDone,
+    perfect: current.perfect || !!change.perfect,
+    unassisted: current.unassisted || !!change.unassisted,
   };
-  // Conquistas só se ganham, nunca se perdem.
-  next.perfect = current.perfect || !!change.perfect;
-  next.unassisted = current.unassisted || !!change.unassisted;
   if (JSON.stringify(next) === JSON.stringify(current)) return;
   cache = next;
   try {
@@ -62,7 +61,6 @@ export function updateProgress(change: Partial<JourneyProgress>) {
     // Sem armazenamento: o progresso vale só enquanto a página estiver aberta.
   }
   for (const listener of listeners) listener();
-  // Selos recém-desbloqueados também são celebrados.
   const before = new Set(
     badgesOf(current)
       .filter((b) => b.earned)
@@ -86,22 +84,16 @@ export function useJourneyProgress() {
   return useSyncExternalStore(subscribe, read, () => empty);
 }
 
-/** Pontos de energia (kWh de conhecimento) por passo concluído: só visual. */
-export const ENERGY = {
-  lesson: 10,
-  guided: 20,
-  independent: 30,
-  simulated: 20,
-};
+/** Energia (kWh de conhecimento) por etapa concluída: só visual. */
+export const ENERGY = { demo: 10, part: 10, full: 40 };
 export const ENERGY_MAX =
-  ENERGY.lesson * 2 + ENERGY.guided + ENERGY.independent + ENERGY.simulated;
+  ENERGY.demo + ENERGY.part * PARTS.length + ENERGY.full;
 
 export function energyOf(progress: JourneyProgress) {
   return (
-    progress.learned.length * ENERGY.lesson +
-    (progress.guidedDone ? ENERGY.guided : 0) +
-    (progress.independentDone ? ENERGY.independent : 0) +
-    (progress.simulated.length ? ENERGY.simulated : 0)
+    (progress.demoDone ? ENERGY.demo : 0) +
+    Math.min(progress.partsDone.length, PARTS.length) * ENERGY.part +
+    (progress.fullDone ? ENERGY.full : 0)
   );
 }
 
@@ -112,38 +104,45 @@ export type Badge = {
   earned: boolean;
 };
 
-/** Selos da trilha, derivados do progresso (motivacionais, só no navegador). */
+/** Selos do serviço, derivados do progresso (motivacionais, só no navegador). */
 export function badgesOf(progress: JourneyProgress): Badge[] {
+  const part = (id: string) => progress.partsDone.includes(id);
   return [
+    {
+      id: "vi",
+      label: "Vi como funciona",
+      detail: "Assistiu à demonstração da conversa com a Clara.",
+      earned: progress.demoDone,
+    },
     {
       id: "achei",
       label: "Achei a segunda via",
-      detail: "Concluiu a lição de encontrar o serviço.",
-      earned: progress.learned.includes("encontrar"),
+      detail: "Escolheu a opção certa no menu da Clara.",
+      earned: part("encontrar-servico"),
+    },
+    {
+      id: "seguro",
+      label: "Documento seguro",
+      detail: "Enviou só o CPF ou CNPJ, nunca senha.",
+      earned: part("informar-documento"),
     },
     {
       id: "conferi",
       label: "Conferi a conta",
-      detail: "Concluiu a lição de conferir a conta.",
-      earned: progress.learned.includes("conferir"),
+      detail: "Escolheu a fatura certa e conferiu antes de pagar.",
+      earned: part("escolher-fatura") && part("conferir-resultado"),
+    },
+    {
+      id: "sozinho",
+      label: "Fiz sozinho",
+      detail: "Fez a conversa inteira sem pedir ajuda.",
+      earned: progress.unassisted,
     },
     {
       id: "perfeita",
       label: "Lição perfeita",
       detail: "Terminou uma prática sem errar.",
       earned: progress.perfect,
-    },
-    {
-      id: "sozinho",
-      label: "Sem ajuda",
-      detail: "Fez a prática individual sem pedir ajuda.",
-      earned: progress.unassisted,
-    },
-    {
-      id: "canal",
-      label: "Treinei no canal",
-      detail: "Concluiu um simulador do atendimento digital.",
-      earned: progress.simulated.length > 0,
     },
   ];
 }

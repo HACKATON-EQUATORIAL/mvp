@@ -5,6 +5,8 @@ import type { VoicePageContext } from "@/components/voice/voice-page-context";
 import styles from "./journey.module.css";
 
 export const JOURNEY_ACTIONS_ID = "journey-actions";
+/** Ponto de ancoragem do Eletriquinho: canto inferior do conteúdo, acima da barra. */
+export const ASSISTANT_DOCK_ID = "assistant-dock";
 
 type JourneyPageProps = {
   eyebrow: string;
@@ -38,6 +40,7 @@ export function JourneyPage({
         <p className={styles.intro}>{intro}</p>
         {children && <div className={styles.content}>{children}</div>}
       </div>
+      <div id={ASSISTANT_DOCK_ID} className={styles.dock} />
       <div id={JOURNEY_ACTIONS_ID} className={styles.actions}>
         {actions}
       </div>

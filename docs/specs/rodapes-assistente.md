@@ -14,7 +14,7 @@ e [direção visual](../structure/visual-direction.md#layout-de-app-todas-as-tel
 - Lição: “Próxima etapa” e “Consultar uma dúvida”. Destino original da API mantido,
   inclusive quando a última etapa leva à prática. O contexto de prática preserva
   “Voltar à prática”, sem forçar avanço.
-- Consulta rápida: “Voltar”, com ícone de retorno e variante discreta; sem repetir
+- Consulta rápida: “Voltar”, com ícone de retorno e botão secundário padrão; sem repetir
   o botão de consulta. Destino e parâmetros de `returnTo` preservados.
 - Acionador amarelo com conversa (`MessageCircle`) e texto visível “Assistente”.
   Abertura do mesmo Drawer, sem iniciar gravação; microfone interno, Eletriquinho,
@@ -83,6 +83,13 @@ Verificação desta atualização:
 - Áudio e captura em aparelho físico não foram revalidados nesta troca visual.
 
 ## Arquivos da refatoração dos rodapés
+
+Atualização de 18/10/2026: a pedido do usuário, “Voltar” na consulta rápida passou
+de `ghost`/`sm` para `secondary` no tamanho padrão, com a mesma borda, superfície
+e relevo dos outros botões secundários. Ícone, destino e parâmetros mantidos.
+Lint e build aprovados; navegador em 320×812 conferido sem sobreposição com o
+assistente nem excesso de largura. Captura em
+`output/playwright/consulta-voltar-padronizado-320.png`.
 
 - Layout: `src/components/layout/journey.module.css` e `journey-page.tsx`.
 - Acionador: `src/components/voice/voice-help-button.tsx` e `src/app/globals.css`.

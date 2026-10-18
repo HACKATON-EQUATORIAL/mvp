@@ -119,7 +119,8 @@ e laterais respeitam as áreas seguras. Sem ações, a barra fica oculta.
 
 Nas trilhas e lições, a ação principal mantém `primary` e a secundária
 “Consultar uma dúvida” usa `ghost`/`sm`. Na consulta rápida, “Voltar” usa
-`ghost`/`sm` com `ArrowLeft`, preservando `returnTo`. A lição mantém o destino de
+`secondary`, no tamanho padrão e com `ArrowLeft`, preservando `returnTo`.
+A lição mantém o destino de
 avanço da API com o rótulo “Próxima etapa”; o contexto de prática continua oferecendo
 “Voltar à prática”. Não criar outro rodapé nem outro estado para compor essas ações.
 

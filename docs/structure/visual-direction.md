@@ -45,7 +45,7 @@ institucional nas partes de serviço real.
 - Barra vazia some (`:empty`). Telas sem ações (ex.: home) mantêm só o assistente.
 - Na trilha e nas lições, “Consultar uma dúvida” usa `ActionLink` com variante
   `ghost` e tamanho `sm`, abaixo da ação principal. Na consulta rápida, só “Voltar”
-  com `ArrowLeft`, também discreto. O assistente usa o `Eletriquinho` original e texto
+  com `ArrowLeft`, usando o botão `secondary` de tamanho padrão. O assistente usa o `Eletriquinho` original e texto
   visível “Assistente”, em amarelo; seu microfone fica dentro do Drawer.
 - Rolagem: só vertical (`overflow-x: hidden`), barra fina arredondada em `--primary-200`,
   conteúdo esmaece ao passar sob a barra de ações (`mask-image`) e a barra tem sombra leve.

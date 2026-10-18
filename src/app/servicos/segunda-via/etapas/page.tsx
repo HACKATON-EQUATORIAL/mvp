@@ -83,8 +83,7 @@ async function PageActions({
       </ActionLink>
       <BottomActions>
         <ActionLink
-          variant="ghost"
-          size="sm"
+          variant="secondary"
           href={returnTo(context, "etapas", routes.preparacao)}
         >
           <ArrowLeft size={18} aria-hidden="true" /> Voltar

@@ -197,8 +197,7 @@ export function TrackRoadmap() {
               : "Ir para o canal oficial"}
         </ActionLink>
         <ActionLink
-          variant="ghost"
-          size="sm"
+          variant="secondary"
           href={withContext(routes.etapas, { origem: "preparacao" })}
         >
           Consultar uma dúvida

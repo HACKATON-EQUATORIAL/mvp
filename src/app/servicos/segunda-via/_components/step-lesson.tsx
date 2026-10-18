@@ -98,8 +98,7 @@ export function StepLesson({
           )
         )}
         <ActionLink
-          variant="ghost"
-          size="sm"
+          variant="secondary"
           href={withContext(routes.etapas, context)}
         >
           Consultar uma dúvida

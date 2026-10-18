@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DemoScene } from "@/app/servicos/segunda-via/_components/demo-scene";
+import { routes } from "@/app/servicos/segunda-via/_lib/navigation";
 import { JourneyPage } from "@/components/layout/journey-page";
 import type { VoicePageContext } from "@/components/voice/voice-page-context";
 
@@ -26,6 +27,7 @@ export default function Page() {
       intro="É só assistir. A conversa anda sozinha e eu explico cada passo."
       voiceContext={voiceContext}
       actions={null}
+      back={{ href: routes.whatsapp, label: "Voltar às etapas" }}
     >
       <DemoScene />
     </JourneyPage>

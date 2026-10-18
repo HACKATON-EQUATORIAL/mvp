@@ -1,5 +1,7 @@
+import { ArrowLeft } from "lucide-react";
 import type { ReactNode } from "react";
 import { Eyebrow } from "@/components/layout/eyebrow";
+import { ActionLink } from "@/components/ui/action-link";
 import { VoiceHelp } from "@/components/voice/voice-help";
 import type { VoicePageContext } from "@/components/voice/voice-page-context";
 import styles from "./journey.module.css";
@@ -16,6 +18,10 @@ type JourneyPageProps = {
   actions: ReactNode;
   voiceContext?: VoicePageContext;
   voiceSlot?: ReactNode;
+  /** Sub-ação no topo: volta a um nível da jornada (ex.: o mapa), dizendo o destino. */
+  back?: { href: string; label: string };
+  /** Etapa anterior da sequência, como botão secundário na barra de ações. */
+  previous?: { href: string; label: string };
 };
 
 /**
@@ -31,10 +37,23 @@ export function JourneyPage({
   actions,
   voiceContext,
   voiceSlot,
+  back,
+  previous,
 }: JourneyPageProps) {
   return (
     <main tabIndex={-1} className={`${styles.page} journey-page`}>
       <div className={styles.scroll} data-journey-scroll>
+        {back && (
+          <ActionLink
+            href={back.href}
+            variant="ghost"
+            size="sm"
+            className={styles.back}
+          >
+            <ArrowLeft size={18} aria-hidden="true" />
+            {back.label}
+          </ActionLink>
+        )}
         <Eyebrow>{eyebrow}</Eyebrow>
         <h1 className={styles.title}>{title}</h1>
         <p className={styles.intro}>{intro}</p>
@@ -43,6 +62,17 @@ export function JourneyPage({
       <div id={ASSISTANT_DOCK_ID} className={styles.dock} />
       <div id={JOURNEY_ACTIONS_ID} className={styles.actions}>
         {actions}
+        {previous && (
+          <ActionLink
+            href={previous.href}
+            variant="secondary"
+            className={styles.previous}
+          >
+            <ArrowLeft size={20} aria-hidden="true" />
+            {/* No celular, só a seta aparece; o nome segue para leitores de tela. */}
+            <span className={styles.previousLabel}>{previous.label}</span>
+          </ActionLink>
+        )}
       </div>
       {voiceSlot ??
         (voiceContext ? <VoiceHelp context={voiceContext} /> : null)}

@@ -40,6 +40,8 @@ export default function Page() {
       intro="Aprenda a pedir a sua conta à Clara, a assistente da Equatorial, em 3 etapas."
       voiceContext={voiceContext}
       actions={null}
+      // Quem já começou chega aqui direto da home (pula a escolha do canal).
+      back={{ href: routes.inicio, label: "Voltar aos serviços" }}
     >
       <TrackRoadmap />
     </JourneyPage>

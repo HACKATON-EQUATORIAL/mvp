@@ -162,9 +162,6 @@ export function JourneyDone() {
             Continuar de onde parei
           </ActionLink>
         )}
-        <ActionLink variant="secondary" href={routes.whatsapp}>
-          Ver as etapas
-        </ActionLink>
       </PageActions>
     </div>
   );

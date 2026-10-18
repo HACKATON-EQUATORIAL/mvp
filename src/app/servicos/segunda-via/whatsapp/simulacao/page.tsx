@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { WhatsAppSimulation } from "@/app/servicos/segunda-via/_components/whatsapp-simulation";
 import { routes } from "@/app/servicos/segunda-via/_lib/navigation";
+import { PARTS, partHref } from "@/app/servicos/segunda-via/_lib/steps";
 import { JourneyPage } from "@/components/layout/journey-page";
 import type { VoicePageContext } from "@/components/voice/voice-page-context";
 
@@ -34,6 +35,11 @@ export default function Page() {
       intro="Faça a conversa inteira, do menu até conferir a fatura."
       voiceContext={voiceContext}
       actions={null}
+      back={{ href: routes.whatsapp, label: "Voltar às etapas" }}
+      previous={{
+        href: partHref(PARTS[PARTS.length - 1].slug),
+        label: `Voltar à parte ${PARTS.length}`,
+      }}
     >
       <WhatsAppSimulation />
     </JourneyPage>

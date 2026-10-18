@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PracticeChat } from "@/app/servicos/segunda-via/_components/practice-chat";
 import { routes } from "@/app/servicos/segunda-via/_lib/navigation";
-import { PARTS, partBySlug } from "@/app/servicos/segunda-via/_lib/steps";
+import {
+  PARTS,
+  partBySlug,
+  partHref,
+} from "@/app/servicos/segunda-via/_lib/steps";
 import { JourneyPage } from "@/components/layout/journey-page";
 import type { VoicePageContext } from "@/components/voice/voice-page-context";
 
@@ -21,6 +25,11 @@ export default async function Page({ params }: Props) {
   const part = partBySlug((await params).parte);
   if (!part) notFound();
   const number = PARTS.indexOf(part) + 1;
+  // Etapa anterior (na barra): parte anterior, ou a demonstração na parte 1.
+  const before = PARTS[number - 2];
+  const previous = before
+    ? { href: partHref(before.slug), label: `Voltar à parte ${number - 1}` }
+    : { href: routes.demonstracao, label: "Voltar à demonstração" };
   const voiceContext: VoicePageContext = {
     id: `segunda-via.parte.${part.slug}`,
     description: `Etapa 2, parte ${number} de ${PARTS.length}: ${part.label}. Responda à Clara no chat simulado; errar é normal e dá para pedir dica.`,
@@ -46,6 +55,8 @@ export default async function Page({ params }: Props) {
       intro="Faça só esta parte da conversa. Pode errar: eu ajudo."
       voiceContext={voiceContext}
       actions={null}
+      back={{ href: routes.whatsapp, label: "Voltar às etapas" }}
+      previous={previous}
     >
       <PracticeChat part={part.slug} />
     </JourneyPage>

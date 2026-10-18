@@ -125,8 +125,61 @@
   transition: width 600ms ease;
 }
 
+.pathCanvas {
+  position: relative;
+  isolation: isolate;
+}
+
+.connector {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.connectorTrack {
+  stroke: var(--border-default);
+  stroke-width: 4px;
+}
+
+.connectorProgress {
+  stroke: var(--success-400);
+  stroke-width: 4px;
+}
+
+.connectorPulse {
+  stroke: var(--success-100);
+  stroke-width: 2px;
+  stroke-dasharray: 0.045 0.955;
+  stroke-dashoffset: 1;
+  opacity: 0;
+  animation: connector-energy 6s linear 1.6s infinite;
+}
+
+@keyframes connector-energy {
+  0% {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  12%,
+  78% {
+    opacity: 0.7;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
 .path {
   position: relative;
+  z-index: 1;
   display: grid;
   gap: 18px;
   margin: 0;
@@ -244,6 +297,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .connectorPulse {
+    display: none;
+    animation: none;
+  }
+
   .energyBar span {
     transition: none;
   }

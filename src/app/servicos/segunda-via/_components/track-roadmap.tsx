@@ -102,7 +102,7 @@ export function TrackRoadmap() {
 
   return (
     <div className={styles.roadmap}>
-      <EnergyMeter />
+      <EnergyMeter completed={!next} />
       <EletriquinhoTip
         mood={doneCount === 0 ? "wave" : next ? "happy" : "cheer"}
       >

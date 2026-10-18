@@ -163,6 +163,38 @@ Validação desta alteração em 18/10/2026:
 - Capturas em `output/playwright/pratica-guiada-sem-tempo-ofensiva.png` e
   `output/playwright/trilha-sem-ofensiva.png`. Verificação em navegador, sem celular físico.
 
+## Atualização: apresentação do card de energia (18/10/2026)
+
+Alteração localizada em `EnergyMeter` e suas classes no CSS do mapa: cabeçalho com
+“Energia de Aprendizado” à esquerda e status à direita; ícone e pontuação abaixo,
+mesma barra e mensagem de apoio contextual. “kWh virtuais” é apenas o novo texto
+da unidade nesse card. Demais telas e o sistema de pontos não foram alterados.
+
+O consumidor `TrackRoadmap` fornece o indicador de conclusão que já usa (`!next`),
+sem nova regra. “Em progresso” acompanha “Ganhe energia ao concluir as lições.”;
+“Meta atingida!” acompanha “Você completou sua jornada de aprendizado!”.
+Manutenção em [direção visual](../structure/visual-direction.md).
+
+Verificações desta alteração em 18/10/2026:
+
+- `bun run lint` e `bun run build --webpack` aprovados, incluindo TypeScript.
+  O build padrão com Turbopack ficou bloqueado pelo ambiente ao abrir uma porta
+  interna (`Operation not permitted`).
+- Navegador com API local: estado inicial em sessão nova (0/90, barra em 0%),
+  progresso já existente na sessão de revisão (60/90, barra em 66,7%) e conclusão
+  (90/90, barra em 100%) após acessar a lição restante e concluir o simulador pela UI.
+  Os status e mensagens acompanharam o indicador da trilha. Não foram inseridas
+  pontuações fixas ou novos dados de progresso para esta verificação.
+- Layout conferido em 320×812, 375×812 e 1280×900, sem excesso de largura;
+  título e status alinhados no cabeçalho. Cores, fonte, ícone, padding, bordas e
+  dimensões da barra existentes foram preservados.
+- Diff conferido: `progress.ts`, hook da prática, dependências e lockfile sem
+  alterações; expressão de largura da barra preservada. Apenas apresentação,
+  prop de conclusão no consumidor e documentação foram alteradas.
+- Capturas em `output/playwright/energia-aprendizado-em-progresso.png`,
+  `output/playwright/energia-aprendizado-concluido.png` e
+  `output/playwright/energia-aprendizado-320.png`. Sem verificação em celular físico.
+
 ## Configuração necessária
 
 - **`mvp/.env`:**

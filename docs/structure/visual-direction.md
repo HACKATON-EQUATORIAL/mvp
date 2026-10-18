@@ -22,6 +22,11 @@ institucional nas partes de serviço real.
 - **Energia** (`_lib/progress.ts` `energyOf`, `EnergyMeter`): 10 kWh por lição, 20 pela
   prática com apoio, 30 pela prática sozinho e 20 pelo simulador (máx. 90). É só visual e
   local; a prova de realização continua sendo a tentativa no backend.
+  No card da trilha, o cabeçalho mostra “Energia de Aprendizado” e o status; a
+  pontuação usa o texto “kWh virtuais”, seguido da mesma barra e de uma mensagem
+  de apoio. `TrackRoadmap` passa sua indicação existente de conclusão (`!next`)
+  para alternar “Em progresso” / “Meta atingida!” e a mensagem. Os cálculos,
+  valores, persistência e atualização de pontos permanecem os mesmos.
 - **Mapa da trilha:** caminho em zigue-zague com nós de 72px (concluído verde, próximo
   amarelo com brilho e selo “Próximo”, meta tracejada).
 - **Lições:** “Guarde” da Eletriquinho com a ideia que a prática cobra e bônus de energia.

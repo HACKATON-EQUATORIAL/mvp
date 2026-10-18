@@ -21,7 +21,6 @@ import { routes, withContext } from "../_lib/navigation";
 import { useJourneyProgress } from "../_lib/progress";
 import { localStep, TRACK_ID } from "../_lib/steps";
 import { BadgeShelf } from "./badge-shelf";
-import { CertificateButton } from "./certificate-button";
 import { EnergyMeter } from "./energy-meter";
 import { LoadState } from "./load-state";
 import { ReviewCard } from "./review-card";
@@ -103,7 +102,7 @@ export function TrackRoadmap() {
 
   return (
     <div className={styles.roadmap}>
-      <EnergyMeter />
+      <EnergyMeter completed={!next} />
       <EletriquinhoTip
         mood={doneCount === 0 ? "wave" : next ? "happy" : "cheer"}
       >
@@ -186,7 +185,6 @@ export function TrackRoadmap() {
       </ol>
 
       <BadgeShelf />
-      {!next && <CertificateButton />}
       {track.data.simulated_notice && (
         <p className={styles.notice}>{track.data.simulated_notice}</p>
       )}
@@ -198,8 +196,12 @@ export function TrackRoadmap() {
               ? `Continuar: ${short(next.title)}`
               : "Ir para o canal oficial"}
         </ActionLink>
-        <ActionLink href={withContext(routes.etapas, { origem: "preparacao" })}>
-          Só quero tirar uma dúvida
+        <ActionLink
+          variant="ghost"
+          size="sm"
+          href={withContext(routes.etapas, { origem: "preparacao" })}
+        >
+          Consultar uma dúvida
         </ActionLink>
       </PageActions>
     </div>

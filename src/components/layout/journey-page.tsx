@@ -18,7 +18,7 @@ type JourneyPageProps = {
 
 /**
  * Tela no formato de app: só o miolo rola; a barra de ações fica presa embaixo,
- * com espaço para o microfone. Componentes de cliente podem enviar botões para
+ * com espaço para o assistente na última linha. Componentes de cliente podem enviar botões para
  * a barra com `PageActions`.
  */
 export function JourneyPage({

@@ -76,7 +76,7 @@ culpa, e som e animação são opcionais.
 | Aviso de ofensiva e selos (fila) | `components/brand/streak-moment.tsx`, `_lib/progress.ts` (`streakOf`, `badgesOf`) |
 | Revisão de erros | `back/.../practice/*` (`item_ids`, migration `0002`), `_lib/review.ts`, `pratica/revisao` |
 | Desafio de toque nas lições e “Comece em 2 minutos” | `lesson-illustration.tsx`, `track-selection.tsx` |
-| Certificado compartilhável | `certificate-button.tsx` |
+| Certificado compartilhável (removido em 18/10/2026; ver atualização abaixo) | Componente removido: `certificate-button.tsx` |
 | Eletriquinho no Drawer com humor pelo estado; botão flutuante só com microfone | `voice-conversation.tsx`, `voice-assistant-host.tsx` |
 | Saída real para o canal oficial, com WhatsApp e mensagem pronta | `channel-exit.tsx`, `back/.../channel/router.py`, `CHANNEL_EXIT_LINKS` |
 
@@ -96,7 +96,8 @@ Data e ambiente: 17 e 18/10/2026, navegador do painel em 375×812, backend local
   - Eletriquinho no Drawer.
 - [x] Layout: 13 telas sem rolagem da página, barra na base e microfone visível sem sobreposição.
 - [ ] Som e vibração reais no celular (os testes rodaram com o som desligado).
-- [ ] Certificado gerado e compartilhado no aparelho.
+- Certificado gerado e compartilhado no aparelho: não verificado na sessão original;
+  validação cancelada com a remoção do recurso em 18/10/2026.
 - [ ] Humores “escutando” e “falando” com microfone real; STT e TTS no celular via ngrok.
 - [ ] Testes de integração do backend (dependem do Postgres).
 
@@ -107,6 +108,92 @@ Data e ambiente: 17 e 18/10/2026, navegador do painel em 375×812, backend local
 - Telas reais da Agência Virtual depois da identificação e o menu exato da Clara por estado. A lista do que mandar está em [canais-oficiais.md](canais-oficiais.md).
 - Trilha indisponível ou com `content_version` diferente ainda não tem tela própria.
 - Dica de desenvolvimento: se o CSS parecer desatualizado no `bun dev`, apague `.next/dev/cache` e reinicie. É o cache do Turbopack.
+
+## Atualização: remoção do certificado (18/10/2026)
+
+Por pedido do usuário, o certificado deixou de fazer parte da aplicação. Foram
+removidos o botão no mapa da trilha completa, o botão no resultado da prática e o
+componente exclusivo que gerava, baixava e compartilhava o PNG. Energia, selos,
+revisão, celebração e navegação para o canal oficial foram preservados. Nenhuma
+dependência, contrato de API ou registro de progresso precisou ser alterado.
+
+Verificações desta alteração:
+
+- `bun run lint` aprovado; nenhuma referência ao certificado permanece em `src`.
+- `bun run build --webpack` aprovado, incluindo TypeScript. O build padrão com
+  Turbopack ficou bloqueado pelo ambiente (download da Nunito e, na nova tentativa,
+  abertura de porta interna com `Operation not permitted`).
+- Navegador em 375×812 com API Python local: mapa inicial e resultado após concluir
+  uma prática individual real (3 perguntas), sem certificado e sem excesso de largura.
+- Mapa completo conferido em sessão isolada com progresso local preparado apenas
+  para verificar esse estado: 90 kWh, 5 selos, mensagem de conclusão e ação para o
+  canal oficial, sem certificado. Isso não comprova realização de toda a trilha.
+- Capturas em `output/playwright/resultado-sem-certificado.png` e
+  `output/playwright/trilha-sem-certificado.png`.
+
+## Atualização: resumo da prática e progresso sem ofensiva (18/10/2026)
+
+Por pedido do usuário, tempo e ofensiva foram retirados do resumo compartilhado
+pelas práticas com apoio, individual e revisão. O resumo mantém energia (ou itens
+revisados) e acertos, em duas colunas. O medidor da trilha mantém energia em kWh e
+a barra de progresso, sem “X dias seguidos”.
+
+Foram removidos o cronômetro local, o cálculo de dias e os avisos de ofensiva.
+O componente de avisos passou a se chamar `BadgeMoment` e mantém a fila de novos
+selos. A sequência de acertos durante as perguntas, os selos e os avanços existentes
+permanecem. Registros antigos no navegador continuam legíveis, mesmo com o campo
+legado `days`; nenhum progresso é apagado. Contratos e métricas do backend não mudam.
+
+Os relatos de tempo e ofensiva nas seções originais desta spec são históricos.
+O comportamento vigente está em [direção visual](../structure/visual-direction.md).
+
+Validação desta alteração em 18/10/2026:
+
+- `bun run lint` e `bun run build --webpack` aprovados, incluindo TypeScript.
+  O build padrão com Turbopack foi tentado e bloqueado pelo ambiente ao abrir
+  uma porta interna (`Operation not permitted`).
+- Navegador em 375×812 com API local: prática com apoio concluída pelas três
+  perguntas reais; resumo com apenas +20 kWh e 100% de acertos. A ação “Agora tente
+  sozinho” abriu a prática individual já concluída na sessão, com +30 kWh e acertos,
+  também sem tempo e ofensiva. Revisão usa o mesmo resumo, mas não foi repetida.
+- O selo “Lição perfeita” gerou o aviso “Novo selo!”, sem aviso de ofensiva.
+- Progresso legado preparado no navegador com `days` e uma lição concluída:
+  após as práticas, o mapa mostrou 60/90 kWh e a barra em 66,7%, sem dias seguidos.
+  Não houve perda dos avanços nem excesso de largura.
+- Capturas em `output/playwright/pratica-guiada-sem-tempo-ofensiva.png` e
+  `output/playwright/trilha-sem-ofensiva.png`. Verificação em navegador, sem celular físico.
+
+## Atualização: apresentação do card de energia (18/10/2026)
+
+Alteração localizada em `EnergyMeter` e suas classes no CSS do mapa: cabeçalho com
+“Energia de Aprendizado” à esquerda e status à direita; ícone e pontuação abaixo,
+mesma barra e mensagem de apoio contextual. “kWh virtuais” é apenas o novo texto
+da unidade nesse card. Demais telas e o sistema de pontos não foram alterados.
+
+O consumidor `TrackRoadmap` fornece o indicador de conclusão que já usa (`!next`),
+sem nova regra. “Em progresso” acompanha “Ganhe energia ao concluir as lições.”;
+“Meta atingida!” acompanha “Você completou sua jornada de aprendizado!”.
+Manutenção em [direção visual](../structure/visual-direction.md).
+
+Verificações desta alteração em 18/10/2026:
+
+- `bun run lint` e `bun run build --webpack` aprovados, incluindo TypeScript.
+  O build padrão com Turbopack ficou bloqueado pelo ambiente ao abrir uma porta
+  interna (`Operation not permitted`).
+- Navegador com API local: estado inicial em sessão nova (0/90, barra em 0%),
+  progresso já existente na sessão de revisão (60/90, barra em 66,7%) e conclusão
+  (90/90, barra em 100%) após acessar a lição restante e concluir o simulador pela UI.
+  Os status e mensagens acompanharam o indicador da trilha. Não foram inseridas
+  pontuações fixas ou novos dados de progresso para esta verificação.
+- Layout conferido em 320×812, 375×812 e 1280×900, sem excesso de largura;
+  título e status alinhados no cabeçalho. Cores, fonte, ícone, padding, bordas e
+  dimensões da barra existentes foram preservados.
+- Diff conferido: `progress.ts`, hook da prática, dependências e lockfile sem
+  alterações; expressão de largura da barra preservada. Apenas apresentação,
+  prop de conclusão no consumidor e documentação foram alteradas.
+- Capturas em `output/playwright/energia-aprendizado-em-progresso.png`,
+  `output/playwright/energia-aprendizado-concluido.png` e
+  `output/playwright/energia-aprendizado-320.png`. Sem verificação em celular físico.
 
 ## Configuração necessária
 

@@ -2,7 +2,6 @@
 
 import {
   CheckCircle2,
-  Clock,
   Flame,
   Lightbulb,
   RotateCcw,
@@ -13,7 +12,7 @@ import {
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Celebration } from "@/components/brand/celebration";
 import { Eletriquinho, EletriquinhoTip } from "@/components/brand/eletriquinho";
 import { scrollJourneyToTop } from "@/components/layout/journey-scroll";
@@ -24,12 +23,7 @@ import { feedback as sfx } from "@/lib/feedback/sound";
 import { cn } from "@/lib/utils";
 import type { PracticeMode } from "@/schemas/http/practice";
 import { routes } from "../_lib/navigation";
-import {
-  ENERGY,
-  streakOf,
-  updateProgress,
-  useJourneyProgress,
-} from "../_lib/progress";
+import { ENERGY, updateProgress } from "../_lib/progress";
 import { readMissed } from "../_lib/review";
 import { localStep } from "../_lib/steps";
 import { usePracticeSession } from "../_lib/use-practice-session";
@@ -58,18 +52,14 @@ export function PracticeSession({
     if (review) setReviewItems(readMissed());
   }, [review]);
   const session = usePracticeSession(mode, reviewItems);
-  const progress = useJourneyProgress();
-  const elapsed = useRef(0);
   const guided = mode === "guided";
   const { state, item, answer } = session;
   const completed = state?.status === "completed" && !answer?.correct;
   const [burst, setBurst] = useState(0);
 
-  // Só ao concluir: medir o tempo, subir a tela e tocar o som (uma vez).
-  // biome-ignore lint/correctness/useExhaustiveDependencies: dispara só na conclusão
+  // Só ao concluir: subir a tela e tocar o som (uma vez).
   useEffect(() => {
     if (!completed) return;
-    elapsed.current = session.elapsedMs();
     scrollJourneyToTop();
     sfx.complete();
   }, [completed]);
@@ -198,20 +188,6 @@ export function PracticeSession({
             label="Acertos"
             value={`${Math.round((state.progress.total / (state.progress.total + session.mistakes)) * 100)}%`}
             delay={0.2}
-          />
-          <Stat
-            icon={Clock}
-            tone="primary"
-            label="Tempo"
-            value={formatTime(elapsed.current)}
-            delay={0.3}
-          />
-          <Stat
-            icon={Flame}
-            tone="streak"
-            label="Ofensiva"
-            value={`${Math.max(streakOf(progress), 1)} ${Math.max(streakOf(progress), 1) === 1 ? "dia" : "dias"}`}
-            delay={0.4}
           />
         </ul>
         <PageActions>
@@ -403,7 +379,7 @@ function Stat({
   delay,
 }: {
   icon: typeof Zap;
-  tone: "energy" | "success" | "primary" | "streak";
+  tone: "energy" | "success";
   label: string;
   value: string;
   delay: number;
@@ -422,9 +398,4 @@ function Stat({
       </strong>
     </motion.li>
   );
-}
-
-function formatTime(ms: number) {
-  const seconds = Math.max(1, Math.round(ms / 1000));
-  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 }

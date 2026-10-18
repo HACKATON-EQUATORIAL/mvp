@@ -22,6 +22,11 @@ institucional nas partes de serviço real.
 - **Energia** (`_lib/progress.ts` `energyOf`, `EnergyMeter`): 10 kWh por lição, 20 pela
   prática com apoio, 30 pela prática sozinho e 20 pelo simulador (máx. 90). É só visual e
   local; a prova de realização continua sendo a tentativa no backend.
+  No card da trilha, o cabeçalho mostra “Energia de Aprendizado” e o status; a
+  pontuação usa o texto “kWh virtuais”, seguido da mesma barra e de uma mensagem
+  de apoio. `TrackRoadmap` passa sua indicação existente de conclusão (`!next`)
+  para alternar “Em progresso” / “Meta atingida!” e a mensagem. Os cálculos,
+  valores, persistência e atualização de pontos permanecem os mesmos.
 - **Mapa da trilha:** caminho em zigue-zague com nós de 72px (concluído verde, próximo
   amarelo com brilho e selo “Próximo”, meta tracejada).
 - **Lições:** “Guarde” da Eletriquinho com a ideia que a prática cobra e bônus de energia.
@@ -30,12 +35,18 @@ institucional nas partes de serviço real.
 
 - O shell ocupa exatamente `100dvh`; a página inteira não rola.
 - `JourneyPage` divide a tela em miolo rolável (`.scroll`, com 96px de respiro no fim) e
-  barra de ações fixa embaixo (`#journey-actions`), com 76px reservados à direita para o
-  microfone do assistente, que fica sempre visível no canto inferior direito.
+  barra de ações fixa embaixo (`#journey-actions`). Ações anteriores à última ocupam
+  a largura disponível; a última linha reserva uma coluna para o assistente,
+  sempre visível no canto inferior direito. Largura e altura do acionador são
+  compartilhadas pelo shell (`--assistant-trigger-width` e `--assistant-trigger-height`).
 - Botões principais vão para a barra: pelo prop `actions` (servidor) ou pelo
   `PageActions` (portal, para componentes de cliente e trechos dentro de `Suspense`).
   Limite de 1 a 2 botões na barra; escolhas e caminhos extras ficam no miolo.
-- Barra vazia some (`:empty`). Telas sem ações (ex.: home) mantêm só o microfone.
+- Barra vazia some (`:empty`). Telas sem ações (ex.: home) mantêm só o assistente.
+- Na trilha e nas lições, “Consultar uma dúvida” usa `ActionLink` com variante
+  `ghost` e tamanho `sm`, abaixo da ação principal. Na consulta rápida, só “Voltar”
+  com `ArrowLeft`, usando o botão `secondary` de tamanho padrão. O assistente usa o `Eletriquinho` original e texto
+  visível “Assistente”, em amarelo; seu microfone fica dentro do Drawer.
 - Rolagem: só vertical (`overflow-x: hidden`), barra fina arredondada em `--primary-200`,
   conteúdo esmaece ao passar sob a barra de ações (`mask-image`) e a barra tem sombra leve.
   Nova pergunta da prática e novo passo do simulador voltam ao topo (`scrollJourneyToTop`);
@@ -67,8 +78,8 @@ regra nova não aparecer, pare o servidor, apague `.next/dev/cache` e suba de no
   das fontes de apps de ensino. Texto base com peso 500; títulos 900; botões 800.
 - Botões e opções com cantos de 16px (`--radius-lg`); rótulo de seção em azul, caixa alta
   espaçada; perguntas e lições com título 1.375rem/900.
-- Barras de progresso mais grossas com brilho interno; medidor de energia com
-  **sequência de dias** (`streakOf`, dias com avanço guardados no navegador).
+- Barras de progresso mais grossas com brilho interno; medidor de energia em kWh,
+  sem contagem de dias seguidos.
 
 ## Efeitos e gamificação gentil (DEC-EQT-036)
 
@@ -76,9 +87,13 @@ regra nova não aparecer, pare o servidor, apague `.next/dev/cache` e suba de no
   conclusão, brilho), com vibração curta. Preferência única em `lib/feedback/preferences.ts`
   (botão de som do Drawer controla voz e efeitos; ligado por padrão).
 - **Prática:** faixa colorida na barra inferior (verde/laranja, via `:has`), “N seguidas!”,
-  selo “Lição perfeita” e resumo animado (energia, acertos, tempo, ofensiva).
-- **Celebrações** (`components/brand/streak-moment.tsx`): fila de avisos de ofensiva e selos
-  no topo; só comemoram.
+  selo “Lição perfeita” e resumo animado (energia e acertos; revisão mostra itens
+  revisados e acertos). Tempo e ofensiva foram removidos em 18/10/2026.
+- **Celebrações** (`components/brand/badge-moment.tsx`): fila de avisos de novos selos
+  no topo; só comemoram. Não há avisos de ofensiva nem contagem diária de avanços.
 - **Selos** (`badge-shelf.tsx`) e **revisão** (`review-card.tsx`) no mapa da trilha.
+- A conclusão da trilha e o resultado da prática não oferecem certificado,
+  geração de imagem, download ou compartilhamento de certificado (removido em 18/10/2026).
 - **Lições:** desafio de toque na ilustração antes do destaque.
-- **Eletriquinho no Drawer** com humor pelo estado; botão flutuante só com o microfone.
+- **Eletriquinho no Drawer** com humor pelo estado; acionador externo com o mascote e
+  texto “Assistente”. O controle de gravação interno mantém o microfone.

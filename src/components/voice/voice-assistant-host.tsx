@@ -443,7 +443,10 @@ export function VoiceAssistantHost() {
     >
       <DrawerTrigger
         render={
-          <VoiceHelpButton aria-label="Abrir assistente" aria-expanded={open} />
+          <VoiceHelpButton
+            aria-label="Abrir Assistente Digitaliza Aí"
+            aria-expanded={open}
+          />
         }
       />
       <DrawerContent className="voice-drawer-popup">

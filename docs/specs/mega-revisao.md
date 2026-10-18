@@ -114,5 +114,9 @@ desafio de toque nas duas lições, home levando à lição 1, canal com os dois
 Drawer com o Eletriquinho. Não verificado: som e vibração reais (testes com som desligado),
 certificado gerado e compartilhado, humores “escutando/falando” com microfone real.
 
+Atualização de 18/10/2026: o certificado foi removido a pedido do usuário; o relato
+acima é histórico. Escopo e verificações da remoção estão na
+[sessão Claude](sessao-claude-2026-10.md#atualizacao-remocao-do-certificado-18102026).
+
 Backlog: painel de autonomia para a Equatorial (precisa de endpoint público agregado),
 lembretes (Web Push), meta diária configurável, repetição espaçada entre sessões.

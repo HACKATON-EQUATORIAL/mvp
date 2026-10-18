@@ -1,34 +1,35 @@
 "use client";
 
-import { Flame, Zap } from "lucide-react";
-import {
-  ENERGY_MAX,
-  energyOf,
-  streakOf,
-  useJourneyProgress,
-} from "../_lib/progress";
+import { Zap } from "lucide-react";
+import { ENERGY_MAX, energyOf, useJourneyProgress } from "../_lib/progress";
 import styles from "./roadmap.module.css";
 
 /** Energia acumulada na trilha (kWh de conhecimento). */
-export function EnergyMeter() {
+export function EnergyMeter({ completed }: { completed: boolean }) {
   const progress = useJourneyProgress();
   const energy = energyOf(progress);
-  const streak = streakOf(progress);
   return (
     <div className={styles.energy}>
-      <span className="sr-only">Energia acumulada:</span>
-      <Zap size={20} aria-hidden="true" />
-      <strong>{energy}</strong>
-      <span>/ {ENERGY_MAX} kWh</span>
-      {streak > 0 && (
-        <span className={styles.streak}>
-          <Flame size={18} aria-hidden="true" />
-          {streak} {streak === 1 ? "dia" : "dias"} seguidos
+      <div className={styles.energyHeader}>
+        <h2 className={styles.energyTitle}>Energia de Aprendizado</h2>
+        <span className={styles.energyStatus}>
+          {completed ? "Meta atingida!" : "Em progresso"}
         </span>
-      )}
+      </div>
+      <div className={styles.energyScore}>
+        <span className="sr-only">Energia acumulada:</span>
+        <Zap size={20} aria-hidden="true" />
+        <strong>{energy}</strong>
+        <span>/ {ENERGY_MAX} kWh virtuais</span>
+      </div>
       <span className={styles.energyBar} aria-hidden="true">
         <span style={{ width: `${(energy / ENERGY_MAX) * 100}%` }} />
       </span>
+      <p className={styles.energyMessage}>
+        {completed
+          ? "Você completou sua jornada de aprendizado!"
+          : "Ganhe energia ao concluir as lições."}
+      </p>
     </div>
   );
 }

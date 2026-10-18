@@ -8,6 +8,7 @@ Contratos atuais de tokens, componentes e configuração não são duplicados aq
 
 | Spec | Conteúdo |
 | --- | --- |
+| [Rodapés e assistente](rodapes-assistente.md) | Hierarquia das ações inferiores, consulta discreta e acionador do assistente com identificação visível |
 | [Sessão Claude (out/2026)](sessao-claude-2026-10.md) | Tudo o que foi feito na sessão longa: integração com o backend, assistente, design, gamificação e canal oficial |
 | [Mega revisão](mega-revisao.md) | Diagnóstico, status por item, verificação e estudo Duolingo |
 | [Canais oficiais](canais-oficiais.md) | Mapeamento da Agência Virtual e da Clara, simulador e saída real |

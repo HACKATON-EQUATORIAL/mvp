@@ -93,14 +93,21 @@ export function StepLesson({
         ) : (
           primary && (
             <ActionLink variant="primary" href={primary.href}>
-              {primary.label}
+              Próxima etapa
             </ActionLink>
           )
         )}
+        <ActionLink
+          variant="ghost"
+          size="sm"
+          href={withContext(routes.etapas, context)}
+        >
+          Consultar uma dúvida
+        </ActionLink>
       </PageActions>
       <nav aria-label="Outros caminhos" className="grid gap-2 pt-2">
         {links
-          .filter((link) => link !== primary)
+          .filter((link) => link !== primary && link.kind !== "consult")
           .map((link) => (
             <ActionLink key={link.kind + link.href} href={link.href}>
               {link.label}

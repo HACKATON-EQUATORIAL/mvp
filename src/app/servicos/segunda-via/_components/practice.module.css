@@ -320,15 +320,3 @@
 .stat[data-tone="success"] strong {
   color: var(--success-600);
 }
-.stat[data-tone="primary"] {
-  border-color: var(--primary-200);
-}
-.stat[data-tone="primary"] strong {
-  color: var(--primary-500);
-}
-.stat[data-tone="streak"] {
-  border-color: var(--warning-200);
-}
-.stat[data-tone="streak"] strong {
-  color: var(--warning-600);
-}

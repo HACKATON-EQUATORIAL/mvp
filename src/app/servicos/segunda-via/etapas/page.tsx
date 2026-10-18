@@ -1,3 +1,4 @@
+import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { TrackOverview } from "@/app/servicos/segunda-via/_components/track-overview";
@@ -81,8 +82,11 @@ async function PageActions({
         Tive outro problema
       </ActionLink>
       <BottomActions>
-        <ActionLink href={returnTo(context, "etapas", routes.preparacao)}>
-          Voltar
+        <ActionLink
+          variant="secondary"
+          href={returnTo(context, "etapas", routes.preparacao)}
+        >
+          <ArrowLeft size={18} aria-hidden="true" /> Voltar
         </ActionLink>
       </BottomActions>
     </>

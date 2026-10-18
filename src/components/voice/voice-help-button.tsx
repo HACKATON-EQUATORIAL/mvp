@@ -1,5 +1,5 @@
-import { Mic } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
+import { Eletriquinho } from "@/components/brand/eletriquinho";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -17,8 +17,8 @@ export function VoiceHelpButton({ children, ...props }: VoiceHelpButtonProps) {
       {...props}
       className={cn("voice-help-button", props.className)}
     >
-      <Mic size={28} aria-hidden="true" className="voice-help-button-icon" />
-      <span className="sr-only">{children ?? "Assistente"}</span>
+      <Eletriquinho size={32} className="voice-help-button-mascot" />
+      <span>{children ?? "Assistente"}</span>
     </Button>
   );
 }

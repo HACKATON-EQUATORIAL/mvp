@@ -76,7 +76,6 @@ export function usePracticeSession(
   // Estatísticas da sessão (só para motivação; o acerto vem da API).
   const [combo, setCombo] = useState(0);
   const [mistakes, setMistakes] = useState(0);
-  const startedAt = useRef<number | null>(null);
 
   const query = useGetAttempt(attemptId ?? "", {
     enabled: !!attemptId,
@@ -127,10 +126,6 @@ export function usePracticeSession(
     );
   }, [state, mode]);
   useEffect(() => () => setPracticeActivity(null), []);
-  useEffect(() => {
-    if (state?.status === "in_progress" && startedAt.current === null)
-      startedAt.current = Date.now();
-  }, [state?.status]);
 
   function choose(optionId: string) {
     const item = state?.current_item;
@@ -192,7 +187,6 @@ export function usePracticeSession(
     engaged.current = false;
     setCombo(0);
     setMistakes(0);
-    startedAt.current = null;
     setAnswer(null);
     setWrongIds([]);
     setHelp(null);
@@ -211,8 +205,6 @@ export function usePracticeSession(
     state,
     combo,
     mistakes,
-    elapsedMs: () =>
-      startedAt.current === null ? 0 : Date.now() - startedAt.current,
     // Enquanto o acerto é exibido, a tela mantém o item respondido.
     item: answer?.correct ? answer.item : (state?.current_item ?? null),
     answer,

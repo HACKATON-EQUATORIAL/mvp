@@ -174,25 +174,37 @@ alto-falante no cabeçalho liga/desliga (padrão ligado, só em memória). A fal
 fechar, navegar, iniciar nova gravação ou desligar. `prime()` roda no toque do microfone para
 liberar a fala assíncrona no iOS. Sem suporte do navegador, o botão não aparece.
 
-## Nível de cautela decidido pela LLM
+## Política de navegação (DEC-EQT-033)
 
-Tipos: `information`, `clarification`, `proposal` (navega), `confirmation_request` (pede
-confirmação: `actionId` + até 2 `optionIds` alternativos), `confirmation`, `cancellation`,
-`out_of_scope`. O prompt traz a matriz por situação:
+Pedido claro vai direto (`proposal`), de qualquer tela. Só não navega quando:
+- é amplo ou tem vários destinos plausíveis → `clarification` (2–3 opções);
+- a fala está confusa, mas há um destino provável → `confirmation_request`
+  (“Você quis dizer…?”, Sim + até 2 alternativas);
+- está fora do escopo → `out_of_scope` com o que dá para fazer e até 2 opções;
+- já está na tela pedida → `information`.
 
-| Situação | Resposta |
-| --- | --- |
-| Dentro da trilha, tela específica ou voltar ao início | `proposal` |
-| Pedido que leva a outra trilha (ex.: na home, “quero segunda via”) | `confirmation_request` na entrada da trilha, com alternativas específicas |
-| Pedido específico vindo de fora (ex.: “quero praticar” na home) | `confirmation_request` na tela pedida, com a entrada como alternativa |
-| Amplo, confuso ou vários destinos | `clarification` (2–3 opções) |
-| Já está na tela pedida | `information` |
+“Sim”/“não” curtos com ação pendente são resolvidos no servidor (`quickReply`), sem LLM.
+O guard de interrupção da prática continua determinístico no app.
 
-No cliente, `confirmation_request` guarda `pendingActionId`, fala a pergunta e mostra Sim, as
-alternativas e “Não, ver opções”. “Sim” por voz chega como `confirmation` do mesmo ID. O servidor
-normaliza `confirmation_request` dentro da mesma trilha para `proposal`. O guard de interrupção
-de prática segue determinístico no app; cliques em botões navegam direto. Resposta inválida de
-um modelo aciona o próximo da cadeia (ver “Limite de uso”).
+### Prompt e custo
 
-Verificação: cenários reais na Groq (home, trilha, prática, fala confusa, sim/alternativa/não) em
-17/10/2026; falta o teste por microfone no aparelho.
+O prompt foi reduzido (~6.000 → ~2.600 caracteres) com exemplos curtos, e a entrada do
+modelo é compactada em `compactInput` (ações como “id | rótulo | descrição”, sem textos de
+confirmação; histórico só com tipo/ação/opções). As descrições dos alvos de voz
+(`_lib/voice-target.ts`) trazem as palavras que as pessoas usam (fatura, mês, código de
+barras, site não abre). `gpt-oss` roda com `reasoning_effort: "medium"` (~1–1,5 s por
+resposta), que acertou pedidos como “identificar o mês da fatura” → lição de conferir.
+
+## "Nada disso", contexto do backend e guard real (mega revisão)
+
+- **"Nada disso, quero outra coisa"** aparece em toda lista de opções (boas-vindas, resposta,
+  confirmação). Guarda as opções exibidas em `rejectedOptionIds` (só na página atual) e já abre o
+  microfone pedindo outras palavras. A LLM não pode reapresentá-las; o servidor também as remove
+  de `optionIds`/`actionId` e, se nada sobrar, responde `information` com franqueza.
+- **Contexto:** `context.practice` (modo, pergunta atual/total, sem gabarito) e
+  `catalog.secondCopy.difficulties` (rótulos de `GET /difficulties`) entram no pedido.
+- **Fora de escopo** nunca termina em “não posso”: explica o que dá para fazer e oferece até 2 opções.
+- **Guard de interrupção:** usa `lib/practice/activity.ts`, publicado pela tela de prática. Só
+  pergunta com tentativa em andamento e já respondida/ajudada; informa a pergunta atual e que a
+  tentativa fica salva para retomar.
+- **Pedido da própria tela:** não navega (evita apagar a conversa); responde que já está nela.

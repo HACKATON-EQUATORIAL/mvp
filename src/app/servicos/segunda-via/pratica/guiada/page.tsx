@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { PracticeChoice } from "@/app/servicos/segunda-via/_components/practice-choice";
+import { PracticeSession } from "@/app/servicos/segunda-via/_components/practice-session";
 import {
   routes,
   withContext,
 } from "@/app/servicos/segunda-via/_lib/navigation";
-import { JourneyCard } from "@/components/layout/journey-card";
 import { JourneyPage } from "@/components/layout/journey-page";
 import type { VoicePageContext } from "@/components/voice/voice-page-context";
 
@@ -31,21 +30,18 @@ const voiceContext: VoicePageContext = {
   ],
 };
 
-export const metadata: Metadata = { title: "Vamos praticar" };
+export const metadata: Metadata = { title: "Vamos praticar com apoio" };
 
 export default function Page() {
   return (
     <JourneyPage
-      eyebrow="PRÁTICA GUIADA"
-      title="Vamos praticar"
-      intro="Você precisa de outra via da conta. Qual serviço escolheria?"
+      eyebrow="PRÁTICA COM APOIO"
+      title="Vamos praticar com apoio"
+      intro="Responda 3 perguntas com uma conta de exemplo. Se errar, a explicação aparece e você tenta de novo."
       voiceContext={voiceContext}
-      actions={<PracticeChoice guided />}
+      actions={null}
     >
-      <JourneyCard title="Dica disponível">
-        Procure o nome do serviço que corresponde à tarefa. Este é um exemplo de
-        prática, sem dados reais.
-      </JourneyCard>
+      <PracticeSession mode="guided" />
     </JourneyPage>
   );
 }

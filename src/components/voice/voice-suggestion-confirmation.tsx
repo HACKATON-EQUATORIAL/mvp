@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { OtherOption } from "./voice-other-option";
 import type { VoicePageSuggestion } from "./voice-page-context";
 import { VoiceStep } from "./voice-step";
 
@@ -11,6 +12,7 @@ export function VoiceSuggestionConfirmation({
   onContinue,
   onSelectAlternative,
   onBack,
+  onReject,
 }: {
   title?: string;
   suggestion: VoicePageSuggestion;
@@ -20,6 +22,7 @@ export function VoiceSuggestionConfirmation({
   onContinue: () => void;
   onSelectAlternative?: (id: string) => void;
   onBack: () => void;
+  onReject?: () => void;
 }) {
   return (
     <VoiceStep title={title} description={suggestion.confirmation}>
@@ -40,6 +43,7 @@ export function VoiceSuggestionConfirmation({
       <Button type="button" variant="secondary" onClick={onBack}>
         {backLabel}
       </Button>
+      {onReject && <OtherOption onClick={onReject} />}
     </VoiceStep>
   );
 }

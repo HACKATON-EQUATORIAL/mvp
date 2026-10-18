@@ -3,9 +3,9 @@ import type { VoiceTarget } from "@/lib/assistant/journey";
 
 export const targetPraticaGuiada: VoiceTarget = {
   id: "segunda-via.pratica-guiada",
-  label: "Abrir prática guiada",
+  label: "Praticar com apoio",
   description:
-    "Exercício demonstrativo de escolha com ajuda. Abrir não responde o exercício.",
+    "Prática com dicas e explicação: 3 perguntas sobre encontrar a segunda via e conferir o mês da conta. Começar a praticar.",
   href: routes["pratica-guiada"],
   contextPrefix: "segunda-via.pratica-guiada",
   origin: "pratica-guiada",

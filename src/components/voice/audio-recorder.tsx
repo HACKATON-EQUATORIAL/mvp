@@ -8,12 +8,14 @@ export function AudioRecorder({
   canRetry,
   onBack,
   onRetry,
+  rephrase = false,
 }: {
   phase: SpeechPhase;
   error: string;
   canRetry: boolean;
   onBack: () => void;
   onRetry: () => void;
+  rephrase?: boolean;
 }) {
   return (
     <VoiceStep
@@ -21,7 +23,9 @@ export function AudioRecorder({
         phase === "requesting"
           ? "Vamos começar?"
           : phase === "recording"
-            ? "Estou ouvindo…"
+            ? rephrase
+              ? "Diga com outras palavras"
+              : "Estou ouvindo…"
             : phase === "transcribing"
               ? "Transcrevendo seu pedido…"
               : phase === "error"
@@ -32,7 +36,9 @@ export function AudioRecorder({
         phase === "requesting"
           ? "Permita o microfone para contar o que você precisa."
           : phase === "recording"
-            ? "Fale no seu ritmo. Quando terminar, toque em parar."
+            ? rephrase
+              ? "Conte o que você procura, do seu jeito. Vou sugerir caminhos diferentes."
+              : "Fale no seu ritmo. Quando terminar, toque em parar."
             : phase === "transcribing"
               ? "Estou identificando seu pedido."
               : "Você pode gravar outra mensagem ou voltar às opções."

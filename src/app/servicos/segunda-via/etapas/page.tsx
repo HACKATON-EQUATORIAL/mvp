@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { TrackOverview } from "@/app/servicos/segunda-via/_components/track-overview";
 import {
   readContext,
   returnTo,
@@ -26,12 +27,12 @@ export default function Page({
           <PageVoice searchParams={searchParams} />
         </Suspense>
       }
-      actions={
-        <Suspense fallback={<p role="status">Preparando a navegação…</p>}>
-          <PageActions searchParams={searchParams} />
-        </Suspense>
-      }
-    />
+      actions={null}
+    >
+      <Suspense fallback={<p role="status">Preparando a navegação…</p>}>
+        <PageActions searchParams={searchParams} />
+      </Suspense>
+    </JourneyPage>
   );
 }
 
@@ -74,31 +75,12 @@ async function PageActions({
   const context = readContext(await searchParams);
   return (
     <>
-      <ActionLink
-        href={withContext(`${routes.etapas}/encontrar`, {
-          ...context,
-          etapa: "encontrar",
-        })}
-      >
-        Como encontrar segunda via
-      </ActionLink>
-      <ActionLink
-        href={withContext(`${routes.etapas}/conferir`, {
-          ...context,
-          etapa: "conferir",
-        })}
-      >
-        Como conferir o resultado
-      </ActionLink>
+      <TrackOverview mode="consult" context={context} />
       <ActionLink href={withContext(routes.dificuldades, context)}>
-        Não consegui acessar o canal
+        Tive outro problema
       </ActionLink>
-      <ActionLink variant="primary" href={routes.preparacao}>
-        Quero aprender desde o início
-      </ActionLink>
-      <ActionLink href={returnTo(context, "etapas", "/")}>Voltar</ActionLink>
-      <ActionLink href={withContext(routes.canal, context)}>
-        Ir ao canal oficial
+      <ActionLink href={returnTo(context, "etapas", routes.preparacao)}>
+        Voltar
       </ActionLink>
     </>
   );

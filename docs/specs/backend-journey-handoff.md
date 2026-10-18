@@ -1,7 +1,7 @@
 # Handoff: integração da jornada com o backend
 
-**Responsável:** outra pessoa e sua IA, conforme divisão do usuário em 17/10/2026.
-**Estado:** pendente. Esta frente não bloqueia a entrega inicial da LLM.
+**Responsável:** assumido pela frente de STT/LLM em 17/10/2026 (mega revisão); outra pessoa pode revisar.
+**Estado:** integrado (seções 1 a 3). Pendências na seção 4 e em [mega revisão](mega-revisao.md).
 
 ## O que já existe
 
@@ -18,27 +18,27 @@
 
 ### 1. Apresentação da trilha
 
-- [ ] Migrar `src/app/servicos/segunda-via/page.tsx` para o detalhe real da trilha
+- [x] Migrar `src/app/servicos/segunda-via/page.tsx` para o detalhe real da trilha
   via `useGetTrack`/`getTrack` em `src/http/track/get-track.ts`.
-- [ ] Exibir título, objetivo, aviso demonstrativo e etapas do contrato; respeitar
+- [x] Exibir título, objetivo, aviso demonstrativo e etapas do contrato; respeitar
   `status` e `content_version`, com loading, indisponível, erro/retry e vazio.
-- [ ] Preservar a home como escolha de trilhas e permitir voltar a ela.
+- [x] Preservar a home como escolha de trilhas e permitir voltar a ela.
 
 ### 2. Explicações, etapas, dificuldades e canal
 
-- [ ] Integrar `explicacao/page.tsx`, `etapas/page.tsx`, `etapas/[etapa]/page.tsx`,
+- [x] Integrar `explicacao/page.tsx`, `etapas/page.tsx`, `etapas/[etapa]/page.tsx`,
   `dificuldades/page.tsx` e `canal/page.tsx` usando os GETs existentes.
-- [ ] Detalhe: GET /api/v1/tracks/{track_id}.
-- [ ] Etapa: GET /api/v1/tracks/{track_id}/steps/{step_id}.
-- [ ] Dificuldades: GET /api/v1/tracks/{track_id}/difficulties.
-- [ ] Canal: GET /api/v1/channel-exit?track_id=segunda-via.
-- [ ] Resolver a diferença de IDs explicitamente: rotas locais usam `encontrar`
+- [x] Detalhe: GET /api/v1/tracks/{track_id}.
+- [x] Etapa: GET /api/v1/tracks/{track_id}/steps/{step_id}.
+- [x] Dificuldades: GET /api/v1/tracks/{track_id}/difficulties.
+- [x] Canal: GET /api/v1/channel-exit?track_id=segunda-via.
+- [x] Resolver a diferença de IDs explicitamente: rotas locais usam `encontrar`
   e `conferir`; o backend usa `encontrar-servico` e `conferir-resultado`. Não enviar
   os aliases locais para a API. Se preservar URLs atuais, adaptar na camada local
   da jornada; não traduzir nomes arbitrariamente no transporte HTTP.
-- [ ] Preservar `origem` e `etapa` de `_lib/navigation.ts`, Suspense para queries
+- [x] Preservar `origem` e `etapa` de `_lib/navigation.ts`, Suspense para queries
   de URL e o retorno correto após consultas/interrupções.
-- [ ] Não inventar URL oficial: `is_simulated: true` e `url: null` não autorizam
+- [x] Não inventar URL oficial: `is_simulated: true` e `url: null` não autorizam
   redirecionar para um endereço suposto.
 
 ### 3. Prática no backend (fase posterior aos GETs)
@@ -47,17 +47,17 @@ A prática atual está em `pratica/*`, `_components/practice-choice.tsx` e
 `_lib/content.ts`. A outra pessoa implementará a migração; esta entrega de LLM
 não cria tentativas, não envia respostas e não altera o banco.
 
-- [ ] Conferir `../back/openapi.json`, `../back/src/digitaliza_api/practice/router.py`
+- [x] Conferir `../back/openapi.json`, `../back/src/digitaliza_api/practice/router.py`
   e `schemas.py`; criar contratos Zod a partir das respostas atuais.
-- [ ] POST /api/v1/practice/attempts cria tentativa com track_id/mode.
-- [ ] GET /api/v1/practice/attempts/{attempt_id} retoma o estado.
-- [ ] POST .../{attempt_id}/actions, /help e /abandon conforme o contrato.
-- [ ] Essas operações usam UUID anônimo em X-Session-Id. Definir armazenamento e
+- [x] POST /api/v1/practice/attempts cria tentativa com track_id/mode.
+- [x] GET /api/v1/practice/attempts/{attempt_id} retoma o estado.
+- [x] POST .../{attempt_id}/actions, /help e /abandon conforme o contrato.
+- [x] Essas operações usam UUID anônimo em X-Session-Id. Definir armazenamento e
   retomada dessa sessão com o usuário/equipe; não confundir com login ou com a
   transcrição em memória do assistente.
-- [ ] Renderizar current_item, progress, last_feedback e status da resposta;
+- [x] Renderizar current_item, progress, last_feedback e status da resposta;
   remover correção/gabarito locais. Não inferir sucesso antes da resposta da API.
-- [ ] Só então introduzir mutations e invalidação por tentativa, sem colocar
+- [x] Só então introduzir mutations e invalidação por tentativa, sem colocar
   domínio no Next nem usar a LLM como motor de prática.
 
 ### 4. Validação real progressiva

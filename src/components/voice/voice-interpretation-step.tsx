@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import type { VoiceInterpretationState } from "@/hooks/use-voice-interpretation";
 import type { VoiceAction } from "@/lib/assistant/journey";
 import type { InterpretationRequest } from "@/lib/assistant/schemas";
+import { OtherOption } from "./voice-other-option";
 import { VoiceStep } from "./voice-step";
 
 export function VoiceInterpretationStep({
@@ -13,6 +14,7 @@ export function VoiceInterpretationStep({
   onRetry,
   onCancel,
   onBack,
+  onReject,
   onConfirm,
   canListen,
   speaking,
@@ -25,6 +27,7 @@ export function VoiceInterpretationStep({
   onRetry: () => void;
   onCancel: () => void;
   onBack: () => void;
+  onReject: () => void;
   onConfirm: (id: string) => void;
   canListen: boolean;
   speaking: boolean;
@@ -106,29 +109,28 @@ export function VoiceInterpretationStep({
           </Button>
         )}
       </div>
-      {(options.length > 0 || askedId) && (
-        <div className="voice-suggestions">
-          {askedId && (
-            <Button variant="primary" onClick={() => onConfirm(askedId)}>
-              Sim
-            </Button>
-          )}
-          {options.map((item) => (
-            <Button
-              key={item.id}
-              variant="secondary"
-              onClick={() => onSelectSuggestion(item.id)}
-            >
-              {item.label}
-            </Button>
-          ))}
-          {askedId && (
-            <Button variant="secondary" onClick={onBack}>
-              Não, ver opções
-            </Button>
-          )}
-        </div>
-      )}
+      <div className="voice-suggestions">
+        {askedId && (
+          <Button variant="primary" onClick={() => onConfirm(askedId)}>
+            Sim
+          </Button>
+        )}
+        {options.map((item) => (
+          <Button
+            key={item.id}
+            variant="secondary"
+            onClick={() => onSelectSuggestion(item.id)}
+          >
+            {item.label}
+          </Button>
+        ))}
+        {askedId && (
+          <Button variant="secondary" onClick={onBack}>
+            Não, ver opções
+          </Button>
+        )}
+        <OtherOption onClick={onReject} />
+      </div>
     </section>
   );
 }

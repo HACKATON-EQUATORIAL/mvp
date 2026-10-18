@@ -23,7 +23,7 @@ export const homeTarget: VoiceAction = {
   id: "app.inicio",
   label: "Escolher uma trilha",
   href: "/",
-  description: "Home com catálogo de trilhas de aprendizagem.",
+  description: "Início: escolher outra trilha de aprendizagem.",
   confirmation: "Você quer voltar à escolha de trilhas?",
 };
 export function buildVoiceActions(

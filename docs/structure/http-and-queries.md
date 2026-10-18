@@ -18,13 +18,17 @@ Não importar Axios, Vite, cookies, organização, auth ou toasts do outro proje
 ```text
 src/
 ├── http/
-│   ├── api.ts                        # Transporte GET e validação da resposta
+│   ├── api.ts                        # apiRequest (GET/POST, X-Session-Id opcional) + apiGet
 │   ├── track/
 │   │   ├── get-tracks.ts              # Fn privada + getTracks + useGetTracks
 │   │   ├── get-track.ts
 │   │   ├── get-step.ts
 │   │   └── get-difficulties.ts
-│   └── channel/get-channel-exit.ts
+│   ├── channel/get-channel-exit.ts
+│   ├── practice/
+│   │   ├── get-attempt.ts             # Query da tentativa (retomada)
+│   │   └── practice-commands.ts       # Mutations: criar, responder, ajuda, abandonar
+│   └── events/post-events.ts          # POST /events, melhor-esforço
 ├── lib/query-client.ts               # Configuração/cache por ambiente
 ├── queries/
 │   └── keys/
@@ -32,8 +36,10 @@ src/
 │       └── channel/get-channel-exit.ts
 ├── schemas/http/
 │   ├── track.ts                      # Respostas reais do backend FastAPI
-│   └── channel.ts
+│   ├── channel.ts
+│   └── practice.ts                   # AttemptState/HelpResponse (sem gabarito)
 ├── lib/error/api-error.ts            # Erro HTTP normalizado
+├── lib/session-id.ts                 # UUID anônimo (localStorage) para X-Session-Id
 └── components/providers/query-provider.tsx
 ```
 
@@ -89,15 +95,20 @@ escopo de organização, autenticação ou filtros inexistentes no contrato Pyth
 
 QueryClient é estável no navegador e isolado no servidor: staleTime de 60s,
 gcTime de 5min e sem refetch ao focar a janela. Uma repetição para falha transitória;
-4xx e resposta inválida não são repetidos. Cache somente em memória. Não há
-mutations ou invalidação automática nesta entrega. STT não passa por esse cache.
+4xx e resposta inválida não são repetidos. Cache somente em memória. STT não passa por esse cache.
+
+Mutations da prática (`http/practice/practice-commands.ts`) gravam a resposta do
+backend no cache da tentativa (`setQueryData`); o front nunca infere acerto. Prática e
+eventos enviam `X-Session-Id`, um UUID anônimo do navegador, sem login nem dado pessoal.
+O ID da tentativa fica em `sessionStorage` por modo para retomar após recarregar.
 
 ## Consumidor e ambiente
 
 A home usa useGetTracks. Loading inicial usa Skeleton shadcn com status acessível;
 refetch com dados preserva os cards. Vazio, offline e falha com retry têm estados
 próprios. Só jornadas disponíveis já implementadas no front podem ser abertas.
-Outras telas ainda são locais; queries preparadas não equivalem à migração completa.
+As telas de segunda via (trilha, lições, consulta, dificuldades, canal, prática e
+resultado) consomem a API; ver `docs/specs/mega-revisao.md`.
 
 Não há prefetch server do catálogo nesta entrega: build independe da API, e a
 consulta começa no navegador. NEXT_PUBLIC_API_URL inclui /api/v1, é validada em

@@ -3,9 +3,9 @@ import type { VoiceTarget } from "@/lib/assistant/journey";
 
 export const targetPraticaIndividual: VoiceTarget = {
   id: "segunda-via.pratica-individual",
-  label: "Abrir prática individual",
+  label: "Praticar sozinho",
   description:
-    "Exercício de escolha com menos ajuda. Abrir não responde o exercício.",
+    "Prática sem dica automática, as mesmas 3 perguntas. Treinar sem ajuda.",
   href: routes["pratica-individual"],
   contextPrefix: "segunda-via.pratica-individual",
   origin: "pratica-individual",

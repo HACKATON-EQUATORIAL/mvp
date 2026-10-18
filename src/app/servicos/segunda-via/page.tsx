@@ -1,26 +1,32 @@
 import type { Metadata } from "next";
+import { TrackRoadmap } from "@/app/servicos/segunda-via/_components/track-roadmap";
 import {
   routes,
   withContext,
 } from "@/app/servicos/segunda-via/_lib/navigation";
-import { JourneyCard } from "@/components/layout/journey-card";
 import { JourneyPage } from "@/components/layout/journey-page";
-import { ActionLink } from "@/components/ui/action-link";
 import type { VoicePageContext } from "@/components/voice/voice-page-context";
 
 const voiceContext: VoicePageContext = {
   id: "segunda-via.preparacao",
-  description: "Posso explicar o caminho ou ajudar você a consultar uma etapa.",
+  description:
+    "Mapa da trilha: duas lições, prática com apoio, prática sozinho e, por fim, o canal oficial. Posso começar a primeira lição ou abrir a prática.",
   suggestions: [
     {
-      id: "explain",
-      label: "Começar explicação",
-      confirmation: "Você quer ler a explicação geral.",
-      href: routes.explicacao,
+      id: "first-lesson",
+      label: "Começar a primeira lição",
+      confirmation: "Você quer abrir a lição sobre como encontrar o serviço.",
+      href: `${routes.etapas}/encontrar`,
+    },
+    {
+      id: "practice",
+      label: "Praticar com apoio",
+      confirmation: "Você quer iniciar a prática com apoio.",
+      href: routes["pratica-guiada"],
     },
     {
       id: "steps",
-      label: "Consultar uma etapa",
+      label: "Tirar uma dúvida",
       confirmation: "Você quer escolher uma etapa para consultar.",
       href: withContext(routes.etapas, { origem: "preparacao" }),
     },
@@ -34,31 +40,13 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <JourneyPage
-      eyebrow="ANTES DE COMEÇAR"
+      eyebrow="TRILHA · SEGUNDA VIA"
       title="Aprenda a obter outra via da conta"
-      intro="Você vai acompanhar uma explicação, praticar e tentar com menos ajuda."
+      intro="Siga os passos no seu ritmo: aprenda, pratique com apoio e depois tente sozinho."
       voiceContext={voiceContext}
-      actions={
-        <>
-          <ActionLink variant="primary" href={routes.explicacao}>
-            Começar explicação
-          </ActionLink>
-          <ActionLink
-            href={withContext(routes.etapas, { origem: "preparacao" })}
-          >
-            Prefiro consultar uma etapa
-          </ActionLink>
-          <ActionLink href="/">Voltar</ActionLink>
-        </>
-      }
+      actions={null}
     >
-      <JourneyCard title="Treino seguro">
-        A prática usa uma conta de exemplo. Você não precisa informar seus
-        dados.
-      </JourneyCard>
-      <JourneyCard title="Você escolhe o ritmo">
-        Pode pedir ajuda, consultar uma etapa ou sair quando quiser.
-      </JourneyCard>
+      <TrackRoadmap />
     </JourneyPage>
   );
 }

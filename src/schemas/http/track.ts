@@ -60,3 +60,50 @@ export type TrackSummary = z.infer<typeof trackSummarySchema>;
 export type TrackDetail = z.infer<typeof trackDetailSchema>;
 export type StepDetail = z.infer<typeof stepDetailSchema>;
 export type DifficultyList = z.infer<typeof difficultyListSchema>;
+
+const simulationStepSchema = z.object({
+  id: z.string(),
+  kind: z.enum(["choose", "form", "chat", "result"]),
+  title: z.string(),
+  instruction: z.string(),
+  verified: z.boolean(),
+  bot_messages: z.array(z.string()),
+  options: z.array(
+    z.object({
+      id: z.string(),
+      label: z.string(),
+      is_expected: z.boolean(),
+      feedback: z.string().nullable(),
+    }),
+  ),
+  fields: z.array(
+    z.object({
+      id: z.string(),
+      label: z.string(),
+      example: z.string(),
+      help: z.string().nullable(),
+    }),
+  ),
+  lines: z.array(
+    z.object({ label: z.string(), value: z.string(), highlight: z.boolean() }),
+  ),
+});
+export const channelSimulationListSchema = z.object({
+  track_id: z.string(),
+  content_version: z.number().int().positive(),
+  items: z.array(
+    z.object({
+      id: z.string(),
+      channel: z.enum(["agencia_virtual", "whatsapp"]),
+      title: z.string(),
+      description: z.string(),
+      source: z.string(),
+      reviewed_at: z.string(),
+      steps: z.array(simulationStepSchema).min(1),
+    }),
+  ),
+});
+export type ChannelSimulation = z.infer<
+  typeof channelSimulationListSchema
+>["items"][number];
+export type SimulationStep = ChannelSimulation["steps"][number];

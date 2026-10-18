@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
+import { TrackOverview } from "@/app/servicos/segunda-via/_components/track-overview";
 import {
   routes,
   withContext,
 } from "@/app/servicos/segunda-via/_lib/navigation";
-import styles from "@/components/layout/journey.module.css";
-import { JourneyCard } from "@/components/layout/journey-card";
 import { JourneyPage } from "@/components/layout/journey-page";
 import { ActionLink } from "@/components/ui/action-link";
 import type { VoicePageContext } from "@/components/voice/voice-page-context";
@@ -28,37 +27,25 @@ const voiceContext: VoicePageContext = {
   ],
 };
 
-export const metadata: Metadata = { title: "Entenda o caminho" };
+export const metadata: Metadata = { title: "O caminho em duas etapas" };
 
 export default function Page() {
   return (
     <JourneyPage
-      eyebrow="EXPLICAÇÃO / VISÃO GERAL"
-      title="Entenda o caminho"
-      intro="Na prática, você vai reconhecer a opção de segunda via e conferir o resultado."
+      eyebrow="VISÃO GERAL"
+      title="O caminho em duas etapas"
+      intro="Primeiro você encontra o serviço certo. Depois confere se a conta é a que você procura."
       voiceContext={voiceContext}
       actions={
         <>
-          <ActionLink href="#explicacao">Ler explicação</ActionLink>
-          <ActionLink variant="primary" href={routes["pratica-guiada"]}>
-            Praticar agora
+          <ActionLink href={routes["pratica-guiada"]}>
+            Já entendi, quero praticar
           </ActionLink>
-          <ActionLink href={routes.preparacao}>Voltar</ActionLink>
+          <ActionLink href={routes.preparacao}>Ver a trilha</ActionLink>
         </>
       }
     >
-      <div id="explicacao" tabIndex={-1} className={styles.content}>
-        <JourneyCard title="1. Encontrar o serviço">
-          Localize a opção correspondente à sua necessidade.
-        </JourneyCard>
-        <JourneyCard title="2. Conferir o resultado">
-          Verifique se chegou à conta que pretendia obter.
-        </JourneyCard>
-        <p>
-          Este caminho é ilustrativo. As opções e os passos reais dependem do
-          canal oficial, ainda a confirmar.
-        </p>
-      </div>
+      <TrackOverview mode="learn" />
     </JourneyPage>
   );
 }

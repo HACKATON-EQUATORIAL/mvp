@@ -30,6 +30,10 @@ import {
   type InterpretationResult,
   MAX_CONVERSATION_TURNS,
 } from "@/lib/assistant/schemas";
+import {
+  getPracticeActivity,
+  usePracticeActivity,
+} from "@/lib/practice/activity";
 import { AudioRecorder } from "./audio-recorder";
 import { useVoicePage } from "./voice-assistant-provider";
 import { VoiceAudioDock } from "./voice-audio-dock";
@@ -41,8 +45,20 @@ import { VoiceSuggestionConfirmation } from "./voice-suggestion-confirmation";
 import { VoiceWelcomeStep } from "./voice-welcome-step";
 
 function leaveConfirmation(label: string) {
-  return `Sair desta tela pode interromper a prática atual. Quer continuar para ${label.toLocaleLowerCase("pt-BR")}?`;
+  const activity = getPracticeActivity();
+  const where = activity
+    ? `Você está na pergunta ${activity.current} de ${activity.total}. `
+    : "";
+  return `${where}Se sair agora, pode continuar a prática depois de onde parou. Quer ir para ${label.toLocaleLowerCase("pt-BR")}?`;
 }
+
+const sameScreen: InterpretationResult = {
+  type: "information",
+  message: "Você já está nesta tela. Posso ajudar com outra coisa?",
+  showCatalog: false,
+  optionIds: [],
+  actionId: null,
+};
 
 const activeSpeechPhases = new Set(["requesting", "recording", "transcribing"]);
 
@@ -58,6 +74,10 @@ export function VoiceAssistantHost() {
   );
   const [pendingActionId, setPendingActionId] = useState<string | null>(null);
   const [presentedOptionIds, setPresentedOptionIds] = useState<string[]>([]);
+  // Opções recusadas com "Nada disso" nesta página (não voltam a ser sugeridas).
+  const [rejectedIds, setRejectedIds] = useState<string[]>([]);
+  const [rephrasing, setRephrasing] = useState(false);
+  const practice = usePracticeActivity();
   const assistant = useVoiceAssistant();
   const speech = useSpeechToText();
   const tts = useSpeechSynthesis();
@@ -111,6 +131,8 @@ export function VoiceAssistantHost() {
     assistant.reset();
     setHistory([]);
     setPresentedOptionIds([]);
+    setRejectedIds([]);
+    setRephrasing(false);
     setLastResponse(null);
   }, [
     locationKey,
@@ -121,7 +143,10 @@ export function VoiceAssistantHost() {
   ]);
 
   if (!context) return null;
-  const pageContext = { ...context, suggestions: options };
+  const pageContext = {
+    ...context,
+    suggestions: options.filter((item) => !rejectedIds.includes(item.id)),
+  };
 
   function resetPageSession() {
     tts.cancel();
@@ -131,6 +156,8 @@ export function VoiceAssistantHost() {
     setHistory([]);
     setPendingActionId(null);
     setPresentedOptionIds([]);
+    setRejectedIds([]);
+    setRephrasing(false);
     setLastResponse(null);
     transcriptionHandled.current = false;
   }
@@ -175,7 +202,8 @@ export function VoiceAssistantHost() {
     setOpen(false);
   }
 
-  function startRecording() {
+  function startRecording(rephrase = false) {
+    setRephrasing(rephrase);
     if (assistant.step === "welcome")
       setPresentedOptionIds(options.map((item) => item.id));
     tts.cancel();
@@ -183,6 +211,20 @@ export function VoiceAssistantHost() {
     interpretation.reset();
     assistant.setStep("capture");
     void speech.startRecording();
+  }
+
+  /** "Nada disso": guarda as opções recusadas e pede outras palavras por voz. */
+  function rejectOptions() {
+    const shown = new Set([
+      ...(assistant.step === "welcome"
+        ? options.map((item) => item.id)
+        : presentedOptionIds),
+      ...(pendingActionId ? [pendingActionId] : []),
+    ]);
+    setRejectedIds((current) => [...new Set([...current, ...shown])]);
+    setPendingActionId(null);
+    setPresentedOptionIds([]);
+    startRecording(true);
   }
 
   function cancelCapture() {
@@ -213,6 +255,16 @@ export function VoiceAssistantHost() {
       returnToOptions();
       return;
     }
+    if (current.href.split("?")[0] === pathname && !confirmed) {
+      // Pedido da própria tela: navegar só apagaria a conversa.
+      interpretation.reset();
+      setPendingActionId(null);
+      setLastResponse(sameScreen);
+      setPresentedOptionIds([]);
+      assistant.setStep("interpretation");
+      speakReply(sameScreen.message);
+      return;
+    }
     if (leavingPracticeTo(current.href) && !confirmed) {
       interpretation.reset();
       setPendingActionId(current.id);
@@ -227,12 +279,10 @@ export function VoiceAssistantHost() {
     router.push(current.href);
   }
 
+  // Guard ligado ao estado real: só pergunta se há tentativa em andamento
+  // com resposta ou ajuda já dada. A tentativa fica salva para retomar.
   function leavingPracticeTo(href: string) {
-    return (
-      !!context?.id.startsWith("segunda-via.pratica-") &&
-      !context.id.startsWith("segunda-via.pratica-concluida") &&
-      href.split("?")[0] !== pathname
-    );
+    return !!getPracticeActivity()?.engaged && href.split("?")[0] !== pathname;
   }
 
   function speakReply(text: string) {
@@ -272,6 +322,13 @@ export function VoiceAssistantHost() {
           label,
           confirmation,
         })),
+        practice: practice
+          ? {
+              mode: practice.mode,
+              current: practice.current,
+              total: practice.total,
+            }
+          : null,
       },
       catalog,
       actions: cleanActions,
@@ -283,7 +340,8 @@ export function VoiceAssistantHost() {
       presentedOptionIds: (assistant.step === "welcome"
         ? options.map((item) => item.id)
         : presentedOptionIds
-      ).filter((id) => allowed.has(id)),
+      ).filter((id) => allowed.has(id) && !rejectedIds.includes(id)),
+      rejectedOptionIds: rejectedIds.filter((id) => allowed.has(id)),
     };
     assistant.setStep("interpretation");
     const result = await interpretation.interpret(input);
@@ -430,6 +488,7 @@ export function VoiceAssistantHost() {
               <VoiceWelcomeStep
                 context={pageContext}
                 onSelectSuggestion={selectSuggestion}
+                onReject={rejectOptions}
               />
             </>
           ) : assistant.step === "capture" ? (
@@ -439,6 +498,7 @@ export function VoiceAssistantHost() {
               canRetry={speech.canRetry}
               onBack={cancelCapture}
               onRetry={speech.retry}
+              rephrase={rephrasing}
             />
           ) : assistant.step === "suggestion-confirmation" && selected ? (
             <VoiceSuggestionConfirmation
@@ -448,6 +508,7 @@ export function VoiceAssistantHost() {
               }}
               onContinue={() => continueToAction(selected, true)}
               onBack={returnToOptions}
+              onReject={rejectOptions}
             />
           ) : (
             <VoiceInterpretationStep
@@ -461,6 +522,7 @@ export function VoiceAssistantHost() {
                 assistant.setStep(lastResponse ? "interpretation" : "welcome");
               }}
               onBack={returnToOptions}
+              onReject={rejectOptions}
               onConfirm={(id) => {
                 const action = currentActions.current.find(
                   (item) => item.id === id,
@@ -481,7 +543,7 @@ export function VoiceAssistantHost() {
           seconds={speech.seconds}
           stream={speech.mediaStream}
           hasTranscript={!!assistant.transcript}
-          onStart={startRecording}
+          onStart={() => startRecording()}
           onFinish={speech.finishRecording}
           onCancel={cancelCapture}
         />

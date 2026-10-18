@@ -3,9 +3,9 @@ import type { VoiceTarget } from "@/lib/assistant/journey";
 
 export const targetPraticaConcluida: VoiceTarget = {
   id: "segunda-via.pratica-concluida",
-  label: "Ver encerramento do treino",
+  label: "Ver meu resultado",
   description:
-    "Encerramento demonstrativo e próximos caminhos. Acesso direto não conclui tentativa nem comprova aprendizagem.",
+    "Resultado da prática individual e próximo passo. Abrir não conclui nem registra a prática.",
   href: routes["pratica-concluida"],
   contextPrefix: "segunda-via.pratica-concluida",
   origin: "pratica-concluida",

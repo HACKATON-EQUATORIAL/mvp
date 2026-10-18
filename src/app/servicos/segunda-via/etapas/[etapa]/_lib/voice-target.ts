@@ -4,8 +4,9 @@ import type { VoiceTarget } from "@/lib/assistant/journey";
 export const stepTargets: VoiceTarget[] = [
   {
     id: "segunda-via.etapa.encontrar",
-    label: "Consultar como encontrar o serviço",
-    description: "Página de explicação da etapa encontrar o serviço.",
+    label: "Lição: encontrar o serviço",
+    description:
+      "Lição: onde fica a opção Segunda via no menu de serviços e como diferenciar de Consultar débitos.",
     href: `${routes.etapas}/encontrar`,
     contextPrefix: "segunda-via.etapa.encontrar",
     origin: "etapas",
@@ -13,8 +14,9 @@ export const stepTargets: VoiceTarget[] = [
   },
   {
     id: "segunda-via.etapa.conferir",
-    label: "Consultar como conferir o resultado",
-    description: "Página de explicação da etapa conferir o resultado.",
+    label: "Lição: conferir a conta",
+    description:
+      "Lição: como identificar o mês de referência da fatura e a identificação da conta (é a conta certa?).",
     href: `${routes.etapas}/conferir`,
     contextPrefix: "segunda-via.etapa.conferir",
     origin: "etapas",

@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { ChannelExit } from "@/app/servicos/segunda-via/_components/channel-exit";
 import {
   readContext,
   returnTo,
   routes,
   withContext,
 } from "@/app/servicos/segunda-via/_lib/navigation";
-import styles from "@/components/layout/journey.module.css";
-import { JourneyCard } from "@/components/layout/journey-card";
 import { JourneyPage } from "@/components/layout/journey-page";
 import { ActionLink } from "@/components/ui/action-link";
 import { VoiceHelp } from "@/components/voice/voice-help";
@@ -20,28 +19,19 @@ export default function Page({
 }: PageProps<"/servicos/segunda-via/canal">) {
   return (
     <JourneyPage
-      eyebrow="SAÍDA DO AMBIENTE DE PRÁTICA"
+      eyebrow="META DA TRILHA"
       title="Continuar no canal oficial"
-      intro="Esta demonstração termina aqui. O destino e o procedimento no canal oficial ainda precisam ser confirmados."
+      intro="Você treinou com uma conta de exemplo. Agora é a vez de fazer o pedido real no canal oficial da Equatorial."
       voiceSlot={
         <Suspense fallback={null}>
           <PageVoice searchParams={searchParams} />
         </Suspense>
       }
-      actions={
-        <Suspense fallback={<p role="status">Preparando a navegação…</p>}>
-          <PageActions searchParams={searchParams} />
-        </Suspense>
-      }
+      actions={null}
     >
-      <JourneyCard title="Destino ainda a confirmar" className={styles.warning}>
-        A Agência Virtual Equatorial é a referência proposta. Não há abertura de
-        canal externo nesta demonstração.
-      </JourneyCard>
-      <JourneyCard title="Se houver um bloqueio">
-        Se não conseguir acessar o serviço real, consulte as orientações de
-        ajuda do próprio canal oficial.
-      </JourneyCard>
+      <Suspense fallback={<p role="status">Preparando a navegação…</p>}>
+        <PageActions searchParams={searchParams} />
+      </Suspense>
     </JourneyPage>
   );
 }
@@ -79,13 +69,10 @@ async function PageActions({
   const context = readContext(await searchParams);
   return (
     <>
-      <ActionLink
-        variant="primary"
-        href={returnTo(context, "canal", routes.etapas)}
-      >
-        Voltar à orientação
+      <ChannelExit context={context} />
+      <ActionLink href={returnTo(context, "canal", routes.preparacao)}>
+        Voltar
       </ActionLink>
-      <ActionLink href="/">Voltar ao início</ActionLink>
     </>
   );
 }

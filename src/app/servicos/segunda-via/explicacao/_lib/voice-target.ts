@@ -3,9 +3,9 @@ import type { VoiceTarget } from "@/lib/assistant/journey";
 
 export const targetExplicacao: VoiceTarget = {
   id: "segunda-via.explicacao",
-  label: "Ver explicação geral",
+  label: "Ver o caminho completo",
   description:
-    "Visão geral do caminho: encontrar o serviço e conferir o resultado.",
+    "Visão geral do processo de segunda via em duas etapas: encontrar o serviço e conferir a conta.",
   href: routes.explicacao,
   contextPrefix: "segunda-via.explicacao",
   origin: "explicacao",

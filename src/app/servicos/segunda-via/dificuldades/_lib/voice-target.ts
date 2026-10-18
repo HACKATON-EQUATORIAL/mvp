@@ -3,8 +3,9 @@ import type { VoiceTarget } from "@/lib/assistant/journey";
 
 export const targetDificuldades: VoiceTarget = {
   id: "segunda-via.dificuldades",
-  label: "Encontrar ajuda para uma dificuldade",
-  description: "Orientação para dúvidas de aprendizagem ou bloqueios externos.",
+  label: "Tive um problema",
+  description:
+    "Ajuda para dificuldades: não sei qual opção escolher, não entendi, site, código ou página do canal oficial não funciona.",
   href: routes.dificuldades,
   contextPrefix: "segunda-via.dificuldades",
   origin: "dificuldades",

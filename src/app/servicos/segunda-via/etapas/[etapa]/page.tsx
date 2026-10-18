@@ -1,19 +1,21 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { steps } from "@/app/servicos/segunda-via/_lib/content";
+import { StepLesson } from "@/app/servicos/segunda-via/_components/step-lesson";
 import {
   readContext,
-  returnTo,
   routes,
   stepParamsSchema,
   withContext,
 } from "@/app/servicos/segunda-via/_lib/navigation";
-import { JourneyCard } from "@/components/layout/journey-card";
 import { JourneyPage } from "@/components/layout/journey-page";
-import { ActionLink } from "@/components/ui/action-link";
 import { VoiceHelp } from "@/components/voice/voice-help";
 import type { VoicePageContext } from "@/components/voice/voice-page-context";
+
+const stepTitles = {
+  encontrar: "Encontrar o serviço",
+  conferir: "Conferir o resultado",
+} as const;
 
 export async function generateMetadata({
   params,
@@ -21,7 +23,7 @@ export async function generateMetadata({
   const result = stepParamsSchema.safeParse(await params);
   return {
     title: result.success
-      ? steps[result.data.etapa].title
+      ? stepTitles[result.data.etapa]
       : "Etapa não encontrada",
   };
 }
@@ -32,22 +34,18 @@ export default function Page({
 }: PageProps<"/servicos/segunda-via/etapas/[etapa]">) {
   return (
     <JourneyPage
-      eyebrow="EXPLICAÇÃO CONTEXTUAL"
-      title="Ajuda para esta etapa"
-      intro="Confira a orientação para a etapa que você selecionou."
+      eyebrow="LIÇÃO DA TRILHA"
+      title="Aprenda esta etapa"
+      intro="Leia com calma, veja o exemplo e siga para o próximo passo."
       voiceSlot={
         <Suspense fallback={null}>
           <PageVoice params={params} searchParams={searchParams} />
         </Suspense>
       }
-      actions={
-        <Suspense fallback={<p role="status">Preparando a navegação…</p>}>
-          <PageActions params={params} searchParams={searchParams} />
-        </Suspense>
-      }
+      actions={null}
     >
       <Suspense fallback={<p role="status">Preparando a explicação…</p>}>
-        <PageContent params={params} />
+        <PageContent params={params} searchParams={searchParams} />
       </Suspense>
     </JourneyPage>
   );
@@ -55,15 +53,16 @@ export default function Page({
 
 async function PageContent({
   params,
-}: Pick<PageProps<"/servicos/segunda-via/etapas/[etapa]">, "params">) {
+  searchParams,
+}: PageProps<"/servicos/segunda-via/etapas/[etapa]">) {
   const result = stepParamsSchema.safeParse(await params);
   if (!result.success) notFound();
-  const content = steps[result.data.etapa];
-
+  const etapa = result.data.etapa;
   return (
-    <JourneyCard title="Explicação desta etapa">
-      {content.explanation}
-    </JourneyCard>
+    <StepLesson
+      etapa={etapa}
+      context={{ ...readContext(await searchParams), etapa }}
+    />
   );
 }
 
@@ -88,7 +87,7 @@ async function PageVoice({
       {
         id: "practice",
         label: "Praticar esta etapa",
-        confirmation: `Você quer praticar: ${steps[etapa].title}.`,
+        confirmation: `Você quer praticar: ${stepTitles[etapa]}.`,
         href,
       },
       {
@@ -104,38 +103,4 @@ async function PageVoice({
 
 export function generateStaticParams() {
   return [{ etapa: "encontrar" }, { etapa: "conferir" }];
-}
-async function PageActions({
-  params,
-  searchParams,
-}: PageProps<"/servicos/segunda-via/etapas/[etapa]">) {
-  const result = stepParamsSchema.safeParse(await params);
-  if (!result.success) notFound();
-  const etapa = result.data.etapa;
-  const context = { ...readContext(await searchParams), etapa };
-  return (
-    <>
-      <ActionLink
-        variant="primary"
-        href={returnTo(context, "ajuda", routes.etapas)}
-      >
-        Voltar à etapa
-      </ActionLink>
-      <ActionLink href={withContext(routes.etapas, context)}>
-        Escolher outra etapa
-      </ActionLink>
-      <ActionLink
-        href={
-          etapa === "encontrar"
-            ? routes["pratica-guiada"]
-            : routes["pratica-conferencia"]
-        }
-      >
-        Praticar esta etapa
-      </ActionLink>
-      <ActionLink href={withContext(routes.canal, context)}>
-        Ir ao canal oficial
-      </ActionLink>
-    </>
-  );
 }

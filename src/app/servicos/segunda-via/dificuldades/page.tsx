@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { DifficultyList } from "@/app/servicos/segunda-via/_components/difficulty-list";
 import {
   readContext,
   returnTo,
   routes,
   withContext,
 } from "@/app/servicos/segunda-via/_lib/navigation";
-import styles from "@/components/layout/journey.module.css";
-import { JourneyCard } from "@/components/layout/journey-card";
 import { JourneyPage } from "@/components/layout/journey-page";
 import { ActionLink } from "@/components/ui/action-link";
 import { VoiceHelp } from "@/components/voice/voice-help";
@@ -20,24 +19,19 @@ export default function Page({
 }: PageProps<"/servicos/segunda-via/dificuldades">) {
   return (
     <JourneyPage
-      eyebrow="TENTATIVA BLOQUEADA"
+      eyebrow="AJUDA"
       title="Onde você encontrou dificuldade?"
-      intro="Uma dúvida sobre o procedimento é diferente de um problema de acesso ao canal."
+      intro="Escolha o que aconteceu. Dúvida a gente resolve aqui; problema no canal oficial precisa da ajuda dele."
       voiceSlot={
         <Suspense fallback={null}>
           <PageVoice searchParams={searchParams} />
         </Suspense>
       }
-      actions={
-        <Suspense fallback={<p role="status">Preparando a navegação…</p>}>
-          <PageActions searchParams={searchParams} />
-        </Suspense>
-      }
+      actions={null}
     >
-      <JourneyCard title="Se o canal não funciona">
-        Este ambiente não corrige códigos de acesso, carregamento ou
-        autorização. Use somente orientações oficiais confirmadas.
-      </JourneyCard>
+      <Suspense fallback={<p role="status">Preparando a navegação…</p>}>
+        <PageActions searchParams={searchParams} />
+      </Suspense>
     </JourneyPage>
   );
 }
@@ -83,21 +77,8 @@ async function PageActions({
   const context = readContext(await searchParams);
   return (
     <>
-      <ActionLink variant="primary" href={withContext(routes.etapas, context)}>
-        Não sei qual opção escolher
-      </ActionLink>
-      <ActionLink href={routes.explicacao}>
-        Não entendi o procedimento
-      </ActionLink>
-      <details className={styles.details}>
-        <summary>Código ou página não funciona</summary>
-        <p>
-          Este ambiente não consegue verificar ou corrigir o acesso ao canal.
-          Procure as orientações de ajuda do próprio canal oficial. Não informe
-          códigos ou dados pessoais nesta prática.
-        </p>
-      </details>
-      <ActionLink href={returnTo(context, "dificuldades", "/")}>
+      <DifficultyList context={context} />
+      <ActionLink href={returnTo(context, "dificuldades", routes.preparacao)}>
         Voltar
       </ActionLink>
     </>

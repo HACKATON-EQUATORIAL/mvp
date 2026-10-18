@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
+import { LessonIllustration } from "@/app/servicos/segunda-via/_components/lesson-illustration";
 import {
   routes,
   withContext,
 } from "@/app/servicos/segunda-via/_lib/navigation";
-import styles from "@/components/layout/journey.module.css";
-import { JourneyCard } from "@/components/layout/journey-card";
 import { JourneyPage } from "@/components/layout/journey-page";
 import { ActionLink } from "@/components/ui/action-link";
 import type { VoicePageContext } from "@/components/voice/voice-page-context";
 
 const voiceContext: VoicePageContext = {
   id: "segunda-via.pratica-conferencia",
-  description: "Posso explicar esta etapa ou levar você de volta à prática.",
+  description:
+    "Mostra a conta de exemplo usada na prática. Posso abrir a lição de conferir ou iniciar a prática.",
   suggestions: [
     {
       id: "explain",
@@ -24,26 +24,26 @@ const voiceContext: VoicePageContext = {
     },
     {
       id: "practice",
-      label: "Voltar à prática",
-      confirmation: "Você quer voltar à prática guiada.",
+      label: "Praticar agora",
+      confirmation: "Você quer iniciar a prática guiada.",
       href: routes["pratica-guiada"],
     },
   ],
 };
 
-export const metadata: Metadata = { title: "Confira o resultado" };
+export const metadata: Metadata = { title: "Conheça a conta de exemplo" };
 
 export default function Page() {
   return (
     <JourneyPage
-      eyebrow="PRÁTICA GUIADA"
-      title="Confira o resultado"
-      intro="Neste exemplo, a conta está disponível. Confira as informações antes de continuar."
+      eyebrow="MATERIAL DE APOIO"
+      title="Conheça a conta de exemplo"
+      intro="É esta conta que aparece na prática. Veja onde ficam as informações que você vai conferir."
       voiceContext={voiceContext}
       actions={
         <>
-          <ActionLink variant="primary" href={routes["pratica-individual"]}>
-            Entendi, quero tentar
+          <ActionLink variant="primary" href={routes["pratica-guiada"]}>
+            Praticar agora
           </ActionLink>
           <ActionLink
             href={withContext(`${routes.etapas}/conferir`, {
@@ -51,35 +51,13 @@ export default function Page() {
               etapa: "conferir",
             })}
           >
-            Preciso de uma explicação
+            Ver a lição de conferir
           </ActionLink>
-          <ActionLink href={routes["pratica-guiada"]}>
-            Voltar à prática
-          </ActionLink>
+          <ActionLink href={routes.preparacao}>Ver a trilha</ActionLink>
         </>
       }
     >
-      <JourneyCard title="Conta para prática">
-        <p>
-          Confira o período e a identificação da conta antes de utilizar a
-          segunda via.
-        </p>
-        <dl className={styles.example}>
-          <div>
-            <dt>Período:</dt>
-            <dd>Outubro de 2026</dd>
-          </div>
-          <div>
-            <dt>Identificação:</dt>
-            <dd>CONTA EXEMPLO</dd>
-          </div>
-        </dl>
-        <p>Informações fictícias, sem valor de cobrança.</p>
-      </JourneyCard>
-      <JourneyCard title="O que observar">
-        No serviço real, confira as informações relevantes antes de utilizar o
-        documento.
-      </JourneyCard>
+      <LessonIllustration step="conferir" />
     </JourneyPage>
   );
 }

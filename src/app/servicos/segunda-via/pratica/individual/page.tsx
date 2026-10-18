@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { PracticeChoice } from "@/app/servicos/segunda-via/_components/practice-choice";
+import { PracticeSession } from "@/app/servicos/segunda-via/_components/practice-session";
 import {
   routes,
   withContext,
 } from "@/app/servicos/segunda-via/_lib/navigation";
-import { JourneyCard } from "@/components/layout/journey-card";
 import { JourneyPage } from "@/components/layout/journey-page";
 import type { VoicePageContext } from "@/components/voice/voice-page-context";
 
@@ -31,20 +30,18 @@ const voiceContext: VoicePageContext = {
   ],
 };
 
-export const metadata: Metadata = { title: "Agora, tente você" };
+export const metadata: Metadata = { title: "Agora, tente sozinho" };
 
 export default function Page() {
   return (
     <JourneyPage
       eyebrow="PRÁTICA INDIVIDUAL"
-      title="Agora, tente você"
-      intro="Sua tarefa é encontrar a opção de segunda via neste exemplo. Escolha um serviço."
+      title="Agora, tente sozinho"
+      intro="As mesmas 3 perguntas, sem dica automática. Se precisar, peça ajuda na própria tela."
       voiceContext={voiceContext}
-      actions={<PracticeChoice guided={false} />}
+      actions={null}
     >
-      <JourneyCard title="Sem dica automática">
-        Se precisar, você pode pedir ajuda. Isso não é uma penalidade.
-      </JourneyCard>
+      <PracticeSession mode="independent" />
     </JourneyPage>
   );
 }

@@ -70,6 +70,16 @@ export const interpretationRequestSchema = z
         suggestions: z
           .array(assistantActionSchema.omit({ description: true }))
           .max(3),
+        // Prática em andamento nesta tela (sem gabarito).
+        practice: z
+          .object({
+            mode: z.enum(["guided", "independent"]),
+            current: z.number().int().positive(),
+            total: z.number().int().positive(),
+          })
+          .strict()
+          .nullable()
+          .default(null),
       })
       .strict(),
     catalog: z
@@ -95,6 +105,12 @@ export const interpretationRequestSchema = z
                 z.object({ id: idSchema, title: z.string().max(200) }).strict(),
               )
               .max(10),
+            difficulties: z
+              .array(
+                z.object({ id: idSchema, label: z.string().max(200) }).strict(),
+              )
+              .max(10)
+              .default([]),
           })
           .strict()
           .nullable(),
@@ -104,6 +120,8 @@ export const interpretationRequestSchema = z
     history: z.array(conversationTurnSchema).max(MAX_CONVERSATION_TURNS),
     pendingActionId: idSchema.nullable(),
     presentedOptionIds: z.array(idSchema).max(3),
+    // Ações recusadas com "Nada disso" nesta página; não devem voltar.
+    rejectedOptionIds: z.array(idSchema).max(32).default([]),
   })
   .strict()
   .superRefine((data, ctx) => {
@@ -114,6 +132,7 @@ export const interpretationRequestSchema = z
       data.context.suggestions.some((item) => !allowed.has(item.id)) ||
       (data.pendingActionId !== null && !allowed.has(data.pendingActionId)) ||
       data.presentedOptionIds.some((id) => !allowed.has(id)) ||
+      data.rejectedOptionIds.some((id) => !allowed.has(id)) ||
       new Set(data.presentedOptionIds).size !== data.presentedOptionIds.length
     ) {
       ctx.addIssue({

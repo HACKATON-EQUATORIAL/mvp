@@ -1,0 +1,122 @@
+.lesson {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.kicker {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+}
+
+.lesson .question {
+  margin: 0;
+  color: var(--text-heading);
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: var(--font-weight-bold);
+}
+
+.text {
+  margin: 0;
+  font-size: 1.0625rem;
+  line-height: 1.625rem;
+}
+
+.figure {
+  display: grid;
+  gap: var(--spacing-xxs);
+  margin: 0;
+}
+
+.figure figcaption {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.device,
+.bill {
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg, 16px);
+  background: var(--surface-subtle);
+}
+
+.deviceTitle {
+  margin: 0 0 var(--spacing-xxs);
+  color: var(--primary-500);
+  font-weight: var(--font-weight-bold);
+}
+
+.menu {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.menu li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 12px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-page);
+  color: var(--text-heading);
+}
+
+.menu li[data-highlight] {
+  border: 2px solid var(--success-400);
+  background: var(--success-50);
+  font-weight: var(--font-weight-bold);
+}
+
+.check {
+  margin-left: auto;
+  color: var(--success-500);
+}
+
+.billHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: var(--spacing-xxs);
+  color: var(--primary-500);
+  font-weight: var(--font-weight-bold);
+}
+
+.bill dl {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.bill dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  background: var(--surface-page);
+}
+
+.bill dl div[data-highlight] {
+  outline: 2px solid var(--highlight-500);
+  background: var(--highlight-50);
+}
+
+.bill dt {
+  color: var(--text-muted);
+}
+
+.bill dd {
+  margin: 0;
+  color: var(--text-heading);
+  font-weight: var(--font-weight-bold);
+}

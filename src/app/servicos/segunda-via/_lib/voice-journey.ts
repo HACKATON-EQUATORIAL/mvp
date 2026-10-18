@@ -8,6 +8,7 @@ import { targetPraticaConcluida } from "@/app/servicos/segunda-via/pratica/concl
 import { targetPraticaConferencia } from "@/app/servicos/segunda-via/pratica/conferencia/_lib/voice-target";
 import { targetPraticaGuiada } from "@/app/servicos/segunda-via/pratica/guiada/_lib/voice-target";
 import { targetPraticaIndividual } from "@/app/servicos/segunda-via/pratica/individual/_lib/voice-target";
+import { targetSimulador } from "@/app/servicos/segunda-via/simulador/_lib/voice-target";
 // Compose descriptors declared beside each page; do not crawl URLs or import pages.
 export const secondCopyTargets = [
   targetPreparacao,
@@ -18,6 +19,7 @@ export const secondCopyTargets = [
   targetPraticaConferencia,
   targetPraticaConcluida,
   targetDificuldades,
+  targetSimulador,
   targetCanal,
   ...stepTargets,
 ];

@@ -129,6 +129,36 @@ regra nova não aparecer, pare o servidor, apague `.next/dev/cache` e suba de no
   energia e selos, aviso de requisitos e o botão do WhatsApp oficial.
 - **Header:** logotipo oficial branco da Equatorial com o estado “MA”.
 
+### Continuidade visual do mapa
+
+`roadmap-path.tsx` acrescenta uma camada SVG decorativa atrás da lista do mapa,
+sem alterar os círculos, rótulos, deslocamentos laterais ou espaçamentos. As curvas
+saem pelas laterais dos círculos, contornam os rótulos e chegam por cima do círculo
+seguinte. Cada conexão usa três curvas Bézier com tangentes compartilhadas, sem
+trecho reto intermediário. O afastamento parte de `--spacing-md`; a amplitude e os
+pontos de controle vêm dos raios dos círculos, da distância entre eles, dos limites
+dos rótulos e da largura disponível. A curva aproveita a folga lateral sem aumentar
+o espaçamento vertical da lista.
+
+A geometria usa as posições reais dos elementos. `ResizeObserver` acompanha a
+lista, os círculos e os rótulos; `MutationObserver` reassocia os alvos quando o
+conteúdo ou a quantidade de passos muda. Ambos são desconectados ao desmontar.
+Isso cobre redimensionamento, quebra de texto, carregamento da fonte e mudanças
+nos filhos sem depender de uma quantidade fixa de etapas.
+
+O percurso completo aparece neutro (`--border-default`, traço de 4px). O progresso
+existente ilumina os segmentos até o primeiro passo pendente em `--success-400`,
+com preenchimento gradual. Uma única faixa em `--success-100` percorre suavemente
+esse trecho a cada seis segundos. Etapas concluídas fora de ordem mantêm seus
+estados, mas não preenchem lacunas no percurso; a ligação até a meta só se ilumina
+depois das seis atividades concluídas. Abrir o mapa ou a conclusão não concede
+progresso. Não há nova persistência nem alteração no backend.
+
+O SVG é oculto de tecnologias assistivas e não intercepta cliques. A lista e os
+links continuam responsáveis pela navegação. Com `prefers-reduced-motion: reduce`,
+o progresso aparece sem animação de desenho e sem pulso. Escopo e verificações:
+[conector da trilha](../specs/trilha-conector.md).
+
 ## Ajustes após teste (DEC-EQT-039)
 
 - **Header:** grade `1fr auto 1fr` (logo + MA / “Digitaliza Aí” / Serviços).

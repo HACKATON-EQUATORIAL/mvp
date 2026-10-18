@@ -13,7 +13,10 @@ export function Header({ className, ...props }: HeaderProps) {
   return (
     <header {...props} className={classes}>
       <div className={styles.content}>
-        <span className={styles.partner}>
+        <a
+          href="https://www.equatorialenergia.com.br/"
+          className={styles.partner}
+        >
           <Image
             src="/brand/equatorial-energia.png"
             alt="Equatorial Energia"
@@ -25,7 +28,7 @@ export function Header({ className, ...props }: HeaderProps) {
           <abbr title="Maranhão" className={styles.state}>
             MA
           </abbr>
-        </span>
+        </a>
         <Link
           href="/"
           className={styles.home}

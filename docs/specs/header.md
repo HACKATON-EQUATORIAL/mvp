@@ -57,3 +57,18 @@ O build de produção permanece sujeito à limitação do ambiente: o Turbopack
 falhou ao criar processo auxiliar por `Operation not permitted`; a tentativa
 com Webpack falhou ao interpretar `tsc --showConfig`. A Eyebrow não foi
 alterada porque não existe componente correspondente no checkout atual.
+
+## Link da marca Equatorial (18/10/2026)
+
+A pedido do usuário, o grupo do logotipo Equatorial e “MA” passou a ser um link
+externo na mesma aba. Destino e contrato de acessibilidade ficam no
+[guia de UI](../structure/styling-and-ui.md#header-e-composicao-da-pagina).
+
+Verificação: `bun run lint` e `git diff --check` passaram. A inspeção do HTML servido
+em `http://localhost:3000/` confirmou o link envolvendo a imagem, o destino exato
+solicitado e a preservação do `alt`. Não houve verificação visual ou clique em
+navegador nesta etapa, pois não havia navegador disponível nas ferramentas.
+
+`bun run build` foi tentado: no sandbox, o download da Nunito falhou; na nova
+tentativa fora do sandbox, o Turbopack falhou ao abrir a porta de seu processo
+auxiliar (`Operation not permitted`). O build não foi concluído neste ambiente.

@@ -16,6 +16,22 @@
   text-align: center;
 }
 
+.icon {
+  display: grid;
+  place-items: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--surface-page);
+  color: var(--neutral-500);
+}
+
+.icon[data-complete] {
+  background: var(--success-500);
+  color: var(--neutral-0);
+  box-shadow: inset 0 -5px 0 rgb(0 0 0 / 12%);
+}
+
 .hero h2 {
   margin: 0;
   color: var(--text-heading);

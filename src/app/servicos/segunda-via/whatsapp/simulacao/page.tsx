@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PracticeChat } from "@/app/servicos/segunda-via/_components/practice-chat";
+import { WhatsAppSimulation } from "@/app/servicos/segunda-via/_components/whatsapp-simulation";
 import { routes } from "@/app/servicos/segunda-via/_lib/navigation";
 import { JourneyPage } from "@/components/layout/journey-page";
 import type { VoicePageContext } from "@/components/voice/voice-page-context";
@@ -35,7 +35,7 @@ export default function Page() {
       voiceContext={voiceContext}
       actions={null}
     >
-      <PracticeChat />
+      <WhatsAppSimulation />
     </JourneyPage>
   );
 }

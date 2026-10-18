@@ -1,10 +1,9 @@
 "use client";
 
-import { Flame, RotateCcw, Star, Target, Zap } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { Check, Lightbulb, RotateCcw, Star, Target, Zap } from "lucide-react";
+import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { Celebration } from "@/components/brand/celebration";
-import { Eletriquinho } from "@/components/brand/eletriquinho";
 import { scrollJourneyToTop } from "@/components/layout/journey-scroll";
 import { PageActions } from "@/components/layout/page-actions";
 import { ActionLink } from "@/components/ui/action-link";
@@ -26,61 +25,43 @@ import {
   type ChatLine,
   ChatLines,
   QuickReplies,
-  revealChatEnd,
 } from "./whatsapp-chat";
 
-type Props = { part: PartSlug } | { part?: undefined };
-
 /**
- * Etapa 2 (`part`: uma parte da conversa, com dica e feedback por opção) e
- * etapa 3 (sem `part`: a conversa inteira, ajuda só sob pedido). Corrige na hora
- * com o pacote do serviço e envia tudo uma vez no fim.
+ * Etapa 2: uma parte da conversa, com dica e feedback por opção. Corrige na hora
+ * com o pacote do serviço; com as 4 partes feitas, envia tudo uma vez.
+ * (A etapa 3 é `WhatsAppSimulation`.)
  */
-export function PracticeChat(props: Props) {
+export function PracticeChat(props: { part: PartSlug }) {
   const bundle = useGetBundle(TRACK_ID);
   if (!bundle.data)
     return (
       <LoadState error={bundle.isError} onRetry={() => void bundle.refetch()} />
     );
-  return (
-    <Practice
-      key={props.part ?? "full"}
-      bundle={bundle.data}
-      part={props.part}
-    />
-  );
+  return <Practice key={props.part} bundle={bundle.data} part={props.part} />;
 }
 
 const expectedLabel = (item: BundleItem) =>
   item.options.find((option) => option.is_expected)?.label ?? "";
 
-function Practice({ bundle, part }: { bundle: TrackBundle; part?: PartSlug }) {
+function Practice({ bundle, part }: { bundle: TrackBundle; part: PartSlug }) {
   const all = bundle.practice.items;
   const partIndex = PARTS.findIndex((entry) => entry.slug === part);
-  const config = part ? PARTS[partIndex] : null;
-  const items = config
-    ? all.filter((item) => item.step_id === config.stepId)
-    : all;
+  const config = PARTS[partIndex];
+  const items = all.filter((item) => item.step_id === config.stepId);
   const run = usePracticeRun({
     items,
     allItemIds: all.map((item) => item.id),
-    kind: part ? "part" : "full",
+    kind: "part",
     lessons: bundle.steps,
   });
-  const lesson =
-    config && bundle.steps.find((step) => step.id === config.stepId);
+  const lesson = bundle.steps.find((step) => step.id === config.stepId);
   const [burst, setBurst] = useState(0);
   const { item, answer, done } = run;
 
   useEffect(() => {
     if (answer?.correct || done) setBurst((value) => value + 1);
   }, [answer?.correct, done]);
-
-  useEffect(() => {
-    // Ao abrir, a explicação da parte fica visível.
-    if (!answer && run.index === 0) return;
-    revealChatEnd();
-  }, [answer, run.index]);
 
   // Dicas e ajudas saem do balão do Eletriquinho.
   useEffect(() => {
@@ -98,34 +79,25 @@ function Practice({ bundle, part }: { bundle: TrackBundle; part?: PartSlug }) {
     scrollJourneyToTop();
     sfx.complete();
     setMascotSpeech({
-      text: config
-        ? "Mais uma parte acesa! Bora para a próxima?"
-        : "Você está pronto! Agora é só fazer no WhatsApp de verdade.",
+      text: "Mais uma parte acesa! Bora para a próxima?",
       mood: "cheer",
     });
-    const perfect = run.mistakes === 0;
-    updateProgress(
-      config
-        ? { partsDone: [config.stepId], perfect }
-        : { fullDone: true, perfect, unassisted: !run.assisted },
-    );
+    updateProgress({ partsDone: [config.stepId], perfect: run.mistakes === 0 });
   }, [done]);
 
   if (done)
-    return part ? (
+    return (
       <PartDone
         burst={burst}
         partIndex={partIndex}
         perfect={run.mistakes === 0}
         onRestart={run.restart}
       />
-    ) : (
-      <Conclusion burst={burst} run={run} />
     );
   if (!item) return null;
 
   // Contexto: na etapa 2, o que já aconteceu antes desta parte (respostas certas).
-  const before = config ? all.slice(0, all.indexOf(items[0])) : [];
+  const before = all.slice(0, all.indexOf(items[0]));
   const history: ChatLine[] = [
     ...before.flatMap((entry) => [
       { from: "bot" as const, text: entry.prompt, past: true },
@@ -149,47 +121,23 @@ function Practice({ bundle, part }: { bundle: TrackBundle; part?: PartSlug }) {
           <p>{lesson.explanation.text}</p>
         </div>
       )}
-      {!part && (
-        <div className={styles.stepRow}>
-          <p className={styles.step}>
-            Mensagem {run.index + 1} de {run.total}
-          </p>
-          <AnimatePresence>
-            {run.combo >= 2 && (
-              <motion.span
-                key={run.combo}
-                className={styles.combo}
-                initial={{ scale: 0.4, opacity: 0 }}
-                animate={{ scale: [1.3, 1], opacity: 1 }}
-                exit={{ scale: 0.6, opacity: 0 }}
-                transition={{ duration: 0.35 }}
-              >
-                <Flame size={16} aria-hidden="true" /> {run.combo} seguidas!
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </div>
-      )}
-
-      <ChatFrame label="Conversa simulada com a Clara">
+      <ChatFrame
+        label="Conversa simulada com a Clara"
+        footer={
+          answer?.correct ? null : (
+            <QuickReplies
+              options={run.options.map((option) => ({
+                id: option.id,
+                label: option.label,
+                state: run.wrongIds.includes(option.id) ? "wrong" : undefined,
+              }))}
+              onChoose={run.choose}
+            />
+          )
+        }
+      >
         <ChatLines lines={history} />
-        {!answer?.correct && (
-          <QuickReplies
-            options={run.options.map((option) => ({
-              id: option.id,
-              label: option.label,
-              state: run.wrongIds.includes(option.id) ? "wrong" : undefined,
-            }))}
-            onChoose={run.choose}
-          />
-        )}
       </ChatFrame>
-
-      {!part && !answer?.correct && (
-        <p className={styles.note}>
-          Pedir ajuda não é penalidade: o resultado só mostra se houve apoio.
-        </p>
-      )}
 
       <PageActions>
         {answer && (
@@ -206,7 +154,13 @@ function Practice({ bundle, part }: { bundle: TrackBundle; part?: PartSlug }) {
             transition={{ type: "spring", stiffness: 420, damping: 26 }}
           >
             {answer.correct && <Celebration burst={burst} />}
-            <Eletriquinho mood={answer.correct ? "cheer" : "think"} size={52} />
+            <span className={styles.feedbackIcon} aria-hidden="true">
+              {answer.correct ? (
+                <Check size={26} strokeWidth={3} />
+              ) : (
+                <Lightbulb size={24} />
+              )}
+            </span>
             <span>
               <strong>{answer.correct ? "Mandou bem!" : "Quase lá!"}</strong>
               <p>{answer.message}</p>
@@ -250,7 +204,9 @@ function PartDone({
     <div className={styles.practice}>
       <div className={cn(styles.panel, styles.done)} role="status">
         <Celebration burst={burst} />
-        <Eletriquinho mood="cheer" size={88} />
+        <span className={styles.doneIcon} aria-hidden="true">
+          <Check size={40} strokeWidth={3} />
+        </span>
         {perfect && <PerfectTag />}
         <h2>Parte {partIndex + 1} concluída!</h2>
         <p>
@@ -291,58 +247,6 @@ function PartDone({
 }
 
 /** Conclusão da etapa 3: saída direta para o WhatsApp oficial, com a mensagem pronta. */
-/** Fim da etapa 3: comemora e leva à tela de conclusão (que abre o WhatsApp oficial). */
-function Conclusion({
-  burst,
-  run,
-}: {
-  burst: number;
-  run: ReturnType<typeof usePracticeRun>;
-}) {
-  const perfect = run.mistakes === 0;
-  return (
-    <div className={styles.practice}>
-      <div className={cn(styles.panel, styles.done)} role="status">
-        <Celebration burst={burst} />
-        <Eletriquinho mood="cheer" size={88} />
-        {perfect && <PerfectTag />}
-        <h2>
-          {run.assisted ? "Conversa concluída!" : "Você conseguiu sozinho!"}
-        </h2>
-        <p>
-          {run.assisted
-            ? "Você terminou com um pouco de ajuda, e tudo bem."
-            : "Você fez a conversa inteira sem ajuda."}
-        </p>
-      </div>
-      <ul className={styles.stats} aria-label="Resumo da simulação">
-        <Stat
-          icon={Zap}
-          tone="energy"
-          label="Energia"
-          value={`+${ENERGY.full} kWh`}
-          delay={0.1}
-        />
-        <Stat
-          icon={Target}
-          tone="success"
-          label="Acertos"
-          value={`${Math.round((run.total / (run.total + run.mistakes)) * 100)}%`}
-          delay={0.2}
-        />
-      </ul>
-      <PageActions>
-        <ActionLink variant="primary" href={routes.concluido}>
-          Concluir
-        </ActionLink>
-        <Button variant="secondary" onClick={run.restart}>
-          <RotateCcw size={18} aria-hidden="true" /> Refazer a simulação
-        </Button>
-      </PageActions>
-    </div>
-  );
-}
-
 function PerfectTag() {
   return (
     <motion.span

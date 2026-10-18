@@ -354,13 +354,30 @@ h2 {
   gap: 4px;
 }
 
-.voice-header-actions [data-slot="button"] {
+/* Ícones do cabeçalho: redondos, sem a borda 3D dos botões da jornada. */
+.voice-drawer-popup .voice-icon-button {
+  display: grid;
+  place-items: center;
   width: 44px;
   min-width: 44px;
   height: 44px;
   min-height: 44px;
   padding: 0;
+  border: 0;
   border-radius: 50%;
+  background: transparent;
+  box-shadow: none;
+  color: var(--primary-500);
+  transform: none;
+}
+
+.voice-drawer-popup .voice-icon-button:hover {
+  background: var(--primary-50);
+}
+
+.voice-drawer-popup .voice-icon-button:active {
+  background: var(--primary-100, #dbe4ff);
+  transform: none;
 }
 
 .voice-drawer-scroll {
@@ -408,31 +425,32 @@ h2 {
   color: var(--warning-800);
 }
 
-.voice-bubble .voice-listen-button {
-  flex: none;
+.voice-drawer-popup .voice-bubble .voice-listen-button {
   width: 36px;
   min-width: 36px;
   height: 36px;
   min-height: 36px;
   margin: -6px -6px -6px 0;
-  padding: 0;
-  border-radius: 50%;
 }
 
-/* Respostas rápidas: chips curtos que quebram linha. */
+.voice-drawer-popup .voice-bubble .voice-listen-button:hover {
+  background: var(--primary-100, #dbe4ff);
+}
+
+/* Respostas rápidas: lista vertical de largura total (quick replies no celular). */
 .voice-chips {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   gap: 8px;
 }
 
 .voice-chip {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 6px;
-  min-height: 44px;
-  max-width: 100%;
-  padding: 0 16px;
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 16px;
   border: 2px solid var(--primary-200);
   border-radius: var(--radius-full);
   background: var(--surface-page);
@@ -636,6 +654,11 @@ a {
   line-height: 1.5rem;
   font-weight: 900;
   letter-spacing: -0.025em;
+}
+@media (max-width: 399px) {
+  .site-header-brand {
+    font-size: 1.0625rem;
+  }
 }
 .site-header-equatorial {
   display: inline-flex;

@@ -7,6 +7,7 @@ import {
   forwardRef,
   type ReactNode,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import brand from "@/components/brand/brand.module.css";
@@ -37,16 +38,22 @@ export const MascotButton = forwardRef<
  * Canto do Eletriquinho: o botão que abre o assistente e o balão de fala com a
  * dica da tela ou a narração. O balão pode ser fechado e volta quando a fala muda.
  */
+const SPEECH_MS = 6000;
+
 export function MascotCorner({
   text,
   hidden,
+  compact,
   children,
 }: {
   text?: string;
   hidden?: boolean;
+  /** Telas de chat: mascote menor. */
+  compact?: boolean;
   children: ReactNode;
 }) {
   const reduced = useReducedMotion();
+  const corner = useRef<HTMLDivElement>(null);
   const [dismissed, setDismissed] = useState<string | null>(null);
   // Fala nova reabre o balão.
   // biome-ignore lint/correctness/useExhaustiveDependencies: reabre só quando a fala muda
@@ -54,8 +61,28 @@ export function MascotCorner({
     setDismissed(null);
   }, [text]);
   const show = !!text && !hidden && dismissed !== text;
+
+  // O balão some sozinho e ao tocar fora dele, para não atrapalhar a tela.
+  useEffect(() => {
+    if (!show) return;
+    const timer = setTimeout(() => setDismissed(text ?? null), SPEECH_MS);
+    const onPointer = (event: PointerEvent) => {
+      if (!corner.current?.contains(event.target as Node))
+        setDismissed(text ?? null);
+    };
+    document.addEventListener("pointerdown", onPointer);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener("pointerdown", onPointer);
+    };
+  }, [show, text]);
+
   return (
-    <div className={brand.mascotCorner}>
+    <div
+      ref={corner}
+      className={brand.mascotCorner}
+      data-compact={compact || undefined}
+    >
       <AnimatePresence mode="wait">
         {show && (
           <motion.div

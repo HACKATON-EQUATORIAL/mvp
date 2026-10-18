@@ -3,7 +3,6 @@
 import { Check, Circle, ExternalLink, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Celebration } from "@/components/brand/celebration";
-import { Eletriquinho } from "@/components/brand/eletriquinho";
 import { PageActions } from "@/components/layout/page-actions";
 import { ActionLink } from "@/components/ui/action-link";
 import { buttonVariants } from "@/components/ui/button";
@@ -89,7 +88,17 @@ export function JourneyDone() {
     <div className={styles.done}>
       <div className={styles.hero} role="status">
         <Celebration burst={burst} />
-        <Eletriquinho mood={complete ? "cheer" : "think"} size={96} />
+        <span
+          className={styles.icon}
+          data-complete={complete || undefined}
+          aria-hidden="true"
+        >
+          {complete ? (
+            <Check size={44} strokeWidth={3} />
+          ) : (
+            <Circle size={40} />
+          )}
+        </span>
         <h2>{complete ? "Você concluiu tudo!" : "Quase lá!"}</h2>
         <p>
           {complete

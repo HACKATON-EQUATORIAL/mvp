@@ -44,3 +44,11 @@ function subscribe(listener: () => void) {
 export function usePracticeActivity() {
   return useSyncExternalStore(subscribe, getPracticeActivity, () => null);
 }
+
+// O assistente avisa quando deu uma ajuda (dica/explicação) durante a prática:
+// na etapa 3, isso marca a tentativa como “com apoio” (métrica de autonomia).
+export const ASSISTANT_HELP_EVENT = "digitaliza:assistant-help";
+
+export function notifyAssistantHelp() {
+  window.dispatchEvent(new Event(ASSISTANT_HELP_EVENT));
+}

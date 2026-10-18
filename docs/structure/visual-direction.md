@@ -128,3 +128,30 @@ regra nova não aparecer, pare o servidor, apague `.next/dev/cache` e suba de no
 - **Conclusão** (`journey-done.tsx`): destaque verde com Eletriquinho, lista das 3 etapas,
   energia e selos, aviso de requisitos e o botão do WhatsApp oficial.
 - **Header:** logotipo oficial branco da Equatorial com o estado “MA”.
+
+## Ajustes após teste (DEC-EQT-039)
+
+- **Header:** grade `1fr auto 1fr` (logo + MA / “Digitaliza Aí” / Serviços).
+- **Assistente:** `.voice-icon-button` (44px, redondo, sem borda 3D); `.voice-chips` em
+  lista vertical de largura total; “Voltar às opções” quando não há IA.
+- **Etapa 1:** player (`.player`, segmentos clicáveis e botões redondos).
+- **Etapa 3:** chat contínuo com campo de mensagem (`.composer`) e resultado só no fim.
+- **Um mascote só:** `.doneIcon` e `.feedbackIcon` no lugar do Eletriquinho dos painéis.
+- **Fim da tela:** `.scroll` com respiro normal (`--spacing-md`), sem os 120px.
+
+## Rolagem, chat e barra (DEC-EQT-040)
+
+- **Rolagem:** nunca usar `scrollIntoView`; usar `revealInJourney`/`scrollJourneyToTop`
+  (`components/layout/journey-scroll.ts`), que rolam só o miolo. O shell é
+  `overflow: clip`, então o header não sai da tela.
+- **Chat** (`ChatFrame`): corpo rolável com `max-height: clamp(160px, 100dvh - 560px,
+  420px)` e rodapé fixo (`footer`) para respostas rápidas ou o campo de mensagem.
+- **Barra:** o principal sempre avança; refazer ou ver de novo é secundário.
+- **Eletriquinho:** `bottom: -6px` (encostado na barra), compacto em lição, balão
+  `pointer-events: none` com X clicável e fechamento automático em 6 s.
+- **Ajustes (DEC-EQT-040):** `.device` com `width: 85%` (folga lateral para rolar a
+  página), scrollbar fina no chat, sem padding extra no fim das telas e dica da tela só
+  após 12 s ocioso (`useIdle`).
+- **WhatsApp e mascote (DEC-EQT-040):** `.device` com altura `clamp(400px, 72dvh, 620px)`
+  e corpo `flex: 1`; `.mascotCorner` com `bottom: var(--spacing-xs)` (e área segura quando
+  não há barra); dica da tela após 30 s ocioso.

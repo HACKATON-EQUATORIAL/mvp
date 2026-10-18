@@ -5,7 +5,6 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 import { feedback } from "@/lib/feedback/sound";
 import styles from "./brand.module.css";
-import { Eletriquinho } from "./eletriquinho";
 
 /** Eventos disparados pelo progresso (ver `segunda-via/_lib/progress.ts`). */
 const BADGE_EVENT = "digitaliza:badge";
@@ -71,7 +70,6 @@ export function BadgeMoment() {
             <strong>Novo selo!</strong>
             <span>{current.label}</span>
           </span>
-          <Eletriquinho mood="cheer" size={52} />
         </motion.button>
       )}
     </AnimatePresence>

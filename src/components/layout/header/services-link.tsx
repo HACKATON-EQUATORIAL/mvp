@@ -10,9 +10,9 @@ export function ServicesLink() {
   const pathname = usePathname();
   if (pathname === "/") return null;
   return (
-    <Link href="/" className={styles.tracks}>
+    <Link href="/" className={styles.tracks} aria-label="Serviços">
       <LayoutGrid size={18} aria-hidden="true" />
-      Serviços
+      <span className={styles.tracksLabel}>Serviços</span>
     </Link>
   );
 }

@@ -97,11 +97,14 @@
   font-size: 0.875rem;
 }
 
-/* Canto do Eletriquinho: acima da barra, no canto direito do conteúdo. */
+/*
+ * Canto do Eletriquinho: sempre 8px acima da barra de ações (ou da borda da tela,
+ * respeitando a área segura), nunca cortado e sem folga extra.
+ */
 .mascotCorner {
   position: absolute;
   right: calc(var(--spacing-sm) + env(safe-area-inset-right));
-  bottom: 12px;
+  bottom: var(--spacing-xs);
   display: flex;
   align-items: flex-end;
   gap: 8px;
@@ -139,13 +142,15 @@
   outline-offset: 3px;
 }
 
+/* O balão não bloqueia a tela: o toque passa para o conteúdo; só o X recebe clique. */
 .speech {
+  pointer-events: none;
   position: relative;
   display: flex;
   align-items: flex-start;
   gap: 6px;
-  max-width: 260px;
-  margin-bottom: 18px;
+  max-width: min(220px, calc(100vw - 120px));
+  margin-bottom: 0;
   padding: 10px 8px 10px 14px;
   border: 2px solid var(--primary-100);
   border-radius: 16px 16px 4px 16px;
@@ -162,6 +167,7 @@
 }
 
 .speechClose {
+  pointer-events: auto;
   display: grid;
   flex: none;
   place-items: center;
@@ -174,4 +180,21 @@
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
+}
+
+/* Telas de chat (lição em andamento): mascote menor para não cobrir a conversa. */
+.mascotCorner[data-compact] .mascotButton {
+  width: 56px;
+  height: 56px;
+}
+
+.mascotCorner[data-compact] .mascotButton svg {
+  width: 44px;
+  height: 44px;
+}
+
+.mascotCorner[data-compact] .speech {
+  max-width: min(200px, calc(100vw - 104px));
+  font-size: 0.875rem;
+  line-height: 1.25rem;
 }

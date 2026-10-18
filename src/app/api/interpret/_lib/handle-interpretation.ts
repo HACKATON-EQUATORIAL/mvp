@@ -1,4 +1,5 @@
 import "server-only";
+import { assistantAiEnabled } from "@/config/assistant";
 import {
   interpretationRequestSchema,
   MAX_INTERPRET_BYTES,
@@ -53,6 +54,12 @@ async function readJson(request: Request): Promise<unknown> {
 }
 
 export async function handleInterpretation(request: Request) {
+  if (!assistantAiEnabled)
+    return failure(
+      "ASSISTANT_AI_DISABLED",
+      "A IA do assistente está desligada neste ambiente.",
+      503,
+    );
   const site = request.headers.get("sec-fetch-site");
   if (
     request.headers.get(CLIENT_HEADER) !== CLIENT_HEADER_VALUE ||

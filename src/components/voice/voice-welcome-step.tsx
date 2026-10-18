@@ -3,6 +3,7 @@ import type { VoicePageContext } from "./voice-page-context";
 import { VoiceChips, VoiceStep } from "./voice-step";
 
 export const EXPLAIN_SCREEN = "explain-screen";
+const PROBLEM = "report-problem";
 
 /** Abertura: uma frase da tela, um atalho “Me explica” e as sugestões locais. */
 export function VoiceWelcomeStep({
@@ -10,6 +11,7 @@ export function VoiceWelcomeStep({
   inPractice,
   onSelectSuggestion,
   onExplain,
+  onProblem,
   onReject,
 }: {
   context: VoicePageContext;
@@ -17,14 +19,21 @@ export function VoiceWelcomeStep({
   inPractice: boolean;
   onSelectSuggestion: (id: string) => void;
   onExplain: () => void;
-  onReject: () => void;
+  /** Sem IA: abre a lista de dificuldades. */
+  onProblem?: () => void;
+  /** Com IA: “Nada disso” pede outras palavras por voz. */
+  onReject?: () => void;
 }) {
   return (
     <VoiceStep
       message={
-        inPractice
-          ? "Travou? Fale comigo ou toque em uma opção."
-          : "Oi! Fale comigo ou toque em uma opção."
+        onReject
+          ? inPractice
+            ? "Travou? Fale comigo ou toque em uma opção."
+            : "Oi! Fale comigo ou toque em uma opção."
+          : inPractice
+            ? "Travou? Toque em uma opção."
+            : "Oi! Toque em uma opção."
       }
     >
       <VoiceChips
@@ -34,12 +43,17 @@ export function VoiceWelcomeStep({
             label: inPractice ? "Me dá uma dica" : "Me explica esta tela",
           },
           ...context.suggestions.slice(0, 2),
+          ...(onProblem ? [{ id: PROBLEM, label: "Estou com problema" }] : []),
         ]}
         onSelect={(id) =>
-          id === EXPLAIN_SCREEN ? onExplain() : onSelectSuggestion(id)
+          id === EXPLAIN_SCREEN
+            ? onExplain()
+            : id === PROBLEM
+              ? onProblem?.()
+              : onSelectSuggestion(id)
         }
       />
-      <OtherOption onClick={onReject} />
+      {onReject && <OtherOption onClick={onReject} />}
     </VoiceStep>
   );
 }

@@ -1,5 +1,6 @@
 import "server-only";
 import { readAudioForm } from "@/app/api/transcribe/_lib/read-audio-form";
+import { assistantAiEnabled } from "@/config/assistant";
 import {
   CLIENT_HEADER,
   CLIENT_HEADER_VALUE,
@@ -29,6 +30,12 @@ function failure(
 }
 
 export async function handleTranscription(request: Request) {
+  if (!assistantAiEnabled)
+    return failure(
+      "ASSISTANT_AI_DISABLED",
+      "A IA do assistente está desligada neste ambiente.",
+      503,
+    );
   // Um formulário externo não deve consumir a cota do serviço.
   // Header não simples exige preflight entre origens; a API não libera CORS.
   const site = request.headers.get("sec-fetch-site");

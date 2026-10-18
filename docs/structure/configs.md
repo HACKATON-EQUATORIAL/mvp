@@ -23,6 +23,12 @@ Para adicionar ou atualizar componentes via CLI, seguir [shadcn/Base UI](shadcn-
 
 ## URL pública do backend
 
+`NEXT_PUBLIC_ASSISTANT_AI` liga a IA do assistente (LLM e transcrição pela Groq) só com o
+valor `on`; ausente ou outro valor vale desligado (DEC-EQT-039). Desligada, as rotas
+`/api/interpret` e `/api/transcribe` respondem `503 ASSISTANT_AI_DISABLED` e o assistente
+segue sem microfone, com chips e ajuda local (`src/config/assistant.ts`). Como é
+`NEXT_PUBLIC_`, a mudança exige reiniciar o dev server ou refazer o build.
+
 `NEXT_PUBLIC_API_URL` define o backend Python com `/api/v1`. Validada por Zod em
 `src/config/api.ts`; disponível no navegador e incorporada ao build, sem segredos.
 Para celular/ngrok e CORS, seguir [HTTP e queries](http-and-queries.md).

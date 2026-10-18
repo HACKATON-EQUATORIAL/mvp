@@ -1,6 +1,6 @@
 "use client";
 
-import { Pause, Play, SkipBack } from "lucide-react";
+import { Pause, Play, RotateCcw, SkipBack, SkipForward } from "lucide-react";
 import { useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 import { Celebration } from "@/components/brand/celebration";
@@ -24,7 +24,6 @@ import {
   ChatLines,
   QuickReplies,
   ResultCard,
-  revealChatEnd,
   Typing,
 } from "./whatsapp-chat";
 
@@ -33,7 +32,8 @@ type Step = TrackBundle["simulations"][number]["steps"][number];
 
 const TYPING_MS = 900;
 const TAP_MS = 1400;
-const END_SPEECH = "Viu como é simples? Agora é a sua vez de praticar.";
+const END_SPEECH =
+  "Viu como é simples? Quando quiser, vamos praticar na etapa 2.";
 
 /** Etapa 1: a conversa com a Clara toca sozinha, narrada pelo Eletriquinho. */
 export function DemoScene() {
@@ -122,12 +122,6 @@ function Scene({ steps }: { steps: Step[] }) {
     return () => clearTimeout(timer);
   }, [playing, finished, phase, index, tts.speaking, sound, tts.supported]);
 
-  useEffect(() => {
-    // Ao abrir, o título e o começo da conversa ficam visíveis.
-    if (index === 0 && phase !== "tap") return;
-    revealChatEnd();
-  }, [index, phase]);
-
   // Contexto para o assistente: passo da demonstração que está na tela.
   useEffect(() => {
     setPracticeActivity({
@@ -180,63 +174,119 @@ function Scene({ steps }: { steps: Step[] }) {
   const showCurrent = phase !== "typing" || finished;
   const reply = expected(step);
 
+  function stepBack() {
+    // Depois do fim, “voltar” reabre o último passo.
+    goTo(finished ? index : Math.max(0, index - 1));
+  }
+
+  function stepForward() {
+    if (finished) return;
+    if (last) finish();
+    else goTo(index + 1);
+  }
+
   return (
     <div className="grid gap-3">
-      <div className={styles.controls}>
-        <p aria-live="polite">
-          {finished
-            ? "Demonstração concluída"
-            : `Passo ${index + 1} de ${steps.length}`}
-        </p>
-        <div>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Passo anterior"
-            disabled={index === 0 && !finished}
-            onClick={() => goTo(Math.max(0, finished ? index : index - 1))}
-          >
-            <SkipBack size={20} aria-hidden="true" />
-          </Button>
-          <Button
-            variant="secondary"
-            size="icon"
-            aria-label={playing ? "Pausar" : "Continuar"}
-            aria-pressed={!playing}
-            onClick={togglePlay}
-          >
-            {playing ? (
-              <Pause size={20} aria-hidden="true" />
-            ) : (
-              <Play size={20} aria-hidden="true" />
-            )}
-          </Button>
+      <section className={styles.player} aria-label="Controles da demonstração">
+        <ol className={styles.segments} aria-label="Passos">
+          {steps.map((entry, position) => (
+            <li key={entry.id}>
+              <button
+                type="button"
+                aria-label={`Ir para o passo ${position + 1}`}
+                aria-current={
+                  !finished && position === index ? "step" : undefined
+                }
+                data-state={
+                  finished || position < index
+                    ? "done"
+                    : position === index
+                      ? "current"
+                      : undefined
+                }
+                onClick={() => goTo(position)}
+              />
+            </li>
+          ))}
+        </ol>
+        <div className={styles.playerRow}>
+          <p aria-live="polite">
+            {finished
+              ? "Demonstração concluída"
+              : `Passo ${index + 1} de ${steps.length}`}
+          </p>
+          <div>
+            <button
+              type="button"
+              className={styles.playerButton}
+              aria-label="Reiniciar"
+              onClick={replay}
+            >
+              <RotateCcw size={20} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              className={styles.playerButton}
+              aria-label="Passo anterior"
+              disabled={index === 0 && !finished}
+              onClick={stepBack}
+            >
+              <SkipBack size={20} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              className={styles.playerButton}
+              data-main
+              aria-label={
+                finished ? "Ver de novo" : playing ? "Pausar" : "Continuar"
+              }
+              onClick={togglePlay}
+            >
+              {playing ? (
+                <Pause size={22} aria-hidden="true" />
+              ) : (
+                <Play size={22} aria-hidden="true" />
+              )}
+            </button>
+            <button
+              type="button"
+              className={styles.playerButton}
+              aria-label="Próximo passo"
+              disabled={finished}
+              onClick={stepForward}
+            >
+              <SkipForward size={20} aria-hidden="true" />
+            </button>
+          </div>
         </div>
-      </div>
+      </section>
 
       <div className="relative">
         <Celebration burst={burst} />
-        <ChatFrame label="Demonstração da conversa com a Clara">
+        <ChatFrame
+          label="Demonstração da conversa com a Clara"
+          footer={
+            showCurrent && step.kind !== "result" ? (
+              <QuickReplies
+                options={step.options.map((option) => ({
+                  id: option.id,
+                  label: option.label,
+                  state:
+                    phase === "tap" && option.id === reply?.id
+                      ? "pointed"
+                      : undefined,
+                }))}
+              />
+            ) : null
+          }
+        >
           <ChatLines lines={history} />
           {showCurrent ? (
             <>
               <ChatLines
                 lines={step.bot_messages.map((text) => ({ from: "bot", text }))}
               />
-              {step.kind === "result" ? (
-                <ResultCard lines={step.lines} />
-              ) : (
-                <QuickReplies
-                  options={step.options.map((option) => ({
-                    id: option.id,
-                    label: option.label,
-                    state:
-                      phase === "tap" && option.id === reply?.id
-                        ? "pointed"
-                        : undefined,
-                  }))}
-                />
-              )}
+              {step.kind === "result" && <ResultCard lines={step.lines} />}
             </>
           ) : (
             <Typing />
@@ -248,21 +298,16 @@ function Scene({ steps }: { steps: Step[] }) {
         {finished ? (
           <>
             <ActionLink variant="primary" href={partHref(PARTS[0].slug)}>
-              Praticar parte por parte
+              Ir para a etapa 2
             </ActionLink>
             <Button variant="secondary" onClick={replay}>
-              Ver de novo
+              <RotateCcw size={18} aria-hidden="true" /> Ver de novo
             </Button>
           </>
         ) : (
-          <>
-            <Button onClick={() => (last ? finish() : goTo(index + 1))}>
-              {last ? "Concluir demonstração" : "Próximo passo"}
-            </Button>
-            <Button variant="secondary" onClick={replay}>
-              Repetir do início
-            </Button>
-          </>
+          <Button variant="secondary" onClick={finish}>
+            Pular para o fim
+          </Button>
         )}
       </PageActions>
     </div>

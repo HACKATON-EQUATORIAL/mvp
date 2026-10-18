@@ -1,5 +1,4 @@
 import { LoaderCircle, Square, Volume2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import type { VoiceInterpretationState } from "@/hooks/use-voice-interpretation";
 import type { VoiceAction } from "@/lib/assistant/journey";
 import type { InterpretationRequest } from "@/lib/assistant/schemas";
@@ -27,7 +26,8 @@ export function VoiceInterpretationStep({
   onRetry: () => void;
   onCancel: () => void;
   onBack: () => void;
-  onReject: () => void;
+  /** Ausente quando a IA está desligada (não há como pedir outras palavras). */
+  onReject?: () => void;
   onConfirm: (id: string) => void;
   canListen: boolean;
   speaking: boolean;
@@ -87,11 +87,9 @@ export function VoiceInterpretationStep({
       message={result.message}
       action={
         canListen && (
-          <Button
+          <button
             type="button"
-            variant="ghost"
-            size="icon"
-            className="voice-listen-button"
+            className="voice-icon-button voice-listen-button"
             aria-label={speaking ? "Parar de ouvir" : "Ouvir resposta"}
             onClick={onListen}
           >
@@ -105,13 +103,19 @@ export function VoiceInterpretationStep({
             ) : (
               <Volume2 size={20} aria-hidden="true" />
             )}
-          </Button>
+          </button>
         )
       }
     >
       {askedId && <VoiceYesNo onYes={() => onConfirm(askedId)} onNo={onBack} />}
       <VoiceChips options={options} onSelect={onSelectSuggestion} />
-      <OtherOption onClick={onReject} />
+      {onReject ? (
+        <OtherOption onClick={onReject} />
+      ) : (
+        <button type="button" className="voice-link" onClick={onBack}>
+          Voltar às opções
+        </button>
+      )}
     </VoiceStep>
   );
 }

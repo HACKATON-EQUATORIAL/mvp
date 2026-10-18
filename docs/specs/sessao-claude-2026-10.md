@@ -262,3 +262,64 @@ Navegador (build de produção e API local; 375 e 320 px):
 
 O dev server já aberto em :3000 serviu um `globals.css` antigo (cache do Turbopack). Para
 ver a UI nova nele, pare o servidor, apague `.next/dev/cache` e suba de novo.
+
+## Ajustes após teste e flag da IA (18/10/2026, DEC-EQT-039)
+
+Verificado em build de produção com API local, a 375px, com a flag desligada:
+- botões de som e X com 44×44 redondos;
+- opções do assistente em lista;
+- sem microfone;
+- “Me dá uma dica” mostrou a dica local;
+- “Estou com problema” listou as dificuldades e a orientação com o chip do destino;
+- `/api/interpret` e `/api/transcribe` responderam 503 e a página não as chamou;
+- etapa 1: play/pausa, ir ao passo 3, voltar, avançar até o fim, “Ver de novo” + “Ir para a
+  etapa 2” e voltar depois do fim;
+- etapa 3:
+  - um erro (a Clara respondeu e repetiu as opções) e CPF pelo campo de exemplo;
+  - nenhum botão na barra durante a conversa;
+  - fatura, resultado “Você conseguiu sozinho!” e “Concluir / Refazer” só no fim;
+  - 1 envio (201);
+- parte concluída com ícone, sem mascote duplicado, e aviso de selo sem mascote;
+- header sem sobreposição a 375px.
+
+**Não verificado:**
+- a flag ligada no navegador (o fluxo com IA é o mesmo de antes);
+- a voz pt-BR em aparelho real;
+- 320 e 414 px nesta rodada.
+
+## Header fixo, chat rolável e cliques (18/10/2026, DEC-EQT-040)
+
+Causa do header sumindo e dos cliques perdidos: `scrollIntoView` rolava o shell inteiro e
+movia os botões durante o toque.
+
+Verificado em build de produção a 375px (flag da IA desligada):
+- header sempre em `top: 0` depois de várias mensagens;
+- página sem rolar na etapa 3; o chat rolou por dentro até a última mensagem;
+- bolha do usuário aparece em cerca de 8ms após o clique;
+- todos os botões do rodapé do chat recebem o toque no centro e na borda direita (onde
+  fica o mascote);
+- fim da etapa 1 com “Ir para a etapa 2” (principal) e “Ver de novo” (secundário);
+- botão “ouvir” com 36×36, redondo e sem borda 3D (medido com um elemento de teste,
+  porque o navegador de teste não tem voz pt e o botão some).
+
+**Não verificado:**
+- aparelho real;
+- 320 e 414 px;
+- rolagem suave com a aba visível (os testes rodaram com o painel oculto).
+
+Ajustes seguintes (375px, build de produção):
+- WhatsApp com 85% da largura (292 de 343px);
+- respiro final normal (24px) em todas as telas;
+- sem balão ao abrir; dica da tela depois de cerca de 12 s parado;
+- etapa 3 com “Sair da simulação” durante a conversa.
+
+Ajustes finais do Eletriquinho e do WhatsApp:
+- **Posição do Eletriquinho:** medida em 320×568, 375×812 e 414×896, em todas as telas
+  e estados: home, canal, mapa, demonstração tocando e no fim, parte (inicial, com erro e
+  dica, acerto e concluída), etapa 3 e conclusão.
+  - Antes ficava 6px abaixo da barra ou da borda e era cortado nas telas sem barra.
+  - Agora fica a 12px, nunca cortado, com o balão sempre dentro da tela e acima da barra.
+- **Tamanho do WhatsApp:**
+  - 287×585 a 375×812;
+  - 240×409 a 320×568, cabendo na área visível de 423px.
+- **Dica da tela:** aparece depois de 30 s parado.

@@ -36,6 +36,11 @@ a.card:focus-visible {
 }
 
 .card[aria-disabled="true"] {
+  cursor: not-allowed;
+  transition:
+    transform 120ms ease,
+    border-color 120ms ease,
+    background-color 120ms ease;
   border-style: dashed;
   background: var(--surface-subtle);
   color: var(--text-muted);
@@ -115,5 +120,20 @@ a.card:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   a.card:active {
     transform: none;
+  }
+}
+
+/* Em breve: reage ao toque/mouse como os ativos, mas continua sem link. */
+.card[aria-disabled="true"]:hover {
+  transform: translateY(-1px);
+  border-color: var(--neutral-400, #9aa3b2);
+  background: var(--surface-page);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card[aria-disabled="true"],
+  .card[aria-disabled="true"]:hover {
+    transform: none;
+    transition: none;
   }
 }

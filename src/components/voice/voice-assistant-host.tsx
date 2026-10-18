@@ -4,13 +4,13 @@ import { Volume2, VolumeX, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { PARTS } from "@/app/servicos/segunda-via/_lib/steps";
 import {
   Eletriquinho,
   type EletriquinhoMood,
 } from "@/components/brand/eletriquinho";
 import { ASSISTANT_DOCK_ID } from "@/components/layout/journey-page";
 import { findVisibleById } from "@/components/layout/journey-target";
-import { Button } from "@/components/ui/button";
 import {
   Drawer,
   DrawerClose,
@@ -19,11 +19,14 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { assistantAiEnabled } from "@/config/assistant";
+import { useIdle } from "@/hooks/use-idle";
 import { useSpeechSynthesis } from "@/hooks/use-speech-synthesis";
 import { useSpeechToText } from "@/hooks/use-speech-to-text";
 import { useVoiceAssistant } from "@/hooks/use-voice-assistant";
 import { useVoiceCatalog } from "@/hooks/use-voice-catalog";
 import { useVoiceInterpretation } from "@/hooks/use-voice-interpretation";
+import { useGetBundle } from "@/http/track/get-bundle";
 import { isInternalVoiceHref } from "@/lib/assistant/interpret-client";
 import {
   buildVoiceActions,
@@ -44,6 +47,7 @@ import {
 } from "@/lib/feedback/preferences";
 import {
   getPracticeActivity,
+  notifyAssistantHelp,
   usePracticeActivity,
 } from "@/lib/practice/activity";
 import { MascotButton, MascotCorner } from "./assistant-mascot";
@@ -71,6 +75,9 @@ const sameScreen: InterpretationResult = {
   optionIds: [],
   actionId: null,
 };
+
+// Tempo parado até o Eletriquinho oferecer a dica da tela.
+const IDLE_TIP_MS = 30_000;
 
 const activeSpeechPhases = new Set(["requesting", "recording", "transcribing"]);
 
@@ -129,6 +136,9 @@ export function VoiceAssistantHost() {
   const voiceReplies = useSoundEnabled();
   const interpretation = useVoiceInterpretation();
   const { catalog, retry } = useVoiceCatalog(used);
+  const bundle = useGetBundle("segunda-via", { enabled: used });
+  // Lista de dificuldades aberta (ajuda sem IA).
+  const [problems, setProblems] = useState(false);
   const actions = context ? buildVoiceActions(context, catalog) : [];
   const options = context ? localVoiceOptions(context, actions) : [];
   const currentActions = useRef(actions);
@@ -136,7 +146,9 @@ export function VoiceAssistantHost() {
   currentActions.current = actions;
   currentPending.current = pendingActionId;
   const selected = actions.find((item) => item.id === pendingActionId);
+  const here = actions.find((item) => item.href.split("?")[0] === pathname);
   const locationKey = `${pathname}:${context?.id}`;
+  const idle = useIdle(IDLE_TIP_MS, locationKey);
   const previousLocation = useRef(locationKey);
 
   const transcriptionHandler = useRef<((text: string) => void) | null>(null);
@@ -177,6 +189,7 @@ export function VoiceAssistantHost() {
     setRejectedIds([]);
     setRephrasing(false);
     setLastResponse(null);
+    setProblems(false);
   }, [
     locationKey,
     interpretation.reset,
@@ -206,6 +219,7 @@ export function VoiceAssistantHost() {
   }
 
   function returnToOptions() {
+    setProblems(false);
     setPendingActionId(null);
     setPresentedOptionIds(options.map((item) => item.id));
     interpretation.reset();
@@ -270,8 +284,59 @@ export function VoiceAssistantHost() {
     startRecording(true);
   }
 
+  /** Resposta montada no navegador (IA desligada): mesmo balão e chips da LLM. */
+  function showLocal(message: string, optionIds: string[] = []) {
+    const local: InterpretationResult = {
+      type: "help",
+      message,
+      optionIds: optionIds.filter((id) => id !== here?.id).slice(0, 2),
+      actionId: null,
+      showCatalog: false,
+    };
+    interpretation.reset();
+    setPendingActionId(null);
+    setProblems(false);
+    setLastResponse(local);
+    setPresentedOptionIds(local.optionIds);
+    assistant.setStep("interpretation");
+    speakReply(message);
+  }
+
+  /** Ajuda local: dica do item, instrução do passo ou o que a tela ensina. */
+  function localHelp() {
+    const activity = getPracticeActivity();
+    showLocal(
+      (activity && activity.mode !== "demo"
+        ? activity.hint
+        : activity?.lesson) ??
+        context?.screen?.teaches ??
+        context?.tip ??
+        "Toque em uma das opções abaixo.",
+    );
+  }
+
+  /** Dificuldade escolhida: orientação do conteúdo e o caminho que resolve. */
+  function showDifficulty(id: string) {
+    const item = bundle.data?.difficulties.find((entry) => entry.id === id);
+    if (!item) return;
+    const part = PARTS.find(
+      (entry) => entry.stepId === item.destination.step_id,
+    );
+    const target =
+      item.destination.kind === "step" && part
+        ? `segunda-via.parte.${part.slug}`
+        : item.destination.kind === "overview"
+          ? "segunda-via.demonstracao"
+          : "segunda-via.conclusao";
+    showLocal(
+      item.guidance,
+      actions.some((action) => action.id === target) ? [target] : [],
+    );
+  }
+
   /** Atalho “Me explica esta tela” / “Me dá uma dica”: pede ajuda sem precisar falar. */
   function explainScreen() {
+    if (!assistantAiEnabled) return localHelp();
     const text =
       practice && practice.mode !== "demo"
         ? "Me dá uma dica para esta pergunta, sem dizer a resposta."
@@ -420,6 +485,8 @@ export function VoiceAssistantHost() {
         -MAX_CONVERSATION_TURNS,
       ),
     );
+    if (result.type === "help" && getPracticeActivity()?.mode !== "demo")
+      notifyAssistantHelp();
     setLastResponse(result);
     setPresentedOptionIds(
       result.showCatalog
@@ -508,7 +575,13 @@ export function VoiceAssistantHost() {
       {(() => {
         // O Eletriquinho fica no canto do conteúdo (âncora da tela) e fala pelo balão.
         const corner = (
-          <MascotCorner text={mascotSpeech?.text ?? context.tip} hidden={open}>
+          <MascotCorner
+            // Fala viva (narração, dica pedida, comemoração) aparece na hora; a dica
+            // da tela só quando a pessoa fica um tempo parada.
+            text={mascotSpeech?.text ?? (idle ? context.tip : undefined)}
+            hidden={open}
+            compact={!!practice}
+          >
             <DrawerTrigger
               render={
                 <MascotButton
@@ -530,10 +603,9 @@ export function VoiceAssistantHost() {
           <DrawerTitle>Eletriquinho</DrawerTitle>
           <div className="voice-header-actions">
             {
-              <Button
+              <button
                 type="button"
-                variant="ghost"
-                size="icon"
+                className="voice-icon-button"
                 aria-pressed={voiceReplies}
                 aria-label={
                   voiceReplies
@@ -547,18 +619,17 @@ export function VoiceAssistantHost() {
                 ) : (
                   <VolumeX size={22} aria-hidden="true" />
                 )}
-              </Button>
+              </button>
             }
             <DrawerClose
               render={
-                <Button
+                <button
                   type="button"
-                  variant="ghost"
-                  size="icon"
+                  className="voice-icon-button"
                   aria-label="Fechar assistente"
                 >
                   <X size={22} aria-hidden="true" />
-                </Button>
+                </button>
               }
             />
           </div>
@@ -577,7 +648,23 @@ export function VoiceAssistantHost() {
               Você disse: <q>{assistant.transcript}</q>
             </p>
           )}
-          {assistant.step === "welcome" ? (
+          {problems ? (
+            <VoiceStep message="O que aconteceu?">
+              <VoiceChips
+                options={(bundle.data?.difficulties ?? []).map(
+                  ({ id, label }) => ({ id, label }),
+                )}
+                onSelect={showDifficulty}
+              />
+              <button
+                type="button"
+                className="voice-link"
+                onClick={() => setProblems(false)}
+              >
+                Voltar
+              </button>
+            </VoiceStep>
+          ) : assistant.step === "welcome" ? (
             catalog.state === "error" ? (
               <VoiceStep
                 tone="error"
@@ -594,7 +681,10 @@ export function VoiceAssistantHost() {
                 inPractice={!!practice && practice.mode !== "demo"}
                 onSelectSuggestion={selectSuggestion}
                 onExplain={explainScreen}
-                onReject={rejectOptions}
+                onProblem={
+                  assistantAiEnabled ? undefined : () => setProblems(true)
+                }
+                onReject={assistantAiEnabled ? rejectOptions : undefined}
               />
             )
           ) : assistant.step === "capture" ? (
@@ -627,7 +717,7 @@ export function VoiceAssistantHost() {
                 assistant.setStep(lastResponse ? "interpretation" : "welcome");
               }}
               onBack={returnToOptions}
-              onReject={rejectOptions}
+              onReject={assistantAiEnabled ? rejectOptions : undefined}
               onConfirm={(id) => {
                 const action = currentActions.current.find(
                   (item) => item.id === id,
@@ -643,15 +733,17 @@ export function VoiceAssistantHost() {
             />
           )}
         </VoiceConversation>
-        <VoiceAudioDock
-          phase={speech.phase}
-          seconds={speech.seconds}
-          stream={speech.mediaStream}
-          hasTranscript={!!assistant.transcript}
-          onStart={() => startRecording()}
-          onFinish={speech.finishRecording}
-          onCancel={cancelCapture}
-        />
+        {assistantAiEnabled && (
+          <VoiceAudioDock
+            phase={speech.phase}
+            seconds={speech.seconds}
+            stream={speech.mediaStream}
+            hasTranscript={!!assistant.transcript}
+            onStart={() => startRecording()}
+            onFinish={speech.finishRecording}
+            onCancel={cancelCapture}
+          />
+        )}
       </DrawerContent>
     </Drawer>
   );

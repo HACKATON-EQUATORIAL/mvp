@@ -320,3 +320,32 @@
 .stat[data-tone="success"] strong {
   color: var(--success-600);
 }
+
+/* Ícones no lugar do mascote: quem comemora é o Eletriquinho do canto. */
+.doneIcon {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--success-500);
+  color: var(--neutral-0);
+  box-shadow: inset 0 -5px 0 rgb(0 0 0 / 12%);
+}
+
+.feedbackIcon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--surface-page);
+}
+
+.correct .feedbackIcon {
+  color: var(--success-600, #15911d);
+}
+
+.wrong .feedbackIcon {
+  color: var(--warning-700);
+}

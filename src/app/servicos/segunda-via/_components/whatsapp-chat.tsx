@@ -1,7 +1,8 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import type { ReactNode } from "react";
+import { type ReactNode, useEffect, useRef } from "react";
+import { revealInJourney } from "@/components/layout/journey-scroll";
 import { cn } from "@/lib/utils";
 import styles from "./chat.module.css";
 
@@ -12,16 +13,45 @@ export type ReplyOption = {
   state?: "correct" | "wrong" | "pointed";
 };
 
-/** Moldura do WhatsApp simulado: cabeçalho da Clara e aviso fixo de treino. */
+/**
+ * Moldura do WhatsApp simulado: cabeçalho da Clara e aviso fixos, conversa com
+ * rolagem própria (desce sozinha a cada mensagem, sem mexer na página) e
+ * rodapé fixo para respostas rápidas ou o campo de mensagem.
+ */
 export function ChatFrame({
   label,
+  footer,
   children,
 }: {
   label: string;
+  footer?: ReactNode;
   children: ReactNode;
 }) {
+  const body = useRef<HTMLDivElement>(null);
+  const foot = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const element = body.current;
+    if (!element) return;
+    // A conversa desce na hora (como no WhatsApp) e o rodapé com as respostas
+    // fica à vista, rolando só o miolo da tela, nunca o shell.
+    // Ao abrir não rola a página (título e explicação ficam à vista).
+    element.scrollTop = element.scrollHeight;
+    const sync = () => {
+      element.scrollTop = element.scrollHeight;
+      revealInJourney(foot.current, false, 0, "auto");
+    };
+    const observer = new MutationObserver(sync);
+    observer.observe(element, { childList: true, subtree: true });
+    if (foot.current)
+      observer.observe(foot.current, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+      });
+    return () => observer.disconnect();
+  }, []);
   return (
-    <section className={styles.device} aria-label={label}>
+    <section className={styles.device} aria-label={label} data-chat-screen>
       <div className={styles.header} aria-hidden="true">
         <span className={styles.avatar}>C</span>
         <span>
@@ -32,7 +62,13 @@ export function ChatFrame({
       <p className={styles.notice}>
         Simulação para treino · não é o canal oficial
       </p>
-      <div className={styles.body}>{children}</div>
+      {/* biome-ignore lint/a11y/noNoninteractiveTabindex: área rolável precisa de foco pelo teclado */}
+      <div ref={body} className={styles.body} tabIndex={0}>
+        {children}
+      </div>
+      <div ref={foot} className={styles.footer} hidden={!footer}>
+        {footer}
+      </div>
     </section>
   );
 }
@@ -52,7 +88,7 @@ export function ChatLines({ lines }: { lines: ChatLine[] }) {
       )}
       initial={reduced ? false : { opacity: 0, y: 8, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ type: "spring", stiffness: 420, damping: 30 }}
+      transition={{ duration: 0.18, ease: "easeOut" }}
     >
       <span className="sr-only">
         {line.from === "bot" ? "Clara: " : "Você: "}
@@ -93,7 +129,6 @@ export function QuickReplies({
     <fieldset
       className={styles.replies}
       aria-hidden={interactive ? undefined : true}
-      data-chat-end
     >
       {interactive && <legend className="sr-only">Escolha uma resposta</legend>}
       {options.map((option) => (
@@ -141,7 +176,7 @@ export function ResultCard({
   lines: { label: string; value: string; highlight: boolean }[];
 }) {
   return (
-    <dl className={styles.result} data-chat-end>
+    <dl className={styles.result}>
       {lines.map((line) => (
         <div key={line.label} data-highlight={line.highlight || undefined}>
           <dt>{line.label}</dt>
@@ -149,17 +184,6 @@ export function ResultCard({
         </div>
       ))}
     </dl>
-  );
-}
-
-/** Mantém a mensagem mais nova visível dentro do miolo rolável. */
-export function revealChatEnd() {
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  requestAnimationFrame(() =>
-    document.querySelector("[data-chat-end]")?.scrollIntoView({
-      block: "nearest",
-      behavior: reduced ? "auto" : "smooth",
-    }),
   );
 }
 

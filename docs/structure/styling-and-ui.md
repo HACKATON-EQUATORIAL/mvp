@@ -83,10 +83,12 @@ precisa quebrar e expandir sem altura fixa ou truncamento de orientação.
 
 ## Header e composição da página
 
-`Header` é um elemento `header` com props HTML e `className`. Renderiza
-“Digitaliza Aí” como identidade principal à esquerda. À direita, agrupa “Equatorial
-Energia” em branco e “MA” em amarelo, ambos menores; o nome Maranhão fica disponível
-para tecnologia assistiva. O grupo é apenas textual, sem seletor ou link. Permanece
+`Header` é um elemento `header` com props HTML e `className`. Renderiza o logotipo
+oficial da Equatorial à esquerda, junto de “MA” em amarelo; o nome Maranhão fica
+disponível para tecnologia assistiva. Esse grupo é um link para
+`https://www.equatorialenergia.com.br/`, na mesma aba, com área de toque de pelo
+menos 44px de altura e foco visível. “Digitaliza Aí” fica no centro e leva ao início;
+o atalho “Serviços” fica à direita, oculto na home. O cabeçalho permanece
 sticky em todas as rotas pelo `AppShell` do layout raiz, ocupa a largura da aplicação,
 sem margem, borda ou raio, e respeita a área segura. O foco no conteúdo considera
 sua altura.
@@ -97,9 +99,9 @@ sua altura.
 | Comportamento | `position: sticky`, no topo e abaixo do Drawer modal |
 | Superfície | Fundo azul na largura da aplicação, sem margem, borda ou raio; padding lateral de 16px |
 | Dimensões | Mínimo 60px mais área segura; limitado pelo AppShell de até 648px |
-| Textos | Digitaliza Aí branco em destaque à esquerda; Equatorial Energia branco e MA amarelo agrupados à direita, separados por hífen |
-| Tipografia | Inter: Digitaliza Aí 20px/24px, peso 800, tracking -0.025em; Equatorial Energia e MA 13px/18px, peso 700 |
-| Organização | Flex, space-between, gap 8px; permitir quebra sem esconder conteúdo |
+| Marca | Logotipo oficial branco em `next/image`, com `alt="Equatorial Energia"`, e MA amarelo à esquerda; Digitaliza Aí em destaque no centro |
+| Tipografia | Fonte da aplicação; marca central pelos tokens de `.site-header-brand`, MA em 0.75rem com peso bold |
+| Organização | Grid em três colunas (`1fr auto 1fr`), mantendo o título centralizado mesmo sem o atalho da direita |
 
 A Eyebrow fica fora do Header e pertence à tela. `JourneyPage` contém um `main`
 focável, Eyebrow, `h1`, introdução, conteúdo, ações e voz. `AppShell` mantém o

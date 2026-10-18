@@ -23,6 +23,7 @@ import { BadgeShelf } from "./badge-shelf";
 import { EnergyMeter } from "./energy-meter";
 import { LoadState } from "./load-state";
 import styles from "./roadmap.module.css";
+import { RoadmapPath } from "./roadmap-path";
 
 type Node = {
   id: string;
@@ -79,6 +80,8 @@ export function TrackRoadmap() {
   ];
   const next = nodes.find((node) => !node.done);
   const started = nodes.some((node) => node.done);
+  // Só ilumina o percurso contínuo: concluir um passo avulso não preenche lacunas.
+  const completedSegments = next ? nodes.indexOf(next) : nodes.length;
 
   return (
     <div className={styles.roadmap}>
@@ -95,7 +98,7 @@ export function TrackRoadmap() {
         </ActionLink>
       </div>
       <EnergyMeter completed={!next} />
-      <ol className={styles.path} aria-label="Etapas do aprendizado">
+      <RoadmapPath completedSegments={completedSegments}>
         {nodes.map((node, index) => {
           const state = node.done
             ? "done"
@@ -106,6 +109,7 @@ export function TrackRoadmap() {
           return (
             <li
               key={node.id}
+              data-roadmap-node={node.id}
               data-state={state}
               style={
                 {
@@ -116,6 +120,7 @@ export function TrackRoadmap() {
               <Link href={node.href} className={styles.node}>
                 <motion.span
                   className={styles.badge}
+                  data-roadmap-badge
                   aria-hidden="true"
                   animate={
                     state === "current" && !reduced
@@ -133,7 +138,7 @@ export function TrackRoadmap() {
                     <Icon size={28} />
                   )}
                 </motion.span>
-                <span className={styles.label}>
+                <span className={styles.label} data-roadmap-label>
                   {state === "current" && (
                     <span className={styles.start}>
                       {started ? "Próximo" : "Começar"}
@@ -150,6 +155,7 @@ export function TrackRoadmap() {
           );
         })}
         <li
+          data-roadmap-node="goal"
           data-state="goal"
           style={{ "--offset": "0px" } as React.CSSProperties}
         >
@@ -157,16 +163,20 @@ export function TrackRoadmap() {
             href={routes.concluido}
             className={`${styles.node} ${styles.goal}`}
           >
-            <span className={styles.badge} aria-hidden="true">
+            <span
+              className={styles.badge}
+              data-roadmap-badge
+              aria-hidden="true"
+            >
               <MessageCircle size={28} />
             </span>
-            <span className={styles.label}>
+            <span className={styles.label} data-roadmap-label>
               <strong>Meta: WhatsApp oficial</strong>
               <span>Tirar a segunda via de verdade.</span>
             </span>
           </Link>
         </li>
-      </ol>
+      </RoadmapPath>
 
       <BadgeShelf />
       <p className={styles.notice}>{bundle.data.simulated_notice}</p>

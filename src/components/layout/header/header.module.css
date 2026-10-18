@@ -27,6 +27,7 @@
 }
 
 .home:focus-visible,
+.partner:focus-visible,
 .tracks:focus-visible {
   outline: 3px solid var(--focus-ring-on-brand);
   outline-offset: 2px;
@@ -36,12 +37,15 @@
 .partner {
   display: flex;
   align-items: center;
+  justify-self: start;
   gap: 6px;
   min-width: 0;
+  min-height: 44px;
   color: var(--text-on-brand);
   font-size: 0.75rem;
   line-height: 1rem;
   font-weight: var(--font-weight-medium);
+  text-decoration: none;
 }
 
 /* Logotipo oficial (branco), baixado do site da Equatorial Maranhão. */

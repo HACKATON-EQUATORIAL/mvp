@@ -91,6 +91,13 @@ Lint e build aprovados; navegador em 320×812 conferido sem sobreposição com o
 assistente nem excesso de largura. Captura em
 `output/playwright/consulta-voltar-padronizado-320.png`.
 
+Também a pedido do usuário, “Consultar uma dúvida” no mapa e nas lições usa
+`secondary` no tamanho padrão, com a mesma superfície, borda e relevo de “Voltar”.
+Destinos, parâmetros, posição na segunda linha e espaço do assistente preservados.
+Lint e build aprovados; mapa e lição conferidos em 320×812 sem corte ou sobreposição.
+Capturas em `output/playwright/consulta-botao-trilha-320.png` e
+`output/playwright/consulta-botao-licao-320.png`.
+
 - Layout: `src/components/layout/journey.module.css` e `journey-page.tsx`.
 - Acionador: `src/components/voice/voice-help-button.tsx` e `src/app/globals.css`.
 - Telas: `src/app/servicos/segunda-via/_components/track-roadmap.tsx`,

@@ -233,3 +233,32 @@ Verificações:
   reenviado uma única vez ao voltar.
 - **Não verificado:** movimento reduzido real (só pelo código), narração com voz em
   celular físico e abertura real do WhatsApp no aparelho.
+
+## Assistente contextual, conclusão, cards e logo (18/10/2026, DEC-EQT-038)
+
+O que mudou: contexto por tela e da lição no assistente, tipo `help` (dica sem resposta),
+UI compacta com chips, fim do botão Ajuda, tela `/whatsapp/concluido`, `ChoiceCard` na home
+e na escolha de canal, faixa “Trocar canal” no mapa e logotipo oficial no header.
+
+Validação da LLM (script temporário fora do repositório, contra `/api/interpret`, Groq real):
+- 39 falas em 9 telas (serviços, canal, mapa, demonstração, 4 partes, simulação, conclusão).
+- Considerando as respostas obtidas: 33 de 35 com tipo e destino esperados.
+- Mensagens entre 19 e 145 caracteres.
+- **Vazamento bruto da resposta:** 2 casos (“09/2026”, deduzido da dica do mês). Na tela, o
+  guarda `withoutAnswer` troca essas falas pela dica; o prompt também foi reforçado.
+- Fala hesitante virou `confirmation_request` depois da regra no servidor.
+- **Não verificado:** 4 falas ficaram sem resposta por limite de cota da Groq e, no fim, 3
+  por `PROVIDER_AUTH_ERROR` (401/403 da Groq, lado da conta). As alterações finais do prompt
+  (valor exato da opção e “terminei, e agora?”) ainda não foram rodadas de novo.
+
+Navegador (build de produção e API local; 375 e 320 px):
+- assistente com cerca de 36% da altura;
+- “Me dá uma dica” na parte 1 devolveu “Procure a opção que fala de ‘fatura’”;
+- home com os cards novos;
+- “Trocar” no mapa sem quebrar;
+- conclusão incompleta (“Quase lá!”) e completa, com `wa.me/...?text=...` em nova aba;
+- logotipo nítido;
+- sem rolagem horizontal.
+
+O dev server já aberto em :3000 serviu um `globals.css` antigo (cache do Turbopack). Para
+ver a UI nova nele, pare o servidor, apague `.next/dev/cache` e suba de novo.

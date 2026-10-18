@@ -1,49 +1,24 @@
-import { Button } from "@/components/ui/button";
-import { OtherOption } from "./voice-other-option";
 import type { VoicePageSuggestion } from "./voice-page-context";
-import { VoiceStep } from "./voice-step";
+import { VoiceStep, VoiceYesNo } from "./voice-step";
 
+/** Confirma uma saída que interrompe a prática em andamento. */
 export function VoiceSuggestionConfirmation({
-  title = "Confirmar escolha",
   suggestion,
-  confirmLabel = "Continuar",
-  backLabel = "Voltar às opções",
-  alternatives = [],
   onContinue,
-  onSelectAlternative,
   onBack,
-  onReject,
 }: {
-  title?: string;
   suggestion: VoicePageSuggestion;
-  confirmLabel?: string;
-  backLabel?: string;
-  alternatives?: VoicePageSuggestion[];
   onContinue: () => void;
-  onSelectAlternative?: (id: string) => void;
   onBack: () => void;
-  onReject?: () => void;
 }) {
   return (
-    <VoiceStep title={title} description={suggestion.confirmation}>
-      <Button type="button" variant="primary" onClick={onContinue}>
-        {confirmLabel}
-      </Button>
-      {onSelectAlternative &&
-        alternatives.slice(0, 2).map((item) => (
-          <Button
-            key={item.id}
-            type="button"
-            variant="secondary"
-            onClick={() => onSelectAlternative(item.id)}
-          >
-            {item.label}
-          </Button>
-        ))}
-      <Button type="button" variant="secondary" onClick={onBack}>
-        {backLabel}
-      </Button>
-      {onReject && <OtherOption onClick={onReject} />}
+    <VoiceStep message={suggestion.confirmation}>
+      <VoiceYesNo
+        yes="Sim, ir"
+        no="Ficar aqui"
+        onYes={onContinue}
+        onNo={onBack}
+      />
     </VoiceStep>
   );
 }

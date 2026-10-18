@@ -22,7 +22,7 @@ Implementação exclusiva fica em pastas privadas com underscore junto ao segmen
 Sob `/servicos/segunda-via`: escolha do canal na raiz e, no WhatsApp, `whatsapp` (mapa
 das 3 etapas), `whatsapp/demonstracao` (etapa 1), `whatsapp/licoes/[parte]` (etapa 2;
 `menu`, `documento`, `fatura`, `conferir`, gerados estaticamente; outra parte recebe
-not-found) e `whatsapp/simulacao` (etapa 3 e conclusão com o WhatsApp oficial). As rotas
+not-found) e `whatsapp/simulacao` (etapa 3) e `whatsapp/concluido` (meta: resumo e WhatsApp oficial com a mensagem pronta). As rotas
 ficam em `_lib/navigation.ts` e as partes em `_lib/steps.ts`. Não há query de origem nem
 redirect de rotas antigas.
 

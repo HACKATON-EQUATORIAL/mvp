@@ -8,7 +8,12 @@ const voiceContext: VoicePageContext = {
   id: "segunda-via.whatsapp",
   description:
     "Mapa da segunda via pelo WhatsApp em 3 etapas: ver como funciona, praticar parte por parte e fazer tudo sozinho.",
-  tip: "São 3 etapas: ver, praticar e fazer sozinho. Toque em mim se precisar.",
+  tip: "São 3 etapas: ver, praticar e fazer sozinho. Travou? Toque em mim.",
+  screen: {
+    stage: "mapa",
+    teaches:
+      "Mapa do aprendizado pelo WhatsApp: etapa 1 ver como funciona, etapa 2 praticar 4 partes, etapa 3 fazer tudo sozinho e, no fim, a meta com o WhatsApp oficial. Mostra energia e selos. Dá para trocar o canal no topo.",
+  },
   suggestions: [
     {
       id: "demo",

@@ -17,6 +17,7 @@ export const interpretationResultSchema = z
   .object({
     type: z.enum([
       "information",
+      "help",
       "clarification",
       "proposal",
       "confirmation",
@@ -46,7 +47,8 @@ export const interpretationResultSchema = z
           (data.actionId !== null &&
             data.optionIds.includes(data.actionId)))) ||
       (data.type === "clarification" && !data.optionIds.length) ||
-      (data.type === "cancellation" && data.optionIds.length > 0)
+      (data.type === "cancellation" && data.optionIds.length > 0) ||
+      (data.type === "help" && data.optionIds.length > 2)
     ) {
       ctx.addIssue({
         code: "custom",
@@ -70,12 +72,35 @@ export const interpretationRequestSchema = z
         suggestions: z
           .array(assistantActionSchema.omit({ description: true }))
           .max(3),
-        // Prática em andamento nesta tela (sem gabarito).
+        // Onde a pessoa está e o que a tela ensina.
+        screen: z
+          .object({
+            stage: z.enum([
+              "servicos",
+              "canal",
+              "mapa",
+              "etapa1",
+              "etapa2",
+              "etapa3",
+              "conclusao",
+              "outra",
+            ]),
+            part: z.string().trim().max(120).optional(),
+            teaches: z.string().trim().min(1).max(600),
+          })
+          .strict()
+          .nullable()
+          .default(null),
+        // Lição em andamento nesta tela (sem a opção esperada).
         practice: z
           .object({
-            mode: z.enum(["guided", "independent"]),
+            mode: z.enum(["demo", "guided", "independent"]),
             current: z.number().int().positive(),
             total: z.number().int().positive(),
+            stepTitle: z.string().max(200).optional(),
+            prompt: z.string().max(600).optional(),
+            hint: z.string().max(600).optional(),
+            lesson: z.string().max(800).optional(),
           })
           .strict()
           .nullable()
@@ -107,7 +132,13 @@ export const interpretationRequestSchema = z
               .max(10),
             difficulties: z
               .array(
-                z.object({ id: idSchema, label: z.string().max(200) }).strict(),
+                z
+                  .object({
+                    id: idSchema,
+                    label: z.string().max(200),
+                    guidance: z.string().max(800).optional(),
+                  })
+                  .strict(),
               )
               .max(10)
               .default([]),

@@ -15,11 +15,21 @@
 }
 
 .partner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
   color: var(--text-on-brand);
   font-size: 0.75rem;
   line-height: 1rem;
   font-weight: var(--font-weight-medium);
-  opacity: 0.9;
+}
+
+/* Logotipo oficial (branco), baixado do site da Equatorial Maranhão. */
+.logo {
+  display: block;
+  width: auto;
+  height: 22px;
 }
 
 .state {

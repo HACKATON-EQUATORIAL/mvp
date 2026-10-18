@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ArrowLeftRight,
   Check,
   Eye,
   type LucideIcon,
@@ -10,10 +11,9 @@ import {
 } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { PageActions } from "@/components/layout/page-actions";
 import { ActionLink } from "@/components/ui/action-link";
-import { Button, buttonVariants } from "@/components/ui/button";
 import { postEvent } from "@/http/events/post-events";
 import { useGetBundle } from "@/http/track/get-bundle";
 import { routes } from "../_lib/navigation";
@@ -21,7 +21,6 @@ import { useJourneyProgress } from "../_lib/progress";
 import { PARTS, partHref, TRACK_ID } from "../_lib/steps";
 import { BadgeShelf } from "./badge-shelf";
 import { EnergyMeter } from "./energy-meter";
-import { HelpSheet } from "./help-sheet";
 import { LoadState } from "./load-state";
 import styles from "./roadmap.module.css";
 
@@ -42,7 +41,6 @@ export function TrackRoadmap() {
   const bundle = useGetBundle(TRACK_ID);
   const progress = useJourneyProgress();
   const reduced = useReducedMotion();
-  const [help, setHelp] = useState(false);
 
   useEffect(() => {
     postEvent({ type: "journey_entered", payload: { intent: "learn" } });
@@ -81,10 +79,21 @@ export function TrackRoadmap() {
   ];
   const next = nodes.find((node) => !node.done);
   const started = nodes.some((node) => node.done);
-  const official = bundle.data.channel_exit.destinations[0];
 
   return (
     <div className={styles.roadmap}>
+      <div className={styles.channel}>
+        <span className={styles.channelIcon} aria-hidden="true">
+          <MessageCircle size={20} />
+        </span>
+        <span className={styles.channelText}>
+          <small>Canal escolhido</small>
+          <strong>WhatsApp da Clara</strong>
+        </span>
+        <ActionLink variant="secondary" size="sm" href={routes.canal}>
+          <ArrowLeftRight size={16} aria-hidden="true" /> Trocar
+        </ActionLink>
+      </div>
       <EnergyMeter completed={!next} />
       <ol className={styles.path} aria-label="Etapas do aprendizado">
         {nodes.map((node, index) => {
@@ -145,7 +154,7 @@ export function TrackRoadmap() {
           style={{ "--offset": "0px" } as React.CSSProperties}
         >
           <Link
-            href={routes.simulacao}
+            href={routes.concluido}
             className={`${styles.node} ${styles.goal}`}
           >
             <span className={styles.badge} aria-hidden="true">
@@ -161,36 +170,14 @@ export function TrackRoadmap() {
 
       <BadgeShelf />
       <p className={styles.notice}>{bundle.data.simulated_notice}</p>
-      <HelpSheet open={help} onOpenChange={setHelp} />
       <PageActions>
-        {next || !official ? (
-          <ActionLink variant="primary" href={next?.href ?? routes.simulacao}>
-            {!started
-              ? "Começar"
-              : next
-                ? `Continuar: ${next.title.toLocaleLowerCase("pt-BR")}`
-                : "Refazer a simulação"}
-          </ActionLink>
-        ) : (
-          <a
-            href={official.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            data-slot="button"
-            className={buttonVariants({ variant: "primary" })}
-            onClick={() =>
-              postEvent({
-                type: "channel_exit_clicked",
-                payload: { origin: "practice_completed" },
-              })
-            }
-          >
-            Abrir o WhatsApp oficial
-          </a>
-        )}
-        <Button variant="secondary" onClick={() => setHelp(true)}>
-          Ajuda
-        </Button>
+        <ActionLink variant="primary" href={next?.href ?? routes.concluido}>
+          {!started
+            ? "Começar"
+            : next
+              ? `Continuar: ${next.title.toLocaleLowerCase("pt-BR")}`
+              : "Ver a conclusão"}
+        </ActionLink>
       </PageActions>
     </div>
   );

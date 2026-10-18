@@ -7,9 +7,9 @@ import { PARTS, partHref } from "./steps";
 export const secondCopyTargets: VoiceTarget[] = [
   {
     id: "segunda-via.canal",
-    label: "Escolher o canal",
+    label: "Trocar o canal",
     description:
-      "Escolher por qual canal aprender a segunda via: WhatsApp da Clara (disponível) ou site (em breve).",
+      "Escolher ou trocar o canal para aprender a segunda via: WhatsApp da Clara (disponível) ou site da Agência Virtual (em breve).",
     href: routes.canal,
   },
   {
@@ -43,7 +43,14 @@ export const secondCopyTargets: VoiceTarget[] = [
     id: "segunda-via.simulacao",
     label: "Fazer tudo sozinho",
     description:
-      "Etapa 3: a conversa inteira com a Clara, sem dica automática. No fim, abrir o WhatsApp oficial para tirar a segunda via de verdade.",
+      "Etapa 3: a conversa inteira com a Clara, sem dica automática, para treinar sozinho.",
     href: routes.simulacao,
+  },
+  {
+    id: "segunda-via.conclusao",
+    label: "Tirar a segunda via de verdade",
+    description:
+      "Conclusão: resumo do aprendizado e botão para abrir o WhatsApp oficial da Clara com a mensagem pronta e pedir a segunda via real.",
+    href: routes.concluido,
   },
 ];

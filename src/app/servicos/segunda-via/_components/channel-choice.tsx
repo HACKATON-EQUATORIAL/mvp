@@ -1,11 +1,10 @@
 "use client";
 
-import { ChevronRight, Globe, MessageCircle } from "lucide-react";
-import Link from "next/link";
+import { Globe, MessageCircle } from "lucide-react";
+import { ChoiceCard, choiceCardStyles } from "@/components/layout/choice-card";
 import { useGetBundle } from "@/http/track/get-bundle";
 import { routes } from "../_lib/navigation";
 import { TRACK_ID } from "../_lib/steps";
-import styles from "./channel-choice.module.css";
 import { LoadState } from "./load-state";
 
 const icons = { whatsapp: MessageCircle, site: Globe } as const;
@@ -20,40 +19,20 @@ export function ChannelChoice() {
       <LoadState error={bundle.isError} onRetry={() => void bundle.refetch()} />
     );
   return (
-    <ul className={styles.list} aria-label="Canais">
-      {bundle.data.channels.map((channel) => {
-        const Icon = icons[channel.id as keyof typeof icons] ?? Globe;
-        const href = hrefs[channel.id];
-        const content = (
-          <>
-            <span className={styles.icon} aria-hidden="true">
-              <Icon size={28} />
-            </span>
-            <span className={styles.text}>
-              <strong>{channel.label}</strong>
-              <span>{channel.description}</span>
-            </span>
-            {channel.status === "available" && href ? (
-              <ChevronRight size={22} aria-hidden="true" />
-            ) : (
-              <span className={styles.soon}>Em breve</span>
-            )}
-          </>
-        );
-        return (
-          <li key={channel.id}>
-            {channel.status === "available" && href ? (
-              <Link href={href} className={styles.card}>
-                {content}
-              </Link>
-            ) : (
-              <div className={styles.card} aria-disabled="true">
-                {content}
-              </div>
-            )}
-          </li>
-        );
-      })}
+    <ul className={choiceCardStyles.list} aria-label="Canais">
+      {bundle.data.channels.map((channel) => (
+        <li key={channel.id}>
+          <ChoiceCard
+            href={
+              channel.status === "available" ? hrefs[channel.id] : undefined
+            }
+            icon={icons[channel.id as keyof typeof icons] ?? Globe}
+            tone={channel.id === "whatsapp" ? "whatsapp" : "brand"}
+            title={channel.label}
+            description={channel.description}
+          />
+        </li>
+      ))}
     </ul>
   );
 }

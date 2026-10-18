@@ -1,23 +1,84 @@
 import type { ReactNode } from "react";
-import { useId } from "react";
 
+/** Bloco de uma etapa do assistente: a fala curta do Eletriquinho e as escolhas. */
 export function VoiceStep({
-  title,
-  description,
+  message,
+  tone,
+  action,
   children,
 }: {
-  title: string;
-  description: string;
-  children: ReactNode;
+  message: ReactNode;
+  tone?: "error";
+  /** Ação no próprio balão (ex.: ouvir de novo). */
+  action?: ReactNode;
+  children?: ReactNode;
 }) {
-  const titleId = useId();
   return (
-    <section className="voice-step" aria-labelledby={titleId}>
-      <h3 id={titleId} tabIndex={-1}>
-        {title}
-      </h3>
-      <p className="voice-step-description">{description}</p>
-      <div className="voice-step-body">{children}</div>
+    <section className="voice-step" aria-label="Resposta do assistente">
+      <p
+        className="voice-bubble"
+        data-tone={tone}
+        role={tone ? "alert" : "status"}
+        tabIndex={-1}
+      >
+        <span>{message}</span>
+        {action}
+      </p>
+      {children}
     </section>
+  );
+}
+
+/** Chips de resposta rápida. */
+export function VoiceChips({
+  options,
+  onSelect,
+}: {
+  options: { id: string; label: string }[];
+  onSelect: (id: string) => void;
+}) {
+  if (!options.length) return null;
+  return (
+    <div className="voice-chips">
+      {options.map((option) => (
+        <button
+          key={option.id}
+          type="button"
+          className="voice-chip"
+          onClick={() => onSelect(option.id)}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/** Sim / Não lado a lado, para confirmar uma ação. */
+export function VoiceYesNo({
+  yes = "Sim",
+  no = "Não",
+  onYes,
+  onNo,
+}: {
+  yes?: string;
+  no?: string;
+  onYes: () => void;
+  onNo: () => void;
+}) {
+  return (
+    <div className="voice-row">
+      <button
+        type="button"
+        className="voice-chip"
+        data-variant="primary"
+        onClick={onYes}
+      >
+        {yes}
+      </button>
+      <button type="button" className="voice-chip" onClick={onNo}>
+        {no}
+      </button>
+    </div>
   );
 }

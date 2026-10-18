@@ -1,13 +1,26 @@
 import { useSyncExternalStore } from "react";
 
-// Estado mínimo da prática em andamento, publicado pela tela de prática e lido
-// pelo assistente (guard de interrupção e contexto). Sem gabarito.
+// Estado vivo da lição em andamento (demonstração ou prática), publicado pela
+// tela e lido pelo assistente: guard de interrupção e contexto da ajuda.
 export type PracticeActivity = {
-  mode: "guided" | "independent";
+  mode: "demo" | "guided" | "independent";
   current: number;
   total: number;
   /** A pessoa já respondeu ou pediu ajuda nesta tentativa. */
   engaged: boolean;
+  /** Título da parte/passo atual. */
+  stepTitle?: string;
+  /** O que a Clara diz agora (pergunta do item ou fala do passo). */
+  prompt?: string;
+  /** Dica do item (orienta sem dar a resposta). */
+  hint?: string;
+  /** Explicação curta da parte. */
+  lesson?: string;
+  /**
+   * Rótulo da opção esperada: fica só no navegador para o host impedir que a
+   * resposta apareça na fala do assistente. Nunca vai para a LLM.
+   */
+  expected?: string;
 };
 
 let activity: PracticeActivity | null = null;

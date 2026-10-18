@@ -4,6 +4,53 @@
   gap: var(--spacing-sm);
 }
 
+/* Canal escolhido, com atalho para trocar (só no mapa). */
+.channel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 8px 8px 10px;
+  border: 2px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-page);
+}
+
+.channelIcon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #dcf8c6;
+  color: #075e54;
+}
+
+.channelText {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.channelText small {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.channelText strong {
+  color: var(--text-heading);
+  font-size: 0.9375rem;
+}
+
+.channel a[data-slot="button"] {
+  flex: none;
+  width: auto;
+  min-height: 44px;
+  padding-inline: 14px;
+}
+
 .energy {
   display: flex;
   flex-wrap: wrap;

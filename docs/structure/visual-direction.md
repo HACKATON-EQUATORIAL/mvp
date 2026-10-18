@@ -115,3 +115,16 @@ regra nova não aparecer, pare o servidor, apague `.next/dev/cache` e suba de no
   a fala muda. A rolagem automática deixa a mensagem nova acima do balão
   (`scroll-margin-bottom`). O `EletriquinhoTip` do topo das telas saiu.
 - Verificado a 320 e 375 px: sem rolagem horizontal; mascote não cobre botões da barra.
+
+## Conclusão, cards e assistente compacto (DEC-EQT-038)
+
+- **Assistente:** meia folha (até 62dvh e 480px de largura), cabeçalho de uma linha (Eletriquinho
+  40px, som, X), fala em balão `--primary-50`, chips de 44px em pílula, Sim/Não lado a lado.
+- **Cards de escolha** (`components/layout/choice-card.tsx`): ícone em círculo, título,
+  descrição, linha de destaque e barra opcional; indisponível tracejado com “Em breve”.
+  Usado na home e na escolha de canal.
+- **Mapa:** faixa “Canal escolhido · WhatsApp da Clara · Trocar” no topo; barra só com
+  “Continuar”/“Ver a conclusão”.
+- **Conclusão** (`journey-done.tsx`): destaque verde com Eletriquinho, lista das 3 etapas,
+  energia e selos, aviso de requisitos e o botão do WhatsApp oficial.
+- **Header:** logotipo oficial branco da Equatorial com o estado “MA”.

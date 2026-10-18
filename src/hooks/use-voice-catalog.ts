@@ -30,10 +30,9 @@ export function useVoiceCatalog(enabled: boolean) {
           title: bundle.data.title,
           objective: bundle.data.objective,
           steps: bundle.data.steps.map(({ id, title }) => ({ id, title })),
-          difficulties: bundle.data.difficulties.map(({ id, label }) => ({
-            id,
-            label,
-          })),
+          difficulties: bundle.data.difficulties.map(
+            ({ id, label, guidance }) => ({ id, label, guidance }),
+          ),
         }
       : null,
   };

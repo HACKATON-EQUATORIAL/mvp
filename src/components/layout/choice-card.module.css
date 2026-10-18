@@ -85,3 +85,35 @@ a.card:focus-visible {
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
 }
+
+.icon[data-tone="brand"] {
+  background: var(--highlight-500);
+  color: var(--primary-700);
+}
+
+.text .progress {
+  display: block;
+  height: 8px;
+  margin-top: 6px;
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background: var(--surface-muted);
+}
+
+.progress > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--highlight-500);
+}
+
+.text .meta {
+  color: var(--primary-500);
+  font-weight: var(--font-weight-bold);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  a.card:active {
+    transform: none;
+  }
+}

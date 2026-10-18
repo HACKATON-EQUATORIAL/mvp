@@ -8,4 +8,5 @@ export const routes = {
   demonstracao: `${base}/whatsapp/demonstracao`,
   licoes: `${base}/whatsapp/licoes`,
   simulacao: `${base}/whatsapp/simulacao`,
+  concluido: `${base}/whatsapp/concluido`,
 } as const;

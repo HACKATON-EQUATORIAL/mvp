@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/button";
 import type { SpeechPhase } from "@/hooks/use-speech-to-text";
-import { VoiceStep } from "./voice-step";
+import { VoiceChips, VoiceStep } from "./voice-step";
 
+/** Estado da captura de voz em uma linha; os controles ficam no compositor. */
 export function AudioRecorder({
   phase,
   error,
@@ -17,66 +17,39 @@ export function AudioRecorder({
   onRetry: () => void;
   rephrase?: boolean;
 }) {
+  if (error)
+    return (
+      <VoiceStep message={error} tone="error">
+        <VoiceChips
+          options={[
+            ...(canRetry ? [{ id: "retry", label: "Enviar de novo" }] : []),
+            { id: "back", label: "Voltar" },
+          ]}
+          onSelect={(id) => (id === "retry" ? onRetry() : onBack())}
+        />
+      </VoiceStep>
+    );
   return (
     <VoiceStep
-      title={
+      message={
         phase === "requesting"
-          ? "Vamos começar?"
+          ? "Permita o microfone para falar comigo."
           : phase === "recording"
             ? rephrase
-              ? "Diga com outras palavras"
+              ? "Diga com outras palavras. Estou ouvindo…"
               : "Estou ouvindo…"
             : phase === "transcribing"
-              ? "Transcrevendo seu pedido…"
-              : phase === "error"
-                ? "Vamos tentar de novo?"
-                : "A gravação foi interrompida"
-      }
-      description={
-        phase === "requesting"
-          ? "Permita o microfone para contar o que você precisa."
-          : phase === "recording"
-            ? rephrase
-              ? "Conte o que você procura, do seu jeito. Vou sugerir caminhos diferentes."
-              : "Fale no seu ritmo. Quando terminar, toque em parar."
-            : phase === "transcribing"
-              ? "Estou identificando seu pedido."
-              : "Você pode gravar outra mensagem ou voltar às opções."
+              ? "Entendendo o que você disse…"
+              : "A gravação parou."
       }
     >
-      {error ? (
-        <p className="voice-error" role="alert">
-          {error}
-        </p>
-      ) : (
-        <div className="voice-transcribing-panel" role="status">
-          <p>
-            {phase === "transcribing"
-              ? "Identificando sua fala"
-              : "Estou acompanhando sua fala"}
-          </p>
-          <div
-            className="voice-transcript-placeholder"
-            data-pending={phase === "transcribing"}
-            aria-hidden="true"
-          >
-            <span />
-            <span />
-            <span />
-          </div>
-        </div>
-      )}
-      {canRetry && (
-        <Button type="button" onClick={onRetry}>
-          Tentar enviar novamente
-        </Button>
-      )}
       {phase !== "recording" &&
         phase !== "requesting" &&
         phase !== "transcribing" && (
-          <Button type="button" variant="secondary" onClick={onBack}>
-            Voltar às opções
-          </Button>
+          <VoiceChips
+            options={[{ id: "back", label: "Voltar" }]}
+            onSelect={onBack}
+          />
         )}
     </VoiceStep>
   );

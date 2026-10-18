@@ -8,7 +8,12 @@ const voiceContext: VoicePageContext = {
   id: "segunda-via.simulacao",
   description:
     "Etapa 3: a conversa inteira com a Clara, sem dica automática. No fim, abre o WhatsApp oficial com a mensagem pronta.",
-  tip: "Agora é com você. Se precisar, peça ajuda: não tem penalidade.",
+  tip: "Agora é com você. Se precisar, toque em mim: não tem penalidade.",
+  screen: {
+    stage: "etapa3",
+    teaches:
+      "Conversa inteira com a Clara, do menu até conferir a fatura, sem dica automática. Ao terminar, segue para a conclusão.",
+  },
   suggestions: [
     {
       id: "map",

@@ -12,6 +12,7 @@ import { useGetBundle } from "@/http/track/get-bundle";
 import { setMascotSpeech } from "@/lib/assistant/mascot-speech";
 import { useSoundEnabled } from "@/lib/feedback/preferences";
 import { feedback as sfx } from "@/lib/feedback/sound";
+import { setPracticeActivity } from "@/lib/practice/activity";
 import type { TrackBundle } from "@/schemas/http/track";
 import { updateProgress } from "../_lib/progress";
 import { PARTS, partHref, TRACK_ID } from "../_lib/steps";
@@ -127,9 +128,23 @@ function Scene({ steps }: { steps: Step[] }) {
     revealChatEnd();
   }, [index, phase]);
 
+  // Contexto para o assistente: passo da demonstração que está na tela.
+  useEffect(() => {
+    setPracticeActivity({
+      mode: "demo",
+      current: index + 1,
+      total: steps.length,
+      engaged: false,
+      stepTitle: finished ? "Demonstração concluída" : PARTS[index]?.label,
+      prompt: step.bot_messages.join(" "),
+      lesson: step.instruction,
+    });
+  }, [index, steps.length, step, finished]);
+
   useEffect(
     () => () => {
       setMascotSpeech(null);
+      setPracticeActivity(null);
     },
     [],
   );

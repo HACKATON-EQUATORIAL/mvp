@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  ExternalLink,
-  Flame,
-  RotateCcw,
-  Star,
-  Target,
-  Zap,
-} from "lucide-react";
+import { Flame, RotateCcw, Star, Target, Zap } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { Celebration } from "@/components/brand/celebration";
@@ -15,8 +8,7 @@ import { Eletriquinho } from "@/components/brand/eletriquinho";
 import { scrollJourneyToTop } from "@/components/layout/journey-scroll";
 import { PageActions } from "@/components/layout/page-actions";
 import { ActionLink } from "@/components/ui/action-link";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { postEvent } from "@/http/events/post-events";
+import { Button } from "@/components/ui/button";
 import { useGetBundle } from "@/http/track/get-bundle";
 import { setMascotSpeech } from "@/lib/assistant/mascot-speech";
 import { feedback as sfx } from "@/lib/feedback/sound";
@@ -73,6 +65,7 @@ function Practice({ bundle, part }: { bundle: TrackBundle; part?: PartSlug }) {
     items,
     allItemIds: all.map((item) => item.id),
     kind: part ? "part" : "full",
+    lessons: bundle.steps,
   });
   const lesson =
     config && bundle.steps.find((step) => step.id === config.stepId);
@@ -127,7 +120,7 @@ function Practice({ bundle, part }: { bundle: TrackBundle; part?: PartSlug }) {
         onRestart={run.restart}
       />
     ) : (
-      <Conclusion bundle={bundle} burst={burst} run={run} />
+      <Conclusion burst={burst} run={run} />
     );
   if (!item) return null;
 
@@ -298,18 +291,14 @@ function PartDone({
 }
 
 /** Conclusão da etapa 3: saída direta para o WhatsApp oficial, com a mensagem pronta. */
+/** Fim da etapa 3: comemora e leva à tela de conclusão (que abre o WhatsApp oficial). */
 function Conclusion({
-  bundle,
   burst,
   run,
 }: {
-  bundle: TrackBundle;
   burst: number;
   run: ReturnType<typeof usePracticeRun>;
 }) {
-  const destination =
-    bundle.channel_exit.destinations.find((item) => item.kind === "whatsapp") ??
-    bundle.channel_exit.destinations[0];
   const perfect = run.mistakes === 0;
   return (
     <div className={styles.practice}>
@@ -322,8 +311,8 @@ function Conclusion({
         </h2>
         <p>
           {run.assisted
-            ? "Você terminou com um pouco de ajuda, e tudo bem. Agora é só repetir no WhatsApp de verdade."
-            : "Você fez a conversa inteira sem ajuda. Agora é só repetir no WhatsApp de verdade."}
+            ? "Você terminou com um pouco de ajuda, e tudo bem."
+            : "Você fez a conversa inteira sem ajuda."}
         </p>
       </div>
       <ul className={styles.stats} aria-label="Resumo da simulação">
@@ -342,26 +331,10 @@ function Conclusion({
           delay={0.2}
         />
       </ul>
-      <p className={styles.note}>{bundle.channel_exit.requirements_notice}</p>
       <PageActions>
-        {destination ? (
-          <a
-            href={destination.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            data-slot="button"
-            className={buttonVariants({ variant: "primary" })}
-            onClick={() =>
-              postEvent({
-                type: "channel_exit_clicked",
-                payload: { origin: "practice_completed" },
-              })
-            }
-          >
-            Abrir o WhatsApp oficial{" "}
-            <ExternalLink size={18} aria-hidden="true" />
-          </a>
-        ) : null}
+        <ActionLink variant="primary" href={routes.concluido}>
+          Concluir
+        </ActionLink>
         <Button variant="secondary" onClick={run.restart}>
           <RotateCcw size={18} aria-hidden="true" /> Refazer a simulação
         </Button>

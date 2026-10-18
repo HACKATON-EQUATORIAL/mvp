@@ -210,3 +210,19 @@ resposta), que acertou pedidos como “identificar o mês da fatura” → liç�
   pergunta com tentativa em andamento e já respondida/ajudada; informa a pergunta atual e que a
   tentativa fica salva para retomar.
 - **Pedido da própria tela:** não navega (evita apagar a conversa); responde que já está nela.
+
+## Assistente contextual e compacto (DEC-EQT-038)
+
+- **Contexto:** `VoicePageContext.screen` (`stage`, `part`, `teaches`) declarado por página e
+  `PracticeActivity` (`lib/practice/activity.ts`) publicado pela demonstração e pela prática
+  com `stepTitle`, `prompt` (fala da Clara), `hint` e `lesson`. O campo `expected` (rótulo da
+  opção certa) fica só no navegador.
+- **Contrato:** `context.screen`, `context.practice` ampliado, dificuldades com `guidance` e o
+  tipo de resultado `help` (até 2 `optionIds`, `actionId` nulo).
+- **Guardas no host:** `withoutAnswer` troca a fala pela dica se citar a opção esperada; chips
+  que levariam à própria tela são removidos.
+- **Prompt:** jornada de 3 etapas, mensagens de até ~160 caracteres, `help` para dúvidas da
+  tela/lição, fala hesitante sempre como `confirmation_request`, `segunda-via.conclusao` só
+  para “fazer de verdade”.
+- **UI:** balão curto (`VoiceStep`), `VoiceChips`, `VoiceYesNo`, link “Nada disso”, atalho
+  “Me explica esta tela” / “Me dá uma dica”; folha até 62dvh.

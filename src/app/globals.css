@@ -290,20 +290,20 @@ h2 {
   letter-spacing: -0.35px;
 }
 
-/* Voice assistant: Base UI bottom drawer and its independently scrollable content. */
+/* Assistente (DEC-EQT-038): meia folha compacta, uma fala curta e chips. */
 .voice-drawer-popup {
-  --drawer-content-width: min(calc(100vw - 32px), 648px);
+  --drawer-content-width: min(calc(100vw - 16px), 480px);
   --drawer-content-height: auto;
-  --drawer-content-max-height: min(90dvh, 760px);
+  --drawer-content-max-height: min(62dvh, 520px);
   margin-inline: auto;
   overflow: hidden;
   border: 1px solid var(--border-default);
   border-bottom: 0;
-  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  border-radius: 24px 24px 0 0;
   background: var(--surface-page);
   color: var(--text-body);
   box-shadow: var(--shadow-2xl);
-  font-size: var(--font-size-desktop-base);
+  font-size: 1rem;
   user-select: auto;
 }
 
@@ -311,54 +311,56 @@ h2 {
   background: var(--surface-page);
 }
 
-.voice-drawer-header {
-  flex-shrink: 0;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 4px 16px;
-  padding: 4px 20px 16px;
-  text-align: left;
-  border-bottom: 1px solid var(--border-default);
-}
-
 .voice-drawer-popup > [data-slot="drawer-swipe-handle"] {
-  height: 24px;
+  height: 16px;
   align-items: center;
 }
 
 .voice-drawer-popup > [data-slot="drawer-swipe-handle"]::after {
-  width: 48px;
-  background: var(--neutral-400);
+  width: 40px;
+  background: var(--neutral-300, #d0d4dc);
 }
 
-.voice-drawer-header [data-slot="drawer-title"] {
-  grid-column: 1;
-  grid-row: 1;
+.voice-drawer-popup .voice-drawer-header {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px 8px 16px;
+  text-align: left;
+}
+
+.voice-drawer-popup .voice-drawer-header [data-slot="drawer-title"] {
+  flex: 1;
   margin: 0;
   color: var(--text-heading);
-  font-size: var(--font-size-desktop-lg);
-  font-weight: 700;
-  line-height: var(--line-height-sm);
+  font-size: 1.0625rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.voice-header-mascot {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
 }
 
 .voice-header-actions {
-  grid-column: 2;
-  grid-row: 1;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
-.voice-replies-button {
+.voice-header-actions [data-slot="button"] {
+  width: 44px;
   min-width: 44px;
+  height: 44px;
   min-height: 44px;
-}
-
-.voice-close-button {
-  width: auto;
-  min-height: 44px;
-  padding-inline: 16px;
+  padding: 0;
+  border-radius: 50%;
 }
 
 .voice-drawer-scroll {
@@ -367,7 +369,7 @@ h2 {
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 24px 20px;
+  padding: 4px 16px 12px;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -377,69 +379,111 @@ h2 {
 
 .voice-step {
   display: grid;
-  gap: 12px;
+  gap: 10px;
 }
 
-.voice-step h3 {
-  margin: 0;
-  color: var(--text-heading);
-  font-size: var(--font-size-desktop-lg);
-  font-weight: 700;
-  line-height: var(--line-height-sm);
-}
-
-.voice-step-description {
-  margin: 0;
-  color: var(--text-muted);
-}
-
-.voice-reply {
+/* Fala do Eletriquinho: um balão curto. */
+.voice-bubble {
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.voice-reply .voice-step-description {
-  min-width: 0;
-  flex: 1;
-}
-
-.voice-drawer-scroll .voice-reply .voice-listen-button {
-  flex: none;
-  width: 44px;
-  min-width: 44px;
-  min-height: 44px;
-  margin-block: -8px;
-}
-
-.voice-step-body {
-  display: grid;
-  gap: 12px;
-  min-width: 0;
-}
-
-.voice-suggestions {
-  display: grid;
-  gap: 8px;
-}
-
-.voice-drawer-scroll [data-slot="button"],
-.voice-step-body > [data-slot="button"],
-.voice-suggestions [data-slot="button"] {
-  width: 100%;
-  max-width: none;
-}
-
-.voice-suggestions-label {
+  gap: 4px;
   margin: 0;
+  padding: 12px 14px;
+  border-radius: 4px 18px 18px;
+  background: var(--primary-50);
   color: var(--text-heading);
+  font-size: 1rem;
   font-weight: 600;
+  line-height: 1.4;
+}
+
+.voice-bubble > span {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.voice-bubble[data-tone="error"] {
+  background: var(--warning-50);
+  color: var(--warning-800);
+}
+
+.voice-bubble .voice-listen-button {
+  flex: none;
+  width: 36px;
+  min-width: 36px;
+  height: 36px;
+  min-height: 36px;
+  margin: -6px -6px -6px 0;
+  padding: 0;
+  border-radius: 50%;
+}
+
+/* Respostas rápidas: chips curtos que quebram linha. */
+.voice-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.voice-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  max-width: 100%;
+  padding: 0 16px;
+  border: 2px solid var(--primary-200);
+  border-radius: var(--radius-full);
+  background: var(--surface-page);
+  color: var(--primary-500);
+  font-size: 0.9375rem;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.voice-chip:hover {
+  background: var(--primary-50);
+}
+
+.voice-chip:active {
+  transform: translateY(1px);
+}
+
+.voice-chip[data-variant="primary"] {
+  border-color: var(--header-bg);
+  background: var(--header-bg);
+  color: var(--neutral-0);
+}
+
+/* Sim / Não lado a lado. */
+.voice-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.voice-row .voice-chip {
+  justify-content: center;
+}
+
+.voice-link {
+  justify-self: start;
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .voice-audio-dock {
   flex: 0 0 auto;
-  padding: 16px 20px max(16px, env(safe-area-inset-bottom));
+  padding: 8px 16px max(12px, env(safe-area-inset-bottom));
   border-top: 1px solid var(--border-default);
   background: var(--surface-page);
 }
@@ -447,12 +491,8 @@ h2 {
 .voice-audio-composer {
   display: flex;
   align-items: center;
-  gap: 16px;
-  min-height: 92px;
-  padding: 14px 16px;
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-lg);
-  background: var(--surface-subtle);
+  gap: 12px;
+  min-height: 64px;
 }
 
 .voice-audio-feedback {
@@ -461,21 +501,22 @@ h2 {
 }
 
 .voice-audio-status {
-  margin: 0 0 4px;
+  margin: 0;
   color: var(--text-heading);
-  font-weight: var(--font-weight-semibold);
+  font-size: 0.9375rem;
+  font-weight: 800;
 }
 
 .voice-audio-hint {
   margin: 0;
   color: var(--text-muted);
-  font-size: var(--font-size-desktop-sm);
-  line-height: 1.4;
+  font-size: 0.8125rem;
+  line-height: 1.3;
 }
 
 .voice-microphone-wrap {
   position: relative;
-  flex: 0 0 60px;
+  flex: 0 0 56px;
 }
 
 .voice-audio-dock .voice-microphone-button {
@@ -486,8 +527,8 @@ h2 {
   --button-border-hover: var(--cta-bg-hover);
   --button-text-hover: var(--cta-text);
   position: relative;
-  width: 60px;
-  height: 60px;
+  width: 56px;
+  height: 56px;
   padding: 0;
   border-radius: 50%;
 }
@@ -510,23 +551,22 @@ h2 {
 }
 
 .voice-audio-dock .voice-cancel-button {
-  display: flex;
   width: auto;
   min-height: 44px;
-  margin: 4px auto -8px;
+  padding-inline: 12px;
 }
 
 .voice-spectrum-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  height: 36px;
+  gap: 10px;
+  height: 28px;
 }
 
 .voice-spectrum {
   display: block;
   width: 100%;
-  height: 32px;
+  height: 24px;
   min-width: 0;
   color: var(--primary-500);
 }
@@ -538,105 +578,14 @@ h2 {
 .voice-recording-time {
   flex: 0 0 auto;
   color: var(--text-heading);
-  font-size: var(--font-size-desktop-sm);
+  font-size: 0.8125rem;
   font-variant-numeric: tabular-nums;
-}
-
-.voice-transcribing-panel {
-  padding: 20px;
-  border-radius: var(--radius-md);
-  background: var(--surface-subtle);
-}
-
-.voice-transcribing-panel p {
-  margin: 0 0 20px;
-  color: var(--text-muted);
-}
-
-.voice-transcript-placeholder {
-  display: grid;
-  gap: 12px;
-}
-
-.voice-transcript-placeholder span {
-  height: 8px;
-  border-radius: var(--radius-full);
-  background: var(--border-default);
-}
-
-.voice-transcript-placeholder span:nth-child(2) {
-  width: 88%;
-}
-
-.voice-transcript-placeholder span:last-child {
-  width: 60%;
-}
-
-.voice-transcript-placeholder[data-pending="true"] {
-  animation: pulse 1.8s ease-in-out infinite;
-}
-
-.voice-confirmation {
-  margin: 0;
-  padding: 16px;
-  border-radius: var(--radius-md);
-  background: var(--surface-subtle);
-  color: var(--text-heading);
-  font-size: var(--font-size-desktop-md);
-  line-height: var(--line-height-lg);
-  overflow-wrap: anywhere;
-}
-
-.voice-confirmed-text {
-  margin: 0;
-  padding: 16px;
-  border-left: 4px solid var(--primary-500);
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
-  background: var(--transcript-bg);
-  color: var(--text-heading);
-  overflow-wrap: anywhere;
-  white-space: pre-wrap;
 }
 
 .voice-error {
   margin: 0;
   color: var(--text-error);
   line-height: var(--line-height-base);
-}
-
-@media (max-width: 575px) {
-  .voice-drawer-popup {
-    font-size: var(--font-size-mobile-base);
-  }
-
-  .voice-drawer-header {
-    padding-inline: 16px;
-  }
-
-  .voice-drawer-header [data-slot="drawer-title"] {
-    font-size: var(--font-size-mobile-lg);
-  }
-
-  .voice-drawer-scroll {
-    padding-inline: 16px;
-  }
-
-  .voice-audio-dock {
-    padding-inline: 16px;
-  }
-
-  .voice-audio-composer {
-    gap: 12px;
-    padding: 12px;
-  }
-
-  .voice-step h3 {
-    font-size: var(--font-size-mobile-lg);
-  }
-
-  .voice-confirmation {
-    font-size: var(--font-size-mobile-base);
-  }
 }
 button,
 a {
@@ -1056,7 +1005,7 @@ a {
 }
 
 .voice-heard {
-  margin: 0 0 var(--spacing-xs);
+  margin: 0 0 8px;
   color: var(--text-muted);
   font-size: 0.875rem;
   line-height: 1.4;

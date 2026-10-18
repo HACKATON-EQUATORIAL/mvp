@@ -62,11 +62,14 @@ export function usePracticeRun({
   items,
   allItemIds,
   kind,
+  lessons = [],
 }: {
   items: BundleItem[];
   /** IDs de todos os itens do serviço (ordem do conteúdo), para a etapa 2. */
   allItemIds: string[];
   kind: "part" | "full";
+  /** Partes do conteúdo (título e explicação), para o contexto do assistente. */
+  lessons?: { id: string; title: string; explanation: { text: string } }[];
 }) {
   const [index, setIndex] = useState(0);
   const [answer, setAnswer] = useState<Answer | null>(null);
@@ -85,7 +88,10 @@ export function usePracticeRun({
     void flushPendingSubmits();
   }, []);
 
+  // Contexto vivo para o assistente; `answer` e `help` recalculam `engaged`.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: answer/help mudam o registro de passos
   useEffect(() => {
+    const lesson = lessons.find((entry) => entry.id === item?.step_id);
     setPracticeActivity(
       done || !item
         ? null
@@ -94,9 +100,14 @@ export function usePracticeRun({
             current: index + 1,
             total: items.length,
             engaged: steps.current.length > 0,
+            stepTitle: lesson?.title,
+            prompt: item.prompt,
+            hint: item.hint,
+            lesson: lesson?.explanation.text,
+            expected: item.options.find((option) => option.is_expected)?.label,
           },
     );
-  }, [done, item, index, items.length, kind]);
+  }, [done, item, index, items.length, kind, lessons, answer, help]);
   useEffect(() => () => setPracticeActivity(null), []);
 
   const options = useMemo(

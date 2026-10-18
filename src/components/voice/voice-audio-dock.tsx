@@ -57,7 +57,7 @@ export function VoiceAudioDock({
       <div className="voice-audio-composer" data-phase={phase}>
         <div className="voice-audio-feedback">
           <p className="voice-audio-status" role="status">
-            {recording ? "Gravando" : pending ? label : "Responda por voz"}
+            {recording ? "Gravando" : pending ? label : "Fale comigo"}
           </p>
           {recording ? (
             <div className="voice-spectrum-row">
@@ -85,8 +85,8 @@ export function VoiceAudioDock({
               {phase === "requesting"
                 ? "Permita o uso do microfone."
                 : phase === "transcribing"
-                  ? "Estamos identificando o que você disse."
-                  : "Toque no microfone para falar."}
+                  ? "Só um instante."
+                  : "Toque no microfone."}
             </p>
           )}
         </div>

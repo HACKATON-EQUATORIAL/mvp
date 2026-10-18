@@ -8,6 +8,11 @@ const voiceContext: VoicePageContext = {
   description:
     "Etapa 1: a conversa com a Clara toca sozinha e o Eletriquinho explica cada passo. Dá para pausar, voltar e repetir.",
   tip: "Assista: eu explico cada passo da conversa.",
+  screen: {
+    stage: "etapa1",
+    teaches:
+      "Demonstração automática da conversa com a Clara: menu, CPF do titular, escolha da fatura pelo mês e conferência antes de pagar. Tem pausar, voltar e repetir.",
+  },
   suggestions: [],
 };
 

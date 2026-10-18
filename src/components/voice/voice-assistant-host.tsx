@@ -1,6 +1,6 @@
 "use client";
 
-import { Volume2, VolumeX } from "lucide-react";
+import { Volume2, VolumeX, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -19,7 +19,6 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useSpeechSynthesis } from "@/hooks/use-speech-synthesis";
 import { useSpeechToText } from "@/hooks/use-speech-to-text";
 import { useVoiceAssistant } from "@/hooks/use-voice-assistant";
@@ -53,7 +52,7 @@ import { useVoicePage } from "./voice-assistant-provider";
 import { VoiceAudioDock } from "./voice-audio-dock";
 import { VoiceConversation } from "./voice-conversation";
 import { VoiceInterpretationStep } from "./voice-interpretation-step";
-import { VoiceStep } from "./voice-step";
+import { VoiceChips, VoiceStep } from "./voice-step";
 import { VoiceSuggestionConfirmation } from "./voice-suggestion-confirmation";
 import { VoiceWelcomeStep } from "./voice-welcome-step";
 
@@ -74,6 +73,31 @@ const sameScreen: InterpretationResult = {
 };
 
 const activeSpeechPhases = new Set(["requesting", "recording", "transcribing"]);
+
+const normalize = (text: string) =>
+  text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+/**
+ * Última barreira: se a fala citar o rótulo da opção esperada da prática, troca
+ * pela dica do item. A LLM não recebe a resposta, mas pode adivinhar.
+ */
+function withoutAnswer(
+  result: InterpretationResult,
+  activity: ReturnType<typeof getPracticeActivity>,
+): InterpretationResult {
+  const expected = activity?.expected && normalize(activity.expected);
+  if (!expected || activity.mode === "demo") return result;
+  if (!normalize(result.message).includes(expected)) return result;
+  return {
+    ...result,
+    message:
+      activity.hint ??
+      "Leia a mensagem da Clara com calma e escolha a opção que combina com o seu pedido.",
+  };
+}
 
 export function VoiceAssistantHost() {
   const { context } = useVoicePage();
@@ -246,6 +270,17 @@ export function VoiceAssistantHost() {
     startRecording(true);
   }
 
+  /** Atalho “Me explica esta tela” / “Me dá uma dica”: pede ajuda sem precisar falar. */
+  function explainScreen() {
+    const text =
+      practice && practice.mode !== "demo"
+        ? "Me dá uma dica para esta pergunta, sem dizer a resposta."
+        : "Não entendi esta tela. Me explica o que faço aqui?";
+    tts.prime();
+    assistant.completeTranscript(text);
+    void interpretTranscript(text);
+  }
+
   function cancelCapture() {
     speech.cancel();
     assistant.setStep(
@@ -341,11 +376,17 @@ export function VoiceAssistantHost() {
           label,
           confirmation,
         })),
+        screen: context.screen ?? null,
+        // A opção esperada (`expected`) fica no navegador; nunca vai à LLM.
         practice: practice
           ? {
               mode: practice.mode,
               current: practice.current,
               total: practice.total,
+              stepTitle: practice.stepTitle,
+              prompt: practice.prompt,
+              hint: practice.hint,
+              lesson: practice.lesson,
             }
           : null,
       },
@@ -363,8 +404,17 @@ export function VoiceAssistantHost() {
       rejectedOptionIds: rejectedIds.filter((id) => allowed.has(id)),
     };
     assistant.setStep("interpretation");
-    const result = await interpretation.interpret(input);
-    if (!result) return;
+    const raw = await interpretation.interpret(input);
+    if (!raw) return;
+    // Chips nunca levam à própria tela.
+    const here = actions.find((item) => item.href.split("?")[0] === pathname);
+    const result = withoutAnswer(
+      {
+        ...raw,
+        optionIds: raw.optionIds.filter((id) => id !== here?.id),
+      },
+      getPracticeActivity(),
+    );
     setHistory((current) =>
       [...current, { user: input.text, assistant: result }].slice(
         -MAX_CONVERSATION_TURNS,
@@ -440,8 +490,11 @@ export function VoiceAssistantHost() {
                 : "happy"
           : "wave";
 
+  // Mostra a resposta já filtrada (`withoutAnswer`), guardada em lastResponse.
   const interpretationState =
-    interpretation.state.status === "idle" && lastResponse
+    (interpretation.state.status === "idle" ||
+      interpretation.state.status === "success") &&
+    lastResponse
       ? { status: "success" as const, result: lastResponse }
       : interpretation.state;
 
@@ -471,14 +524,16 @@ export function VoiceAssistantHost() {
       })()}
       <DrawerContent className="voice-drawer-popup">
         <DrawerHeader className="voice-drawer-header">
-          <DrawerTitle>Assistente Digitaliza Aí</DrawerTitle>
+          <span className="voice-header-mascot" aria-hidden="true">
+            <Eletriquinho mood={mascotMood} size={40} />
+          </span>
+          <DrawerTitle>Eletriquinho</DrawerTitle>
           <div className="voice-header-actions">
             {
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="voice-replies-button"
                 aria-pressed={voiceReplies}
                 aria-label={
                   voiceReplies
@@ -498,17 +553,17 @@ export function VoiceAssistantHost() {
               render={
                 <Button
                   type="button"
-                  variant="secondary"
-                  className="voice-close-button"
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Fechar assistente"
                 >
-                  Fechar
+                  <X size={22} aria-hidden="true" />
                 </Button>
               }
             />
           </div>
         </DrawerHeader>
         <VoiceConversation
-          header={<Eletriquinho mood={mascotMood} size={92} />}
           stage={
             assistant.step === "capture"
               ? `capture-${speech.phase}`
@@ -523,29 +578,25 @@ export function VoiceAssistantHost() {
             </p>
           )}
           {assistant.step === "welcome" ? (
-            <>
-              {catalog.state === "loading" ? (
-                <div role="status" aria-label="Carregando opções do assistente">
-                  <Skeleton className="h-6 w-3/4" />
-                  <Skeleton className="mt-3 h-12 w-full" />
-                </div>
-              ) : null}
-              {catalog.state === "error" ? (
-                <VoiceStep
-                  title="Não consegui atualizar os serviços"
-                  description="Você ainda pode usar os caminhos conhecidos desta tela."
-                >
-                  <Button variant="secondary" onClick={retry}>
-                    Tentar novamente
-                  </Button>
-                </VoiceStep>
-              ) : null}
+            catalog.state === "error" ? (
+              <VoiceStep
+                tone="error"
+                message="Não consegui atualizar os serviços. As opções desta tela continuam valendo."
+              >
+                <VoiceChips
+                  options={[{ id: "retry", label: "Tentar de novo" }]}
+                  onSelect={retry}
+                />
+              </VoiceStep>
+            ) : (
               <VoiceWelcomeStep
                 context={pageContext}
+                inPractice={!!practice && practice.mode !== "demo"}
                 onSelectSuggestion={selectSuggestion}
+                onExplain={explainScreen}
                 onReject={rejectOptions}
               />
-            </>
+            )
           ) : assistant.step === "capture" ? (
             <AudioRecorder
               phase={speech.phase}
@@ -563,7 +614,6 @@ export function VoiceAssistantHost() {
               }}
               onContinue={() => continueToAction(selected, true)}
               onBack={returnToOptions}
-              onReject={rejectOptions}
             />
           ) : (
             <VoiceInterpretationStep

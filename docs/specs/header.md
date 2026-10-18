@@ -35,8 +35,10 @@ Conteúdo confirmado:
 
 A descrição do componente no Figma informa que o header é inspirado na navegação
 azul arredondada do site, com Roboto provisória, sem reproduzir o logotipo oficial.
-O texto deve continuar sendo texto HTML; não criar ou substituir por logotipo,
-imagem ou SVG.
+Atualização (DEC-EQT-038, 18/10/2026): a pedido do usuário, a linha da Equatorial
+passou a usar o logotipo oficial branco (`public/brand/equatorial-energia.png`, do site
+da Equatorial Maranhão) com `next/image`, 22px de altura e `alt="Equatorial Energia"`.
+“Digitaliza Aí” continua em texto HTML.
 
 
 ## Verificação registrada na etapa original

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { HTMLAttributes } from "react";
 import styles from "./header.module.css";
@@ -18,7 +19,14 @@ export function Header({ className, ...props }: HeaderProps) {
         >
           <span className="site-header-brand">Digitaliza Aí</span>
           <span className={styles.partner}>
-            Equatorial Energia ·{" "}
+            <Image
+              src="/brand/equatorial-energia.png"
+              alt="Equatorial Energia"
+              width={151}
+              height={44}
+              priority
+              className={styles.logo}
+            />
             <abbr title="Maranhão" className={styles.state}>
               MA
             </abbr>

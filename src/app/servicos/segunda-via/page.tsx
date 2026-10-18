@@ -9,6 +9,11 @@ const voiceContext: VoicePageContext = {
   description:
     "Escolha do canal para aprender a segunda via: WhatsApp da Clara (disponível) ou site (em breve).",
   tip: "Por onde você quer aprender? O WhatsApp da Clara já está pronto.",
+  screen: {
+    stage: "canal",
+    teaches:
+      "Escolher o canal para aprender a segunda via. Só o WhatsApp da Clara está disponível; o site da Agência Virtual vem em breve.",
+  },
   suggestions: [
     {
       id: "whatsapp",

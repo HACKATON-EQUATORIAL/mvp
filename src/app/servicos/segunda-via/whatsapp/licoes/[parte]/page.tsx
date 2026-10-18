@@ -24,7 +24,12 @@ export default async function Page({ params }: Props) {
   const voiceContext: VoicePageContext = {
     id: `segunda-via.parte.${part.slug}`,
     description: `Etapa 2, parte ${number} de ${PARTS.length}: ${part.label}. Responda à Clara no chat simulado; errar é normal e dá para pedir dica.`,
-    tip: "Leia como funciona e responda à Clara. Se travar, peça uma dica.",
+    tip: "Leia como funciona e responda à Clara. Travou? Toque em mim.",
+    screen: {
+      stage: "etapa2",
+      part: part.label,
+      teaches: `Parte ${number} de ${PARTS.length} da prática: ${part.label}. A pessoa responde à Clara no chat simulado e recebe feedback na hora.`,
+    },
     suggestions: [
       {
         id: "map",

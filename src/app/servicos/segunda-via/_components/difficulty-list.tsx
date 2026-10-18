@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { PageActions } from "@/components/layout/page-actions";
 import { ActionLink } from "@/components/ui/action-link";
 import { Button } from "@/components/ui/button";
 import { postEvent } from "@/http/events/post-events";
@@ -60,13 +61,15 @@ export function DifficultyList({ context }: { context: NavigationContext }) {
       {item && (
         <div role="status" className="grid gap-3 pt-2">
           <p className={styles.text}>{item.guidance}</p>
-          <ActionLink variant="primary" href={href}>
-            {destination?.kind === "step"
-              ? "Ver a lição desta etapa"
-              : destination?.kind === "overview"
-                ? "Ver o caminho completo"
-                : "Ver orientações do canal oficial"}
-          </ActionLink>
+          <PageActions>
+            <ActionLink variant="primary" href={href}>
+              {destination?.kind === "step"
+                ? "Ver a lição desta etapa"
+                : destination?.kind === "overview"
+                  ? "Ver o caminho completo"
+                  : "Ver orientações do canal oficial"}
+            </ActionLink>
+          </PageActions>
         </div>
       )}
     </div>

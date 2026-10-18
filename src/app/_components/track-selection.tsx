@@ -1,7 +1,22 @@
 "use client";
 
+import {
+  ChevronRight,
+  FileText,
+  HeartHandshake,
+  Lock,
+  type LucideIcon,
+  Search,
+  ZapOff,
+} from "lucide-react";
+import Link from "next/link";
+import {
+  ENERGY_MAX,
+  energyOf,
+  useJourneyProgress,
+} from "@/app/servicos/segunda-via/_lib/progress";
+import { FaiscaTip } from "@/components/brand/faisca";
 import { JourneyPage } from "@/components/layout/journey-page";
-import { ActionLink } from "@/components/ui/action-link";
 import { Button } from "@/components/ui/button";
 import type { VoicePageContext } from "@/components/voice/voice-page-context";
 import { useGetTracks } from "@/http/track/get-tracks";
@@ -12,6 +27,13 @@ import { TrackSelectionSkeleton } from "./track-selection-skeleton";
 // Only implemented journeys can be opened, even if the backend grows its catalog.
 const destinations: Record<string, string | undefined> = {
   "segunda-via": "/servicos/segunda-via",
+};
+
+const icons: Record<string, LucideIcon> = {
+  "segunda-via": FileText,
+  "consultar-debitos": Search,
+  "falta-de-energia": ZapOff,
+  "tarifa-social": HeartHandshake,
 };
 
 export function TrackSelection() {
@@ -36,11 +58,14 @@ export function TrackSelection() {
   return (
     <JourneyPage
       eyebrow="TRILHAS DE APRENDIZAGEM"
-      title="O que você quer aprender?"
-      intro="Escolha uma trilha e aprenda no seu ritmo."
+      title="Aprenda a usar o atendimento digital da Equatorial"
+      intro="Trilhas curtas, com prática segura e uma conta de exemplo. No fim, você faz o pedido real sozinho."
       actions={null}
       voiceContext={voiceContext}
     >
+      <FaiscaTip>
+        Oi! Eu sou a Faísca. Escolha uma trilha e vamos juntos, no seu ritmo.
+      </FaiscaTip>
       <section
         className={styles.catalog}
         aria-label="Trilhas disponíveis"
@@ -81,15 +106,47 @@ export function TrackSelection() {
 function TrackItem({ track }: { track: TrackSummary }) {
   const href = destinations[track.id];
   const available = track.status === "available" && !!href;
-  return (
-    <li className={styles.item}>
-      {available ? (
-        <ActionLink href={href}>{track.title}</ActionLink>
-      ) : (
-        <Button disabled>
-          {track.title}
+  const Icon = icons[track.id] ?? FileText;
+  const energy = energyOf(useJourneyProgress());
+  const started = track.id === "segunda-via" && energy > 0;
+  const content = (
+    <>
+      <span className={styles.icon} aria-hidden="true">
+        {available ? <Icon size={26} /> : <Lock size={22} />}
+      </span>
+      <span className={styles.body}>
+        <strong>{track.title}</strong>
+        {available ? (
+          <span>
+            {started
+              ? `Continuar · ${energy} de ${ENERGY_MAX} kWh`
+              : "Começar agora · 5 passos"}
+          </span>
+        ) : (
           <span className={styles.status}>Em breve</span>
-        </Button>
+        )}
+        {available && started && (
+          <span className={styles.bar} aria-hidden="true">
+            <span
+              className={styles.fill}
+              style={{ width: `${(energy / ENERGY_MAX) * 100}%` }}
+            />
+          </span>
+        )}
+      </span>
+      {available && <ChevronRight size={22} aria-hidden="true" />}
+    </>
+  );
+  return (
+    <li className={styles.item} data-available={available || undefined}>
+      {available ? (
+        <Link href={href} className={styles.card}>
+          {content}
+        </Link>
+      ) : (
+        <div className={styles.card} aria-disabled="true">
+          {content}
+        </div>
       )}
     </li>
   );

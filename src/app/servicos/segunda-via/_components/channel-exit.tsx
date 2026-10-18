@@ -1,7 +1,8 @@
 "use client";
 
-import { ExternalLink, Info } from "lucide-react";
+import { ExternalLink, Info, ShieldCheck } from "lucide-react";
 import { useEffect } from "react";
+import { PageActions } from "@/components/layout/page-actions";
 import { ActionLink } from "@/components/ui/action-link";
 import { useGetChannelExit } from "@/http/channel/get-channel-exit";
 import { postEvent } from "@/http/events/post-events";
@@ -35,7 +36,18 @@ export function ChannelExit({ context }: { context: NavigationContext }) {
   const exit = query.data;
   return (
     <div className={styles.lesson}>
-      <p className={styles.text}>{exit.requirements_notice}</p>
+      <section className={styles.official} aria-label="Atendimento oficial">
+        <p className={styles.officialTitle}>
+          <ShieldCheck size={22} aria-hidden="true" />
+          Atendimento oficial da Equatorial
+        </p>
+        <p className={styles.text}>{exit.requirements_notice}</p>
+        <ul className={styles.channels}>
+          <li>Agência Virtual: “Pagamento Simplificado”, sem login</li>
+          <li>WhatsApp da Clara: número impresso na sua conta</li>
+          <li>Aplicativo “Equatorial Energia”</li>
+        </ul>
+      </section>
       {exit.url ? (
         <a
           href={exit.url}
@@ -56,9 +68,11 @@ export function ChannelExit({ context }: { context: NavigationContext }) {
           </span>
         </p>
       )}
-      <ActionLink href={routes.simulador}>
-        Treinar antes no simulador
-      </ActionLink>
+      <PageActions>
+        <ActionLink variant="primary" href={routes.simulador}>
+          Treinar antes no simulador
+        </ActionLink>
+      </PageActions>
       <ActionLink href="/">Escolher outra trilha</ActionLink>
     </div>
   );

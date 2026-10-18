@@ -120,3 +120,51 @@
   color: var(--text-heading);
   font-weight: var(--font-weight-bold);
 }
+
+.gain {
+  justify-self: start;
+  align-self: flex-start;
+  margin: 0;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: var(--highlight-500);
+  color: var(--primary-700);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-bold);
+}
+
+.bill dl div {
+  flex-wrap: wrap;
+}
+
+.bill dt,
+.bill dd {
+  overflow-wrap: normal;
+}
+
+/* Tom institucional: o que é serviço real fica calmo, sem mascote. */
+.official {
+  display: grid;
+  gap: 10px;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--primary-100);
+  border-radius: var(--radius-md);
+  background: var(--primary-50);
+}
+
+.officialTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--primary-600);
+  font-weight: var(--font-weight-bold);
+}
+
+.channels {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--primary-600);
+}

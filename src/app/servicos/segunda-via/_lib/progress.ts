@@ -62,3 +62,22 @@ function subscribe(listener: () => void) {
 export function useJourneyProgress() {
   return useSyncExternalStore(subscribe, read, () => empty);
 }
+
+/** Pontos de energia (kWh de conhecimento) por passo concluído: só visual. */
+export const ENERGY = {
+  lesson: 10,
+  guided: 20,
+  independent: 30,
+  simulated: 20,
+};
+export const ENERGY_MAX =
+  ENERGY.lesson * 2 + ENERGY.guided + ENERGY.independent + ENERGY.simulated;
+
+export function energyOf(progress: JourneyProgress) {
+  return (
+    progress.learned.length * ENERGY.lesson +
+    (progress.guidedDone ? ENERGY.guided : 0) +
+    (progress.independentDone ? ENERGY.independent : 0) +
+    (progress.simulated.length ? ENERGY.simulated : 0)
+  );
+}

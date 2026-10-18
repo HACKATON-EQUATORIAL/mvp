@@ -7,7 +7,9 @@ import {
   MessageCircle,
   ShieldAlert,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { scrollJourneyToTop } from "@/components/layout/journey-scroll";
+import { PageActions } from "@/components/layout/page-actions";
 import { ActionLink } from "@/components/ui/action-link";
 import { Button } from "@/components/ui/button";
 import { useGetChannelSimulations } from "@/http/track/get-channel-simulations";
@@ -92,6 +94,16 @@ function Simulation({
   const step = simulation.steps[index];
   const done = index >= simulation.steps.length;
 
+  // Novo passo: site volta ao topo; no WhatsApp, mostra a mensagem mais nova.
+  useEffect(() => {
+    if (index === 0) return;
+    if (whatsapp && !done)
+      document
+        .querySelector("[data-chat-end]")
+        ?.scrollIntoView({ block: "end", behavior: "smooth" });
+    else scrollJourneyToTop();
+  }, [index, whatsapp, done]);
+
   function advance(userText?: string) {
     setChat((lines) => [
       ...lines,
@@ -132,12 +144,14 @@ function Simulation({
           Agora é só repetir no canal oficial, com os seus dados. Lembre de
           conferir o mês de referência e a identificação.
         </p>
-        <ActionLink
-          variant="primary"
-          href={withContext(routes.canal, { origem: "pratica-concluida" })}
-        >
-          Ir ao canal oficial
-        </ActionLink>
+        <PageActions>
+          <ActionLink
+            variant="primary"
+            href={withContext(routes.canal, { origem: "pratica-concluida" })}
+          >
+            Ir ao canal oficial
+          </ActionLink>
+        </PageActions>
         {others.map((item) => (
           <Button
             key={item.id}
@@ -194,7 +208,7 @@ function Simulation({
         </p>
       )}
 
-      <div className={styles.actions}>
+      <PageActions>
         {step.kind === "form" && !filled && (
           <Button onClick={() => setFilled(true)}>
             Preencher com dados de exemplo
@@ -207,10 +221,10 @@ function Simulation({
             {step.kind === "result" ? "Concluir treino" : "Continuar"}
           </Button>
         )}
-        <Button variant="ghost" onClick={() => onSwitch(null)}>
-          Escolher outro canal
-        </Button>
-      </div>
+      </PageActions>
+      <Button variant="ghost" onClick={() => onSwitch(null)}>
+        Escolher outro canal
+      </Button>
       <details className={styles.source}>
         <summary>De onde vêm estas telas?</summary>
         <p>{simulation.source}</p>
@@ -290,9 +304,11 @@ function ChatScreen({
         </p>
       ))}
       {step.kind === "result" ? (
-        <ResultLines step={step} />
+        <div data-chat-end>
+          <ResultLines step={step} />
+        </div>
       ) : (
-        <div className={styles.replies}>
+        <div className={styles.replies} data-chat-end>
           {step.options.map((option) => (
             <button
               key={option.id}

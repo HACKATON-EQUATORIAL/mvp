@@ -1,80 +1,93 @@
 .roadmap {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
+  gap: var(--spacing-sm);
 }
 
-.objective {
+.energy {
   display: flex;
-  gap: 10px;
-  margin: 0;
-  padding: var(--spacing-sm);
-  border-radius: var(--radius-md);
-  background: var(--primary-50);
-  color: var(--primary-600);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border: 2px solid var(--highlight-200);
+  border-radius: var(--radius-lg);
+  background: var(--highlight-50);
+  color: var(--highlight-900);
 }
 
-.objective svg {
-  flex: none;
-  margin-top: 2px;
+.energy svg {
+  color: var(--highlight-600);
 }
 
-.count {
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 0.875rem;
-  font-weight: var(--font-weight-medium);
+.energy strong {
+  font-size: 1.25rem;
+}
+
+.energyBar {
+  flex: 1 1 100%;
+  height: 10px;
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background: var(--surface-page);
+}
+
+.energyBar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--highlight-500);
+  transition: width 600ms ease;
 }
 
 .path {
   position: relative;
   display: grid;
-  gap: 12px;
+  gap: 18px;
   margin: 0;
-  padding: 0;
+  padding: 8px 0;
   list-style: none;
 }
 
-/* Linha da trilha conectando os passos. */
-.path::before {
-  content: "";
-  position: absolute;
-  top: 24px;
-  bottom: 24px;
-  left: 23px;
-  width: 4px;
-  border-radius: 2px;
-  background: var(--surface-muted);
+.path li {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+
+/* O deslocamento vai no nó (não no item) para não estourar a largura. */
+.path li > a {
+  transform: translateX(var(--offset, 0));
 }
 
 .node {
-  position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 14px;
-  min-height: 64px;
-  padding: 8px 12px 8px 0;
-  border-radius: var(--radius-md);
+  gap: 6px;
+  max-width: 190px;
+  padding: 4px;
+  border-radius: var(--radius-lg);
   color: inherit;
+  text-align: center;
   text-decoration: none;
 }
 
 .node:focus-visible {
   outline: 3px solid var(--primary-400);
-  outline-offset: 2px;
+  outline-offset: 4px;
 }
 
 .badge {
   display: grid;
-  flex: none;
   place-items: center;
-  width: 50px;
-  height: 50px;
+  width: 72px;
+  height: 72px;
   border: 3px solid var(--border-default);
+  border-bottom-width: 7px;
   border-radius: 50%;
-  background: var(--surface-page);
-  color: var(--text-muted);
-  font-weight: var(--font-weight-bold);
+  background: var(--surface-muted);
+  color: var(--neutral-500);
 }
 
 .label {
@@ -84,40 +97,50 @@
 
 .label strong {
   color: var(--text-heading);
+  font-size: 0.9375rem;
+  line-height: 1.25rem;
 }
 
 .label > span {
   color: var(--text-muted);
-  font-size: 0.9375rem;
-  line-height: 1.3125rem;
+  font-size: 0.8125rem;
+  line-height: 1.125rem;
+}
+
+.label .start {
+  justify-self: center;
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  background: var(--header-bg);
+  color: var(--text-on-brand);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 [data-state="done"] .badge {
-  border-color: var(--success-400);
+  border-color: var(--success-500);
   background: var(--success-400);
   color: var(--neutral-0);
 }
 
 [data-state="current"] .badge {
-  border-color: var(--primary-500);
+  border-color: var(--highlight-600);
   background: var(--highlight-500);
   color: var(--primary-700);
-  box-shadow: 0 0 0 6px var(--highlight-100);
-}
-
-[data-state="current"] .node {
-  background: var(--primary-50);
+  box-shadow: var(--energy-glow);
 }
 
 [data-state="goal"] .badge {
-  border-style: dashed;
   border-color: var(--primary-300);
+  border-style: dashed;
+  background: var(--primary-50);
   color: var(--primary-500);
 }
 
-.goalIcon {
-  margin-left: auto;
-  color: var(--text-muted);
+.goal .label strong {
+  color: var(--primary-500);
 }
 
 .notice {
@@ -132,5 +155,10 @@
 .actions {
   display: grid;
   gap: var(--spacing-xxs);
-  padding-top: var(--spacing-xxs);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .energyBar span {
+    transition: none;
+  }
 }

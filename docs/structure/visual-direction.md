@@ -1,0 +1,62 @@
+# Direção visual: trilha de energia (DEC-EQT-034)
+
+Une plataforma educacional e empresa de energia, inspirada no Duolingo, com o tom
+institucional nas partes de serviço real.
+
+## Onde vale cada tom
+
+| Área | Tom | Elementos |
+| --- | --- | --- |
+| Home, mapa da trilha, lições, prática, resultado | Aprendizagem (lúdico) | Faísca, energia em kWh, passos que acendem, celebração, botões 3D |
+| Canal oficial, dificuldades, simulador, avisos | Institucional (calmo) | Sem mascote, selo “Atendimento oficial”, azul claro, aviso de simulação |
+
+## Peças
+
+- **Botões:** `.ui-button-primary` passa a ser azul Equatorial (`--header-bg`) com texto
+  branco; primário e secundário têm borda inferior de 4px e “afundam” ao tocar. Botões do
+  assistente (microfone e ajuda) ficam fora dessa regra e mantêm o amarelo.
+- **Faísca** (`components/brand/faisca.tsx`): guia da trilha em SVG, humores `happy`,
+  `cheer` e `think`; `FaiscaTip` mostra uma dica em balão. Decorativa (`aria-hidden`).
+- **Celebração** (`components/brand/celebration.tsx`): faíscas curtas no acerto e na
+  conclusão. Desligada com `prefers-reduced-motion`.
+- **Energia** (`_lib/progress.ts` `energyOf`, `EnergyMeter`): 10 kWh por lição, 20 pela
+  prática com apoio, 30 pela prática sozinho e 20 pelo simulador (máx. 90). É só visual e
+  local; a prova de realização continua sendo a tentativa no backend.
+- **Mapa da trilha:** caminho em zigue-zague com nós de 72px (concluído verde, próximo
+  amarelo com brilho e selo “Próximo”, meta tracejada).
+- **Lições:** “Guarde” da Faísca com a ideia que a prática cobra e bônus de energia.
+
+## Layout de app (todas as telas)
+
+- O shell ocupa exatamente `100dvh`; a página inteira não rola.
+- `JourneyPage` divide a tela em miolo rolável (`.scroll`, com 96px de respiro no fim) e
+  barra de ações fixa embaixo (`#journey-actions`), com 76px reservados à direita para o
+  microfone do assistente, que fica sempre visível no canto inferior direito.
+- Botões principais vão para a barra: pelo prop `actions` (servidor) ou pelo
+  `PageActions` (portal, para componentes de cliente e trechos dentro de `Suspense`).
+  Limite de 1 a 2 botões na barra; escolhas e caminhos extras ficam no miolo.
+- Barra vazia some (`:empty`). Telas sem ações (ex.: home) mantêm só o microfone.
+- Rolagem: só vertical (`overflow-x: hidden`), barra fina arredondada em `--primary-200`,
+  conteúdo esmaece ao passar sob a barra de ações (`mask-image`) e a barra tem sombra leve.
+  Nova pergunta da prática e novo passo do simulador voltam ao topo (`scrollJourneyToTop`);
+  no WhatsApp simulado, a conversa rola até a mensagem mais nova. O feedback da prática é
+  revelado com rolagem suave (`revealInJourney`).
+- Cabeçalho: “Digitaliza Aí” leva à home e o botão “Trilhas” (oculto na home) permite
+  trocar de trilha de qualquer tela.
+
+Verificado a 375×812 em home, trilha, lições, visão geral, consulta, dificuldades,
+canal, conta de exemplo, prática (pergunta e conclusão), resultado e simulador: a página
+não rola, a barra fica na base, o microfone fica visível e não cobre botões.
+
+Nota de teste: no painel de preview em segundo plano, telas com `Suspense` só revelam o
+conteúdo quando a aba fica visível (o React usa `requestAnimationFrame`); não é bug do app.
+
+## Acessibilidade
+
+Toque mínimo de 44px (nós de 72px), contraste com os tokens existentes, textos de estado
+para leitores de tela (“concluído”), animações respeitando movimento reduzido.
+
+## Dica de desenvolvimento
+
+O Turbopack às vezes mantém uma versão antiga de `app/globals.css` no `bun dev`. Se uma
+regra nova não aparecer, pare o servidor, apague `.next/dev/cache` e suba de novo.

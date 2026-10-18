@@ -1,7 +1,9 @@
 "use client";
 
-import { PartyPopper, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Celebration } from "@/components/brand/celebration";
+import { Faisca, FaiscaTip } from "@/components/brand/faisca";
+import { PageActions } from "@/components/layout/page-actions";
 import { ActionLink } from "@/components/ui/action-link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetAttempt } from "@/http/practice/get-attempt";
@@ -38,28 +40,24 @@ export function PracticeResult() {
   if (attempt?.status !== "completed")
     return (
       <div className={styles.practice}>
-        <div className={styles.panel}>
-          <h2 className={styles.prompt}>Você ainda não concluiu a prática</h2>
-          <p>
-            O resultado aparece quando você termina a prática individual. Ela
-            leva poucos minutos.
-          </p>
-        </div>
-        <ActionLink variant="primary" href={routes["pratica-guiada"]}>
-          Começar a prática
-        </ActionLink>
-        <ActionLink href={routes.preparacao}>Ver a trilha</ActionLink>
+        <FaiscaTip mood="think">
+          Seu resultado aparece quando você termina a prática individual. Leva
+          poucos minutos!
+        </FaiscaTip>
+        <PageActions>
+          <ActionLink variant="primary" href={routes["pratica-guiada"]}>
+            Começar a prática
+          </ActionLink>
+          <ActionLink href={routes.preparacao}>Ver a trilha</ActionLink>
+        </PageActions>
       </div>
     );
 
   return (
     <div className={styles.practice}>
       <div className={`${styles.panel} ${styles.done}`} role="status">
-        {attempt.assisted ? (
-          <Sparkles size={40} aria-hidden="true" />
-        ) : (
-          <PartyPopper size={40} aria-hidden="true" />
-        )}
+        <Celebration burst={1} />
+        <Faisca mood="cheer" size={96} />
         <h2>
           {attempt.assisted
             ? "Treino concluído com apoio"
@@ -71,9 +69,12 @@ export function PracticeResult() {
         </p>
         {attempt.outcome_label && <p>{attempt.outcome_label}</p>}
       </div>
-      <ActionLink variant="primary" href={channel}>
-        Usar o canal oficial
-      </ActionLink>
+      <PageActions>
+        <ActionLink variant="primary" href={channel}>
+          Usar o canal oficial
+        </ActionLink>
+        <ActionLink href={routes.simulador}>Treinar no simulador</ActionLink>
+      </PageActions>
       <ActionLink href={routes["pratica-individual"]}>
         {attempt.assisted ? "Tentar sem ajuda" : "Praticar de novo"}
       </ActionLink>

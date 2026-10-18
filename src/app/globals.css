@@ -1061,3 +1061,64 @@ a {
   -webkit-line-clamp: 2;
   overflow: hidden;
 }
+
+/* ---------------------------------------------------------------------------
+   Direção visual “trilha de energia” (DEC-EQT-034): botões táteis, primário
+   em azul Equatorial e acentos de energia. Serviço real mantém tom calmo.
+   ------------------------------------------------------------------------- */
+:root {
+  --energy-500: var(--highlight-500);
+  --energy-100: var(--highlight-100);
+  --energy-glow: 0 0 0 6px var(--highlight-100), 0 0 24px 4px #ffd70066;
+  --button-depth: 4px;
+}
+
+.ui-button.ui-button-primary:not(.voice-help-button, .voice-microphone-button) {
+  --button-bg: var(--header-bg);
+  --button-border: var(--primary-700);
+  --button-text: var(--text-on-brand);
+  --button-bg-hover: var(--header-bg-hover);
+  --button-border-hover: var(--primary-800);
+  --button-text-hover: var(--text-on-brand);
+  font-weight: var(--font-weight-bold);
+}
+
+.ui-button.ui-button-primary,
+.ui-button.ui-button-secondary {
+  border-bottom-width: var(--button-depth);
+  transition:
+    transform 90ms ease,
+    border-bottom-width 90ms ease,
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.ui-button.ui-button-secondary {
+  --button-border: var(--border-default);
+  border-bottom-color: #c9ccd6;
+}
+
+.ui-button.ui-button-primary:active:not(:disabled),
+.ui-button.ui-button-secondary:active:not(:disabled) {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+  box-shadow: none;
+}
+
+/* Botões redondos do assistente seguem com o visual próprio. */
+.voice-help-button.ui-button,
+.voice-microphone-button.ui-button,
+.ui-button.ui-button-size-icon {
+  border-bottom-width: 1px;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-button.ui-button-primary,
+  .ui-button.ui-button-secondary {
+    transition: none;
+  }
+  .ui-button:active:not(:disabled) {
+    transform: none;
+  }
+}

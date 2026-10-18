@@ -115,14 +115,39 @@
   outline: none;
 }
 
+.correct,
+.wrong {
+  position: relative;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 12px;
+  border: 2px solid transparent;
+}
+
 .correct {
+  border-color: var(--success-200);
   background: var(--success-50);
   color: var(--success-700);
 }
 
 .wrong {
+  border-color: var(--warning-200);
   background: var(--warning-50);
   color: var(--warning-800);
+}
+
+.correct strong,
+.wrong strong {
+  font-size: 1.125rem;
+}
+
+.gain {
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: var(--highlight-500);
+  color: var(--primary-700);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-bold);
 }
 
 .help {
@@ -133,7 +158,11 @@
 }
 
 .done {
+  position: relative;
   justify-items: center;
+  gap: 8px;
+  padding-block: var(--spacing-md);
+  border: 2px solid var(--success-200);
   text-align: center;
   background: var(--success-50);
   color: var(--success-700);
@@ -166,4 +195,16 @@
   .option {
     transition: none;
   }
+}
+
+.inlineActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+}
+
+.practice .inlineActions [data-slot="button"] {
+  width: auto;
+  min-height: 44px;
 }

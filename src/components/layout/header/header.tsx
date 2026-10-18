@@ -1,4 +1,7 @@
+import Link from "next/link";
 import type { HTMLAttributes } from "react";
+import styles from "./header.module.css";
+import { TracksLink } from "./tracks-link";
 
 export type HeaderProps = HTMLAttributes<HTMLElement>;
 
@@ -8,17 +11,20 @@ export function Header({ className, ...props }: HeaderProps) {
   return (
     <header {...props} className={classes}>
       <div className="site-header-content">
-        <span className="site-header-brand">Digitaliza Aí</span>
-        <span className="site-header-equatorial">
-          <span className="site-header-partner">Equatorial Energia</span>
-          <span className="site-header-separator" aria-hidden="true">
-            -
+        <Link
+          href="/"
+          className={styles.home}
+          aria-label="Digitaliza Aí: início"
+        >
+          <span className="site-header-brand">Digitaliza Aí</span>
+          <span className={styles.partner}>
+            Equatorial Energia ·{" "}
+            <abbr title="Maranhão" className={styles.state}>
+              MA
+            </abbr>
           </span>
-          <abbr className="site-header-state" title="Maranhão">
-            <span aria-hidden="true">MA</span>
-            <span className="sr-only">Maranhão</span>
-          </abbr>
-        </span>
+        </Link>
+        <TracksLink />
       </div>
     </header>
   );

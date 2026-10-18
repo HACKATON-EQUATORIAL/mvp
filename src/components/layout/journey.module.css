@@ -3,7 +3,8 @@
   width: 100%;
   max-width: var(--app-content-max-width);
   margin-inline: auto;
-  min-height: 100dvh;
+  height: 100dvh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -15,20 +16,37 @@
   width: 100%;
   max-width: var(--app-content-max-width);
   margin-inline: auto;
-  padding: var(--spacing-sm);
   display: flex;
   flex: 1;
   flex-direction: column;
   min-width: 0;
+  min-height: 0;
+  overflow: hidden;
   scroll-margin-top: calc(env(safe-area-inset-top) + 60px + var(--spacing-xs));
 }
 .page {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: var(--spacing-xs);
   min-width: 0;
+  min-height: 0;
   overflow-wrap: anywhere;
+}
+/* Só o miolo rola; o espaço final evita que o microfone cubra o conteúdo. */
+.scroll {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-padding-bottom: 96px;
+  /* Conteúdo esmaece ao passar por baixo da barra de ações. */
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
+  padding: var(--spacing-sm) var(--spacing-sm) 96px;
+  -webkit-overflow-scrolling: touch;
 }
 .eyebrow {
   margin: 0;
@@ -70,12 +88,20 @@
 .content p {
   margin: 0;
 }
+/* Barra fixa de ações; à direita fica o microfone do assistente. */
 .actions {
-  margin-top: auto;
-  padding-top: var(--spacing-xs);
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xxs);
+  padding: var(--spacing-xs) calc(var(--spacing-sm) + 76px)
+    calc(var(--spacing-xs) + env(safe-area-inset-bottom)) var(--spacing-sm);
+  border-top: 1px solid var(--border-default);
+  background: var(--surface-page);
+  box-shadow: 0 -6px 16px rgb(0 0 0 / 6%);
+}
+.actions:empty {
+  display: none;
 }
 .voice {
   display: flex;
@@ -142,4 +168,26 @@
 }
 .example dd {
   margin: 0;
+}
+
+/* Barra de rolagem fina, arredondada e nas cores da marca. */
+.scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.scroll::-webkit-scrollbar-track {
+  margin-block: 8px 32px;
+  background: transparent;
+}
+.scroll::-webkit-scrollbar-thumb {
+  border-radius: var(--radius-full);
+  background: var(--primary-200);
+}
+.scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-300);
+}
+@supports not selector(::-webkit-scrollbar) {
+  .scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-200) transparent;
+  }
 }

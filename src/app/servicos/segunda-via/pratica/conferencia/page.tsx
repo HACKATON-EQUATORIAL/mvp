@@ -53,7 +53,6 @@ export default function Page() {
           >
             Ver a lição de conferir
           </ActionLink>
-          <ActionLink href={routes.preparacao}>Ver a trilha</ActionLink>
         </>
       }
     >

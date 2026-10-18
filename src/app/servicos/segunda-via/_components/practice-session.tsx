@@ -2,13 +2,20 @@
 
 import { CheckCircle2, Lightbulb, RotateCcw, XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Celebration } from "@/components/brand/celebration";
+import { Faisca } from "@/components/brand/faisca";
+import {
+  revealInJourney,
+  scrollJourneyToTop,
+} from "@/components/layout/journey-scroll";
+import { PageActions } from "@/components/layout/page-actions";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import type { PracticeMode } from "@/schemas/http/practice";
 import { routes } from "../_lib/navigation";
-import { updateProgress } from "../_lib/progress";
+import { ENERGY, updateProgress } from "../_lib/progress";
 import { localStep } from "../_lib/steps";
 import { usePracticeSession } from "../_lib/use-practice-session";
 import styles from "./practice.module.css";
@@ -25,9 +32,19 @@ export function PracticeSession({ mode }: { mode: PracticeMode }) {
   const guided = mode === "guided";
   const { state, item, answer } = session;
   const completed = state?.status === "completed" && !answer?.correct;
+  const [burst, setBurst] = useState(0);
 
   useEffect(() => {
-    if (answer) feedbackRef.current?.focus();
+    if (completed) scrollJourneyToTop();
+  }, [completed]);
+
+  // Cada acerto e a conclusão disparam uma pequena celebração.
+  useEffect(() => {
+    if (answer?.correct || completed) setBurst((value) => value + 1);
+  }, [answer?.correct, completed]);
+
+  useEffect(() => {
+    if (answer) revealInJourney(feedbackRef.current);
   }, [answer]);
 
   useEffect(() => {
@@ -70,7 +87,11 @@ export function PracticeSession({ mode }: { mode: PracticeMode }) {
           total={state.progress.total}
         />
         <div className={cn(styles.panel, styles.done)} role="status">
-          <CheckCircle2 size={36} aria-hidden="true" />
+          <Celebration burst={burst} />
+          <Faisca mood="cheer" size={88} />
+          <span className={styles.gain}>
+            +{guided ? ENERGY.guided : ENERGY.independent} kWh de conhecimento
+          </span>
           <h2>
             {guided
               ? "Prática com apoio concluída!"
@@ -86,20 +107,22 @@ export function PracticeSession({ mode }: { mode: PracticeMode }) {
                 : "Você concluiu sem pedir ajuda."}
           </p>
         </div>
-        <Button
-          onClick={() =>
-            router.push(
-              guided
-                ? routes["pratica-individual"]
-                : routes["pratica-concluida"],
-            )
-          }
-        >
-          {guided ? "Agora tente sozinho" : "Ver meu resultado"}
-        </Button>
-        <Button variant="secondary" onClick={session.restart}>
-          <RotateCcw size={18} aria-hidden="true" /> Praticar de novo
-        </Button>
+        <PageActions>
+          <Button
+            onClick={() =>
+              router.push(
+                guided
+                  ? routes["pratica-individual"]
+                  : routes["pratica-concluida"],
+              )
+            }
+          >
+            {guided ? "Agora tente sozinho" : "Ver meu resultado"}
+          </Button>
+          <Button variant="secondary" onClick={session.restart}>
+            <RotateCcw size={18} aria-hidden="true" /> Praticar de novo
+          </Button>
+        </PageActions>
       </div>
     );
 
@@ -161,8 +184,12 @@ export function PracticeSession({ mode }: { mode: PracticeMode }) {
             answer.correct ? styles.correct : styles.wrong,
           )}
         >
-          <strong>{answer.correct ? "Isso mesmo!" : "Ainda não."}</strong>
-          <p>{answer.message}</p>
+          {answer.correct && <Celebration burst={burst} />}
+          <Faisca mood={answer.correct ? "cheer" : "think"} size={48} />
+          <span>
+            <strong>{answer.correct ? "Mandou bem!" : "Quase lá!"}</strong>
+            <p>{answer.message}</p>
+          </span>
         </div>
       )}
 
@@ -179,37 +206,35 @@ export function PracticeSession({ mode }: { mode: PracticeMode }) {
         </p>
       )}
 
-      <div className={styles.actions}>
+      <PageActions>
         {answer?.correct ? (
-          <Button onClick={session.next}>Continuar</Button>
+          <Button
+            onClick={() => {
+              session.next();
+              scrollJourneyToTop();
+            }}
+          >
+            Continuar
+          </Button>
         ) : (
-          <>
-            {guided && item.hint_available && (
-              <Button
-                variant="secondary"
-                loading={session.helpPending}
-                onClick={() => session.askHelp("hint")}
-              >
-                Ver uma dica
-              </Button>
-            )}
-            {!guided && (
-              <Button
-                variant="secondary"
-                loading={session.helpPending}
-                onClick={() => session.askHelp("hint")}
-              >
-                Pedir ajuda
-              </Button>
-            )}
-            <Button
-              variant="ghost"
-              loading={session.helpPending}
-              onClick={() => session.askHelp("accessibility")}
-            >
-              Descrever as opções
-            </Button>
-          </>
+          <Button
+            variant="secondary"
+            loading={session.helpPending}
+            onClick={() => session.askHelp("hint")}
+          >
+            {guided ? "Ver uma dica" : "Pedir ajuda"}
+          </Button>
+        )}
+      </PageActions>
+      <div className={styles.inlineActions}>
+        {!answer?.correct && (
+          <Button
+            variant="ghost"
+            loading={session.helpPending}
+            onClick={() => session.askHelp("accessibility")}
+          >
+            Descrever as opções
+          </Button>
         )}
         <Button variant="ghost" onClick={() => void leave()}>
           Sair da prática

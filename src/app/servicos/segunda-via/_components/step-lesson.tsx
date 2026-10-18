@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
+import { FaiscaTip } from "@/components/brand/faisca";
+import { PageActions } from "@/components/layout/page-actions";
 import { ActionLink } from "@/components/ui/action-link";
 import { postEvent } from "@/http/events/post-events";
 import { useGetStep } from "@/http/track/get-step";
@@ -13,11 +15,19 @@ import {
   type Step,
   withContext,
 } from "../_lib/navigation";
-import { updateProgress } from "../_lib/progress";
+import { ENERGY, updateProgress } from "../_lib/progress";
 import { apiStepIds, localStep, TRACK_ID } from "../_lib/steps";
 import styles from "./lesson.module.css";
 import { LessonIllustration } from "./lesson-illustration";
 import { LoadState } from "./load-state";
+
+// O “guarde isto” de cada lição: a ideia que a prática vai cobrar.
+const takeaways = {
+  encontrar:
+    "Guarde: a conta fica em “Segunda via”. “Consultar débitos” mostra o que está em aberto, mas não entrega a conta.",
+  conferir:
+    "Guarde: setembro é o mês 09. Antes de pagar, confira o mês de referência e a identificação.",
+} as const;
 
 const practiceOrigins = new Set([
   "pratica-guiada",
@@ -70,20 +80,25 @@ export function StepLesson({
       <h2 className={styles.question}>{step.data.consult_title}</h2>
       <p className={styles.text}>{step.data.explanation.text}</p>
       <LessonIllustration step={etapa} />
-      <nav aria-label="Próximos passos" className="grid gap-2 pt-2">
-        {fromPractice && (
+      <FaiscaTip mood="think">{takeaways[etapa]}</FaiscaTip>
+      <p className={styles.gain}>+{ENERGY.lesson} kWh de conhecimento</p>
+      <PageActions>
+        {fromPractice ? (
           <ActionLink
             variant="primary"
             href={returnTo(context, "ajuda", routes["pratica-guiada"])}
           >
             Voltar à prática
           </ActionLink>
+        ) : (
+          primary && (
+            <ActionLink variant="primary" href={primary.href}>
+              {primary.label}
+            </ActionLink>
+          )
         )}
-        {primary && (
-          <ActionLink variant="primary" href={primary.href}>
-            {primary.label}
-          </ActionLink>
-        )}
+      </PageActions>
+      <nav aria-label="Outros caminhos" className="grid gap-2 pt-2">
         {links
           .filter((link) => link !== primary)
           .map((link) => (

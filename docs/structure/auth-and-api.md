@@ -25,3 +25,11 @@ Não há rate limiter próprio, autenticação nem quota por usuário; chamadas 
 CSP com restrição de scripts ainda não foi implantada; deve ser planejada e testada com o modo de renderização Next escolhido. Não adicionar `unsafe-inline` ou desativar proteções para contornar incompatibilidade. Não existe alegação de auditoria completa ou prontidão para produção nesta refatoração.
 
 Ver [contrato](../../../docs/stt/STT-API.md) e [ambiente](configs.md). Usar dados sintéticos na demonstração.
+
+## Interpretação LLM
+
+/api/interpret segue a proteção de mesma origem e header público do STT. Corpo
+JSON limitado, schemas estritos, IDs restritos às opções enviadas e respostas
+sanitizadas. Prompt não é controle de autorização. Não retorna URLs ou executa
+ferramentas; confirmação e destino interno são resolvidos pelo frontend. Mesmos
+limites de cota/acesso da demonstração. Ver [contrato LLM](voice-interpretation.md).

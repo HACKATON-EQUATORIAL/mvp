@@ -51,6 +51,7 @@ async function PageVoice({
 }: Pick<PageProps<"/servicos/segunda-via/canal">, "searchParams">) {
   const context = readContext(await searchParams);
   const voiceContext: VoicePageContext = {
+    navigation: context,
     id: `segunda-via.canal.${context.origem ?? "inicio"}.${context.etapa ?? "geral"}`,
     description:
       "O destino oficial ainda não está disponível nesta demonstração.",

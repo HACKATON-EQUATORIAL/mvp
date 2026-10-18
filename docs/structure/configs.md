@@ -26,3 +26,7 @@ Para adicionar ou atualizar componentes via CLI, seguir [shadcn/Base UI](shadcn-
 `NEXT_PUBLIC_API_URL` define o backend Python com `/api/v1`. Validada por Zod em
 `src/config/api.ts`; disponível no navegador e incorporada ao build, sem segredos.
 Para celular/ngrok e CORS, seguir [HTTP e queries](http-and-queries.md).
+
+GROQ_LLM_MODEL configura a interpretação no servidor, com padrão openai/gpt-oss-20b.
+Usa a mesma GROQ_API_KEY do STT; validadores independentes preservam o contrato
+de transcrição. Alternativa aceita: openai/gpt-oss-120b. Ver [LLM](voice-interpretation.md).

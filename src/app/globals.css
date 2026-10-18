@@ -1018,3 +1018,15 @@ a {
 .card-action {
   align-self: flex-end;
 }
+
+.voice-heard {
+  margin: 0 0 var(--spacing-xs);
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}

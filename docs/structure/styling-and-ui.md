@@ -14,7 +14,7 @@ e `src/components/voice`, enquanto a prática exclusiva fica junto à rota. Toke
 | Card e suas partes | `components/ui/card.tsx` | Agrupamento informativo |
 | Header, AppShell, JourneyPage, Eyebrow, JourneyCard | `components/layout/` | Estrutura e composição compartilhada das telas |
 | VoiceHelpButton, VoiceHelp, AudioRecorder e etapas do assistente | `components/voice/` | Drawer, contexto recebido da página, captura e revisão |
-| VoiceAudioDock / VoiceConversation / TranscriptionPanel | `components/voice/` | Rodapé de áudio, transições do conteúdo e transcrição |
+| VoiceAudioDock / VoiceConversation / indicação de transcrição | `components/voice/` | Rodapé de áudio, transições do conteúdo e indicação discreta do texto ouvido |
 | PracticeChoice | `app/servicos/segunda-via/_components/` | Interação exclusiva da prática |
 
 Usar imports explícitos e `cn` de `@/lib/utils`; não recriar Button/Card em pastas
@@ -150,25 +150,28 @@ Cada página declara um `VoicePageContext` serializável com `id`, descrição e
 três sugestões. O contexto não inclui o título da página. Cada sugestão declara
 rótulo, confirmação e destino interno.
 Páginas com query params compõem `VoiceHelp` em um slot dentro de `Suspense`, junto
-da própria leitura dos parâmetros. O assistente não infere tela pelo pathname nem
-mantém catálogo central de páginas. Contextos e destinos devem reutilizar os
+da própria leitura dos parâmetros. O assistente não infere conteúdo pelo pathname. O manifesto de segunda via compõe descritores declarados junto às páginas. Contextos e destinos devem reutilizar os
 auxiliares de navegação existentes e preservar origem/etapa.
 
-O fluxo compartilhado separa início, confirmação de sugestão, captura, revisão da
-transcrição e confirmação do texto. Navegação sugerida exige ação explícita no
-botão de continuar. A transcrição confirmada permanece texto; não aciona intenção
-nem ação automática. Interpretação por LLM e TTS ficam para entregas futuras.
-Não manter componentes ou rotas dedicados a demonstrar estados ainda não implementados.
+O fluxo vai de captura/transcrição diretamente à interpretação. “Você disse…”
+aparece discretamente, sem tela ou botão para revisar texto. Escolhas claras por
+botão ou voz navegam direto; ambiguidade oferece opções, e sair de uma tela de
+prática pede confirmação porque pode interromper a atividade. O microfone continua
+disponível para corrigir a fala e cancela interpretação anterior ao gravar.
+TTS fica para entrega futura. Ver [contrato e ciclo LLM](voice-interpretation.md).
 
 `useSpeechToText` permanece montado fora do portal descartável. Fechar durante
 permissão/captura/envio invalida a tentativa, para tracks, aborta o envio e apaga
 o áudio de retry; autorização tardia não retoma o microfone. A última transcrição
-concluída é preservada em memória na mesma tela e é retomada na revisão ao reabrir.
-Um contexto com outro identificador remonta a sessão. Não há persistência local.
+concluída, a resposta e seus botões são preservados ao fechar/reabrir na mesma página.
+Navegação ou mudança dos parâmetros de contexto cancela operações e limpa toda a
+conversa. Ao abrir no destino, mostrar as sugestões da nova tela. Não há botão para
+reiniciar: uma fala nova pode mudar o assunto normalmente. Fechar também aborta a LLM. Não há persistência local; recarregar limpa
+as informações. Ver o contrato vigente do assistente para os estados de retomada.
 
 `AudioRecorder` apresenta somente o conteúdo da conversa durante permissão,
 captura, envio e erro/retry. Sugestões dão lugar ao processamento e depois à
-revisão em `TranscriptionPanel`; não há transcrição parcial durante a gravação.
+interpretação com transcrição discreta; não há transcrição parcial durante a gravação.
 O controle de gravar outra mensagem permanece no rodapé. Texto transcrito
 vai para região viva e erro usa `role=alert`; não inserir resposta como HTML.
 Ciclo de vida e contrato: [HTTP/estado](http-and-queries.md) e [STT](../../../docs/stt/STT-API.md).

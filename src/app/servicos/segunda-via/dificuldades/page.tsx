@@ -47,6 +47,7 @@ async function PageVoice({
 }: Pick<PageProps<"/servicos/segunda-via/dificuldades">, "searchParams">) {
   const context = readContext(await searchParams);
   const voiceContext: VoicePageContext = {
+    navigation: context,
     id: `segunda-via.dificuldades.${context.origem ?? "inicio"}.${context.etapa ?? "geral"}`,
     description:
       "Escolha a etapa sobre encontrar o serviço ou conferir o resultado.",

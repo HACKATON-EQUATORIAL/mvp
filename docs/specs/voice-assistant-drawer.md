@@ -13,10 +13,9 @@ começa com a descrição direcionada pela página e suas sugestões. O microfon
 permanece no rodapé em todas as etapas. Durante captura/envio, a área de opções
 mostra o estado da conversa; ao terminar, apresenta o texto. O fluxo permite revisar a transcrição e confirmar
 o texto. Uma sugestão só navega depois de mostrar sua confirmação e receber toque
-em “Continuar”. O texto transcrito não é interpretado nem executado.
+em “Continuar”. A interpretação inicial posterior está em [LLM](voice-interpretation.md); o registro abaixo preserva a evidência da primeira entrega.
 
-LLM, intenção inferida, resposta falada, serviço oficial e execução de tarefas ficam
-fora deste recorte. A prévia de desenvolvimento e seus componentes exclusivos
+Esta entrega original não incluía LLM; foi ampliada pela [spec de interpretação](voice-interpretation.md). Resposta falada, serviço oficial e execução de tarefas continuam fora. A prévia de desenvolvimento e seus componentes exclusivos
 foram removidos a pedido do usuário em 17/10/2026. A validação segue o fluxo real,
 incrementalmente. Registros de prévia abaixo são evidências históricas, não escopo vigente.
 

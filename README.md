@@ -1,6 +1,11 @@
 # Digitaliza Aí · MVP
 
-MVP web com foco em mobile, reunindo frontend e API em Next.js. A home oferece orientação, consulta de etapas e prática demonstrativa de segunda via. O acesso opcional de voz abre o gravador existente, que usa Groq e Zod para transcrever áudio. Os outros três serviços permanecem como placeholders.
+MVP web mobile com frontend Next.js e backend Python/FastAPI em `../back`.
+A home lista trilhas da API. Voz usa Groq para transcrever áudio e interpretar o
+texto confirmado com catálogo, mapa completo de segunda via e conversa curta.
+Escolhas claras navegam direto; sair de uma prática pode exigir confirmação. Páginas internas e prática ainda são locais; a integração Python
+será conduzida pela outra pessoa conforme o [handoff](docs/specs/backend-journey-handoff.md).
+TTS e operações oficiais não foram implementados.
 
 Decisões ficam em [docs/DECISIONS.md do workspace](../docs/DECISIONS.md); a documentação específica de voz fica em [docs/stt](../docs/stt/README.md).
 
@@ -25,7 +30,8 @@ Abra [localhost:3000](http://localhost:3000). Se alterar as variáveis de ambien
 
 | Variável | Necessária | Comportamento |
 | --- | --- | --- |
-| `GROQ_API_KEY` | Sim, para transcrever | Chave privada usada apenas no servidor |
+| `GROQ_API_KEY` | Sim, para STT/LLM | Chave privada usada apenas no servidor |
+| `GROQ_LLM_MODEL` | Não | Padrão `openai/gpt-oss-20b`; alternativa `openai/gpt-oss-120b` |
 | `GROQ_STT_MODEL` | Não | Padrão `whisper-large-v3-turbo`; aceita também `whisper-large-v3` |
 | `NEXT_DEV_ALLOWED_ORIGINS` | Para túnel no desenvolvimento | Hostnames autorizados para carregar scripts do Next.js, separados por vírgula, sem protocolo ou porta |
 
@@ -72,7 +78,7 @@ O arquivo deve ter de 1 byte a 4.000.000 bytes. A interface grava até 60 segund
 
 Segunda via contém explicação, prática guiada, conferência de conta fictícia, prática individual, encerramento, consulta contextual, dificuldades e limite de saída. Não coleta dados reais, emite fatura, avalia aprendizagem ou abre canal externo. O canal e o procedimento oficiais continuam a confirmar. A navegação e as adaptações do Figma estão na [spec de reconstrução](docs/specs/frontend-reconstruction.md).
 
-Os outros três serviços exibem título, aviso de indisponibilidade e retorno à home. O catálogo conceitual vem de [BR-EQT-003 no workspace](../docs/business-rules/BR-EQT-003-catalogo-e-recorte.md); não representa integração, emissão de fatura, consulta real ou cadastro oficial. A transcrição não interpreta intenção nem navega automaticamente.
+Os outros três serviços exibem título, aviso de indisponibilidade e retorno à home. O catálogo conceitual vem de [BR-EQT-003 no workspace](../docs/business-rules/BR-EQT-003-catalogo-e-recorte.md); não representa integração, emissão de fatura, consulta real ou cadastro oficial. A transcrição concluída é interpretada automaticamente pela LLM; escolhas claras navegam direto.
 
 ## Verificação
 

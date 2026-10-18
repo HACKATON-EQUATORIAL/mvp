@@ -3,16 +3,18 @@ import type { VoicePageSuggestion } from "./voice-page-context";
 import { VoiceStep } from "./voice-step";
 
 export function VoiceSuggestionConfirmation({
+  title = "Confirmar escolha",
   suggestion,
   onContinue,
   onBack,
 }: {
+  title?: string;
   suggestion: VoicePageSuggestion;
   onContinue: () => void;
   onBack: () => void;
 }) {
   return (
-    <VoiceStep title="Confirmar escolha" description={suggestion.confirmation}>
+    <VoiceStep title={title} description={suggestion.confirmation}>
       <Button type="button" variant="primary" onClick={onContinue}>
         Continuar
       </Button>

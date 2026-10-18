@@ -34,7 +34,7 @@ export function AudioRecorder({
           : phase === "recording"
             ? "Fale no seu ritmo. Quando terminar, toque em parar."
             : phase === "transcribing"
-              ? "Em instantes, você poderá conferir o que foi identificado."
+              ? "Estou identificando seu pedido."
               : "Você pode gravar outra mensagem ou voltar às opções."
       }
     >
@@ -47,7 +47,7 @@ export function AudioRecorder({
           <p>
             {phase === "transcribing"
               ? "Identificando sua fala"
-              : "Sua transcrição aparecerá aqui"}
+              : "Estou acompanhando sua fala"}
           </p>
           <div
             className="voice-transcript-placeholder"

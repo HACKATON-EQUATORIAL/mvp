@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Header } from "@/components/layout/header/header";
+import { VoiceAssistantHost } from "@/components/voice/voice-assistant-host";
 import styles from "./journey.module.css";
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -9,6 +10,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div id="conteudo" tabIndex={-1} className={styles.body}>
         {children}
       </div>
+      <VoiceAssistantHost />
     </div>
   );
 }

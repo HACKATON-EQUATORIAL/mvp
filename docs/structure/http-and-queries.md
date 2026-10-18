@@ -122,3 +122,10 @@ Ver [contrato STT](../../../docs/stt/STT-API.md).
 Referências complementares: [queryOptions](https://tanstack.com/query/latest/docs/framework/react/guides/query-options),
 [cancelamento](https://tanstack.com/query/latest/docs/framework/react/guides/query-cancellation)
 e [App Router/provider](https://tanstack.com/query/latest/docs/framework/react/guides/advanced-ssr).
+
+## Interpretação por LLM
+
+Após confirmar a transcrição, o client faz POST /api/interpret para o próprio Next
+que chama Groq. Não entra no transporte GET Python nem em React Query/mutations.
+Contrato e fronteiras em [interpretação](voice-interpretation.md). Integração de
+páginas/prática com Python pertence à outra frente: [handoff](../specs/backend-journey-handoff.md).

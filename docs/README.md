@@ -1,9 +1,12 @@
 # Documentação técnica · MVP Digitaliza Aí
 
-O MVP reúne frontend e API em Next.js. A jornada de segunda via oferece
-orientação, consulta e prática demonstrativa; os outros três serviços são
-placeholders. Voz atualmente grava e transcreve com Groq, sem interpretação de
-intenção ou navegação automática. Canal e procedimento oficiais estão pendentes.
+Frontend Next.js com backend Python/FastAPI. A home carrega trilhas reais;
+a jornada interna ainda usa conteúdo/prática locais. Voz grava e transcreve com
+Groq e interpreta o texto automaticamente com catálogo e mapa de segunda via.
+Escolhas claras navegam direto; sair da prática pode exigir confirmação. Sem TTS ou execução de serviço oficial.
+
+- [Integração pendente para outra pessoa/IA](specs/backend-journey-handoff.md).
+- [Assistente conversacional e interpretação LLM](structure/voice-interpretation.md).
 
 ## Manter o projeto
 

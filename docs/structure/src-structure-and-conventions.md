@@ -16,6 +16,7 @@ src/
 │   │   │   ├── _components/practice-choice.tsx
 │   │   │   └── _lib/                     # Conteúdo e navegação da jornada
 │   │   └── <servico>/page.tsx            # Três placeholders
+│   ├── api/interpret/                  # POST JSON para LLM Groq e _lib/handler
 │   └── api/transcribe/
 │       ├── route.ts                     # Entrada POST e maxDuration
 │       └── _lib/                        # Handler e leitura multipart
@@ -25,7 +26,9 @@ src/
 │   ├── layout/                         # Shell, Header, telas e JourneyCard
 │   └── voice/                          # Drawer, contexto tipado, etapas e captura
 ├── hooks/use-speech-to-text.ts         # Captura e estado do client
+├── hooks/use-voice-catalog.ts          # Catálogo compartilhado com React Query
 ├── hooks/use-voice-assistant.ts        # Etapa, sugestão e transcrição em memória
+├── hooks/use-voice-interpretation.ts   # Envio LLM, resultado e abort
 ├── hooks/use-audio-spectrum.ts         # AnalyserNode/canvas do stream já capturado
 ├── http/                               # api.ts e operação/fábrica/hook por recurso
 ├── queries/                            # Query client e keys/<recurso>/get-*.ts
@@ -33,6 +36,7 @@ src/
 ├── config/api.ts                       # URL pública do backend validada com Zod
 ├── config/app.ts                        # Identidade global
 ├── lib/
+│   ├── assistant/                     # Schemas e POST explícito de interpretação
 │   ├── error/api-error.ts              # Erro HTTP normalizado
 │   ├── utils.ts                        # cn local para composição de classes
 │   └── stt/                            # Contrato público e auxiliares client
@@ -42,6 +46,7 @@ src/
 │       └── transcribe-client.ts        # Envio HTTP para a API local
 └── server/                              # Código exclusivamente de servidor
     ├── env.ts
+    ├── assistant/                      # Prompt, provedor LLM e erro tipado
     └── stt/
         ├── groq.ts                      # Adaptador do provedor
         └── transcription-error.ts
@@ -56,7 +61,7 @@ src/
 - `lib/stt/constants.ts` e `schemas.ts` são compartilhados entre client e servidor; `recording.ts` e `transcribe-client.ts` são auxiliares do navegador. Credenciais ficam em `server/env.ts`.
 - Primitivas visuais compartilhadas ficam em `components/ui`, no padrão shadcn com Base UI. Composições gerais ficam em `components/layout`; recursos de voz em `components/voice`; somente a prática permanece em `app/servicos/segunda-via/_components`. Não criar camadas vazias por antecipação.
 - Route groups `(grupo)` servem para organizar seções ou layouts sem mudar a URL. O MVP tem um único layout compartilhado e não precisa deles agora.
-- Páginas e layout continuam Server Components por padrão. `use client` fica no gravador/hooks, no wrapper interativo `VoiceHelp`, nas etapas reutilizáveis que recebem dados e callbacks e na escolha da prática. `useVoiceAssistant` controla a etapa, sugestão e transcrição; `useSpeechToText` permanece responsável pelo microfone e envio. Contextos de voz são dados serializáveis declarados por página; páginas que dependem de `searchParams` encaminham a composição interativa por slot dentro de `Suspense`.
+- Páginas e layout continuam Server Components por padrão. `use client` fica no gravador/hooks, no provider/host persistente e no registro `VoiceHelp`, nas etapas reutilizáveis que recebem dados e callbacks e na escolha da prática. `useVoiceAssistant` controla a etapa, sugestão e transcrição; `useSpeechToText` permanece responsável pelo microfone e envio. Contextos de voz são dados serializáveis declarados por página; páginas que dependem de `searchParams` encaminham a composição interativa por slot dentro de `Suspense`.
 
 Configurações do framework, `.env*`, `public` e `docs` ficam na raiz. O alias `@/*` resolve `src/*`. Arquivos usam kebab-case, componentes PascalCase e hooks prefixo `use`. Tipos de contrato derivam dos schemas Zod. Manter TypeScript estrito e validar entradas externas como `unknown`, sem `any`.
 
@@ -73,3 +78,5 @@ Configuração e manutenção das primitivas: [shadcn com Base UI](shadcn-ui.md)
 Consultas de domínio usam `http` por operação, `queries/keys` e `schemas/http`; provider compartilhado em
 `components/providers/query-provider.tsx`. O Route Handler Next permanece apenas
 para Groq. Ver [HTTP e estado](http-and-queries.md).
+
+O host do assistente é único no AppShell. VoiceHelp registra o contexto, sem criar Drawer ou microfone por página. Descritores `_lib/voice-target.ts` junto às telas compõem o manifesto da jornada. Manter IDs canônicos e o contrato descrito em [interpretação](voice-interpretation.md).

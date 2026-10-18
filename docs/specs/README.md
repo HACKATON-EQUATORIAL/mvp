@@ -8,6 +8,9 @@ Contratos atuais de tokens, componentes e configuração não são duplicados aq
 
 | Spec | Conteúdo |
 | --- | --- |
+| [Checklist manual do assistente](voice-assistant-manual-checklist.md) | Perguntas, casos positivos/negativos e espaço para registrar resultados |
+| [Interpretação inicial LLM](voice-interpretation.md) | Groq, confirmação e fallbacks reais |
+| [Handoff da jornada](backend-journey-handoff.md) | Tarefas de integração Python atribuídas à outra pessoa/IA |
 | [Consultas GET do backend](backend-queries.md) | React Query, contratos Python e seleção inicial de trilhas |
 | [Reconstrução do frontend](frontend-reconstruction.md) | Percursos, rotas propostas, limites, aceite e registros de execução |
 | [Drawer de ajuda por voz](voice-assistant-drawer.md) | Contexto por página, fluxo STT e ciclo de vida do assistente |

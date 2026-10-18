@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { AppShell } from "@/components/layout/app-shell";
 import { QueryProvider } from "@/components/providers/query-provider";
+import { VoiceAssistantProvider } from "@/components/voice/voice-assistant-provider";
 import { APP_NAME } from "@/config/app";
 import "./globals.css";
 
@@ -25,7 +26,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Ir para o conteúdo
         </a>
         <QueryProvider>
-          <AppShell>{children}</AppShell>
+          <VoiceAssistantProvider>
+            <AppShell>{children}</AppShell>
+          </VoiceAssistantProvider>
         </QueryProvider>
       </body>
     </html>

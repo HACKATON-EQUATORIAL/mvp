@@ -80,6 +80,7 @@ async function PageVoice({
       ? routes["pratica-guiada"]
       : routes["pratica-conferencia"];
   const voiceContext: VoicePageContext = {
+    navigation: context,
     id: `segunda-via.etapa.${etapa}.${context.origem ?? "inicio"}`,
     description:
       "Posso iniciar a prática desta etapa ou ajudar você a escolher outra.",

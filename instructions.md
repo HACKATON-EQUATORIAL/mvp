@@ -12,6 +12,8 @@ O pedido do usuário define a fronteira do trabalho. O projeto `mvp` usa Next.js
 | Primitivas visuais | `src/components/ui`, `components.json` e [guia shadcn/Base UI](docs/structure/shadcn-ui.md) |
 | Captura e UI compartilhada | `src/components/layout`, `src/components/voice`, `src/hooks/use-speech-to-text.ts` e `src/lib/stt` |
 | Consultas GET do domínio | `src/http`, `src/queries/keys`, `src/schemas/http` e [HTTP/queries](docs/structure/http-and-queries.md); backend Python em `../back` |
+| Interpretação LLM | [Contrato/manutenção](docs/structure/voice-interpretation.md), `src/app/api/interpret`, `src/server/assistant` |
+| Integração de jornada por outra pessoa | [Handoff com tarefas pendentes](docs/specs/backend-journey-handoff.md) |
 | API de transcrição | [Contrato STT](../docs/stt/STT-API.md), `src/app/api/transcribe` e `src/server/stt` |
 | Ambiente e segurança | `src/server/env.ts`, `.env.example` e [limites da API](docs/structure/auth-and-api.md) |
 | Configuração e comandos | [Execução](docs/structure/build-and-run.md), `package.json` e arquivo afetado |

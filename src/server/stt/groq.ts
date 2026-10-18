@@ -1,17 +1,26 @@
 import "server-only";
 import { PROVIDER_TIMEOUT_MS } from "@/lib/stt/constants";
 import { transcriptionResponseSchema } from "@/lib/stt/schemas";
-import type { GroqEnv } from "@/server/env";
+import { type GroqEnv, STT_MODELS } from "@/server/env";
+import { modelChain, withModelFallback } from "@/server/model-fallback";
 import { TranscriptionError } from "@/server/stt/transcription-error";
 
-export async function transcribeAudio(
+export function transcribeAudio(file: File, env: GroqEnv, signal: AbortSignal) {
+  return withModelFallback(
+    modelChain(env.GROQ_STT_MODEL, STT_MODELS),
+    (model) => transcribeWithModel(file, model, env.GROQ_API_KEY, signal),
+  );
+}
+
+async function transcribeWithModel(
   file: File,
-  env: GroqEnv,
+  model: string,
+  apiKey: string,
   signal: AbortSignal,
 ) {
   const form = new FormData();
   form.set("file", file, file.name);
-  form.set("model", env.GROQ_STT_MODEL);
+  form.set("model", model);
   form.set("language", "pt");
   form.set("response_format", "json");
   form.set("temperature", "0");
@@ -22,7 +31,7 @@ export async function transcribeAudio(
       "https://api.groq.com/openai/v1/audio/transcriptions",
       {
         method: "POST",
-        headers: { Authorization: `Bearer ${env.GROQ_API_KEY}` },
+        headers: { Authorization: `Bearer ${apiKey}` },
         body: form,
         signal: AbortSignal.any([
           signal,

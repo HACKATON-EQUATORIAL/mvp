@@ -816,10 +816,10 @@ a {
   line-height: var(--line-height-xs);
   font-weight: var(--font-weight-bold);
 }
-.voice-help-button-icon {
-  width: var(--spacing-md);
-  height: var(--spacing-md);
-  flex: 0 0 var(--spacing-md);
+.voice-help-button-mascot {
+  width: var(--spacing-lg);
+  height: var(--spacing-lg);
+  flex: 0 0 var(--spacing-lg);
 }
 .info-card {
   display: flex;

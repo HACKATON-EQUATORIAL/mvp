@@ -125,12 +125,13 @@ avanço da API com o rótulo “Próxima etapa”; o contexto de prática contin
 
 ## Voz e captura
 
-`VoiceHelpButton` reutiliza Button; acionador amarelo compacto com `MessageCircle`
-em 24px e texto visível “Assistente”, dispostos em coluna. Mantém sombra e raio da
+`VoiceHelpButton` reutiliza Button; acionador amarelo compacto com o componente
+`Eletriquinho` original em 32px (token `--spacing-lg`) e texto visível “Assistente”,
+dispostos em coluna. Mantém sombra e raio da
 aplicação. As dimensões ficam no shell: largura pelo token `--spacing-6xl` (96px)
 e altura de 60px, compartilhadas com a reserva da barra de ações. O nome acessível
-“Abrir assistente” inclui o texto visível; ícones decorativos usam `aria-hidden`.
-Somente o acionador externo usa conversa: o botão interno de gravar mantém `Mic`,
+“Abrir Assistente Digitaliza Aí” inclui o texto visível; o SVG decorativo usa `aria-hidden`.
+Somente o acionador externo usa o mascote: o botão interno de gravar mantém `Mic`,
 parar mantém `Square` e carregamento mantém `LoaderCircle`.
 O controle usa `position: absolute` no canto inferior direito do AppShell, que
 define o contêiner relativo. Usa `--spacing-sm` na lateral e `--spacing-xs` na base,

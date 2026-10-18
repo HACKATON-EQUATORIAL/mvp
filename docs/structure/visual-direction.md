@@ -45,7 +45,7 @@ institucional nas partes de serviço real.
 - Barra vazia some (`:empty`). Telas sem ações (ex.: home) mantêm só o assistente.
 - Na trilha e nas lições, “Consultar uma dúvida” usa `ActionLink` com variante
   `ghost` e tamanho `sm`, abaixo da ação principal. Na consulta rápida, só “Voltar”
-  com `ArrowLeft`, também discreto. O assistente tem ícone `MessageCircle` e texto
+  com `ArrowLeft`, também discreto. O assistente usa o `Eletriquinho` original e texto
   visível “Assistente”, em amarelo; seu microfone fica dentro do Drawer.
 - Rolagem: só vertical (`overflow-x: hidden`), barra fina arredondada em `--primary-200`,
   conteúdo esmaece ao passar sob a barra de ações (`mask-image`) e a barra tem sombra leve.
@@ -95,5 +95,5 @@ regra nova não aparecer, pare o servidor, apague `.next/dev/cache` e suba de no
 - A conclusão da trilha e o resultado da prática não oferecem certificado,
   geração de imagem, download ou compartilhamento de certificado (removido em 18/10/2026).
 - **Lições:** desafio de toque na ilustração antes do destaque.
-- **Eletriquinho no Drawer** com humor pelo estado; acionador externo com conversa e
+- **Eletriquinho no Drawer** com humor pelo estado; acionador externo com o mascote e
   texto “Assistente”. O controle de gravação interno mantém o microfone.

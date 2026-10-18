@@ -61,7 +61,28 @@ Limites: gravação/reprodução reais e áreas seguras em aparelho físico não
 revalidadas. O microfone interno foi conferido na interface e permaneceu sem
 alterações no código. Não foram criadas suítes nem infraestrutura de testes.
 
-## Arquivos
+## Atualização: Eletriquinho no acionador (18/10/2026)
+
+O ícone de conversa da entrega original foi substituído pelo componente SVG
+`Eletriquinho` já utilizado na aplicação, sem alteração do mascote nem novos assets.
+É decorativo (`aria-hidden`), proporcional e usa 32px pelo token `--spacing-lg`.
+Mantém o humor padrão do componente. O texto “Assistente” continua abaixo e o
+botão mantém 96×60px, cores, tipografia, posição e eventos. O nome acessível passou
+a “Abrir Assistente Digitaliza Aí”. Nenhuma alteração no Drawer ou na lógica de voz.
+
+Verificação desta atualização:
+
+- `bun run lint` e `bun run build` aprovados (Turbopack e TypeScript).
+- Navegador em 320×812 e 375×812: botão mantém 96×60px, mascote 32×32px,
+  `viewBox` quadrado original, sem recorte ou excesso de largura; texto visível.
+- Abertura e fechamento conferidos: mesmo Drawer, sugestões, Eletriquinho interno
+  e “Gravar áudio” em repouso. Foco volta a “Abrir Assistente Digitaliza Aí”.
+- Nenhum asset, dependência, evento ou lógica de áudio alterado. Capturas em
+  `output/playwright/assistente-eletriquinho-320.png` e
+  `output/playwright/assistente-eletriquinho-375.png`.
+- Áudio e captura em aparelho físico não foram revalidados nesta troca visual.
+
+## Arquivos da refatoração dos rodapés
 
 - Layout: `src/components/layout/journey.module.css` e `journey-page.tsx`.
 - Acionador: `src/components/voice/voice-help-button.tsx` e `src/app/globals.css`.

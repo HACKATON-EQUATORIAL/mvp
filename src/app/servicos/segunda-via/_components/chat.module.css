@@ -1,14 +1,9 @@
 /* Chat simulado do WhatsApp (etapas 1 a 3). Cores próprias do mensageiro, sem logo. */
-/*
- * Tamanho padrão de celular: 85% da largura (15% de folga para rolar a página) e
- * altura fixa; só a conversa rola por dentro.
- */
+/* Largura toda do conteúdo; a conversa cresce e a página rola (sem rolagem interna). */
 .device {
   display: flex;
   flex-direction: column;
-  width: 85%;
-  height: clamp(400px, 72dvh, 620px);
-  margin-inline: auto;
+  width: 100%;
   overflow: hidden;
   border: 6px solid var(--neutral-900, #1a1a1a);
   border-radius: 24px;
@@ -59,38 +54,12 @@
   text-align: center;
 }
 
-/* Só a conversa rola; cabeçalho e rodapé ficam fixos, como num app de chat. */
 .body {
   display: grid;
   align-content: start;
   gap: 8px;
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  /* Barra de rolagem fina e discreta, como num app de mensagens. */
-  scrollbar-width: thin;
-  scrollbar-color: rgb(0 0 0 / 22%) transparent;
+  min-height: 160px;
   padding: 14px 12px 16px;
-}
-
-.body::-webkit-scrollbar {
-  width: 6px;
-}
-
-.body::-webkit-scrollbar-track {
-  margin-block: 6px;
-  background: transparent;
-}
-
-.body::-webkit-scrollbar-thumb {
-  border-radius: var(--radius-full);
-  background: rgb(0 0 0 / 22%);
-}
-
-.body:focus-visible {
-  outline: 3px solid var(--primary-400);
-  outline-offset: -3px;
 }
 
 .footer[hidden] {

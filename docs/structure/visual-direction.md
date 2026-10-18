@@ -155,3 +155,6 @@ regra nova não aparecer, pare o servidor, apague `.next/dev/cache` e suba de no
 - **WhatsApp e mascote (DEC-EQT-040):** `.device` com altura `clamp(400px, 72dvh, 620px)`
   e corpo `flex: 1`; `.mascotCorner` com `bottom: var(--spacing-xs)` (e área segura quando
   não há barra); dica da tela após 30 s ocioso.
+- **WhatsApp sem rolagem interna (revisão final, DEC-EQT-040):** `.device` com
+  `width: 100%`, sem altura fixa; `ChatFrame` chama `revealInJourney(frame)` a cada
+  mensagem (só o miolo rola). Substitui as notas anteriores de 85%, altura fixa e scrollbar.

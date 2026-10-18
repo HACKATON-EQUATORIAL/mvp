@@ -14,9 +14,9 @@ export type ReplyOption = {
 };
 
 /**
- * Moldura do WhatsApp simulado: cabeçalho da Clara e aviso fixos, conversa com
- * rolagem própria (desce sozinha a cada mensagem, sem mexer na página) e
- * rodapé fixo para respostas rápidas ou o campo de mensagem.
+ * Moldura do WhatsApp simulado: cabeçalho da Clara, aviso de treino, conversa
+ * (sem rolagem interna: cresce com a página) e rodapé para respostas rápidas ou
+ * o campo de mensagem.
  */
 export function ChatFrame({
   label,
@@ -27,19 +27,15 @@ export function ChatFrame({
   footer?: ReactNode;
   children: ReactNode;
 }) {
+  const frame = useRef<HTMLElement>(null);
   const body = useRef<HTMLDivElement>(null);
   const foot = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const element = body.current;
     if (!element) return;
-    // A conversa desce na hora (como no WhatsApp) e o rodapé com as respostas
-    // fica à vista, rolando só o miolo da tela, nunca o shell.
-    // Ao abrir não rola a página (título e explicação ficam à vista).
-    element.scrollTop = element.scrollHeight;
-    const sync = () => {
-      element.scrollTop = element.scrollHeight;
-      revealInJourney(foot.current, false, 0, "auto");
-    };
+    // Mensagem nova: a página (só o miolo, nunca o shell) desce até o fim do chat,
+    // deixando à vista a última mensagem e as respostas. Ao abrir, não rola.
+    const sync = () => revealInJourney(frame.current, false, 0, "auto");
     const observer = new MutationObserver(sync);
     observer.observe(element, { childList: true, subtree: true });
     if (foot.current)
@@ -51,7 +47,12 @@ export function ChatFrame({
     return () => observer.disconnect();
   }, []);
   return (
-    <section className={styles.device} aria-label={label} data-chat-screen>
+    <section
+      ref={frame}
+      className={styles.device}
+      aria-label={label}
+      data-chat-screen
+    >
       <div className={styles.header} aria-hidden="true">
         <span className={styles.avatar}>C</span>
         <span>
@@ -62,8 +63,7 @@ export function ChatFrame({
       <p className={styles.notice}>
         Simulação para treino · não é o canal oficial
       </p>
-      {/* biome-ignore lint/a11y/noNoninteractiveTabindex: área rolável precisa de foco pelo teclado */}
-      <div ref={body} className={styles.body} tabIndex={0}>
+      <div ref={body} className={styles.body}>
         {children}
       </div>
       <div ref={foot} className={styles.footer} hidden={!footer}>

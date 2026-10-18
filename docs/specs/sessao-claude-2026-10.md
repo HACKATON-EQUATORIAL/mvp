@@ -323,3 +323,14 @@ Ajustes finais do Eletriquinho e do WhatsApp:
   - 287×585 a 375×812;
   - 240×409 a 320×568, cabendo na área visível de 423px.
 - **Dica da tela:** aparece depois de 30 s parado.
+
+Revisão final do WhatsApp (pedido do usuário): sem rolagem interna e com 100% da largura.
+Verificado na etapa 3 a 320×568, 375×812, 840×520 e 405×313:
+- sem rolagem dentro do chat;
+- fim do chat visível depois de cada mensagem (inclusive depois de um erro);
+- header em `top: 0`;
+- botões das respostas recebendo o toque;
+- espaço final de 24px.
+
+Etapa 2 e demonstração conferidas a 375px. O espaço grande do print do usuário vinha de
+uma versão antiga em execução (o padding de 168px já removido).

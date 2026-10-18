@@ -5,8 +5,17 @@
   align-items: center;
   gap: var(--spacing-xxs);
   width: 100%;
+  max-width: var(--app-content-max-width);
   min-height: 60px;
+  margin-inline: auto;
   padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+/* Com a moldura (≥768px), logo e Serviços alinham com as bordas da coluna. */
+@media (min-width: 768px) {
+  .content {
+    padding-inline: 0;
+  }
 }
 
 .end {
@@ -55,9 +64,14 @@
   height: 22px;
 }
 
+/* Etiqueta amarela com texto escuro: mantém a cor da marca com leitura firme. */
 .state {
-  color: var(--highlight-500);
-  font-weight: var(--font-weight-bold);
+  display: inline-block;
+  padding: 0 5px;
+  border-radius: var(--radius-sm);
+  background: var(--highlight-500);
+  color: var(--primary-700);
+  font-weight: var(--font-weight-black);
   text-decoration: none;
 }
 

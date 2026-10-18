@@ -34,6 +34,9 @@ export default function Page() {
       intro="Você treinou cada passo. Agora é fazer de verdade, com os seus dados."
       voiceContext={voiceContext}
       actions={null}
+      back={{ href: routes.whatsapp, label: "Voltar às etapas" }}
+      // Na barra, a etapa anterior (o mapa já está no “Voltar às etapas” do topo).
+      previous={{ href: routes.simulacao, label: "Voltar à etapa 3" }}
     >
       <JourneyDone />
     </JourneyPage>

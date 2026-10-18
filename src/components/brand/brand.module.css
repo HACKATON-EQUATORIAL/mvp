@@ -116,6 +116,13 @@
   pointer-events: auto;
 }
 
+/* Desktop: acompanha a margem interna de 32px da coluna. */
+@media (min-width: 992px) {
+  .mascotCorner {
+    right: calc(var(--spacing-lg) + env(safe-area-inset-right));
+  }
+}
+
 .mascotButton {
   display: grid;
   flex: none;

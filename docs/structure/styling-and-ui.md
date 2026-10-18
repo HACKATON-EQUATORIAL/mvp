@@ -86,7 +86,8 @@ precisa quebrar e expandir sem altura fixa ou truncamento de orientação.
 `Header` é um elemento `header` com props HTML e `className`. Renderiza o logotipo
 oficial da Equatorial à esquerda, junto de “MA” em amarelo; o nome Maranhão fica
 disponível para tecnologia assistiva. Esse grupo é um link para
-`https://www.equatorialenergia.com.br/`, na mesma aba, com área de toque de pelo
+`https://www.equatorialenergia.com.br/`, em nova aba (um toque sem querer não tira a
+pessoa da prática; “abre em nova aba” fica para leitores de tela), com área de toque de pelo
 menos 44px de altura e foco visível. “Digitaliza Aí” fica no centro e leva ao início;
 o atalho “Serviços” fica à direita, oculto na home. O cabeçalho permanece
 sticky em todas as rotas pelo `AppShell` do layout raiz, ocupa a largura da aplicação,

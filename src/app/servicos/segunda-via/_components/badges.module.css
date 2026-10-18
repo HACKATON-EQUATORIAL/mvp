@@ -20,10 +20,18 @@
 .list {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 6px;
+  /* Linhas mais afastadas: o rótulo não encosta no selo de baixo. */
+  gap: var(--spacing-sm) 6px;
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+/* Desktop: os 6 selos numa linha só. */
+@media (min-width: 992px) {
+  .list {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
 }
 
 .badge {
@@ -53,8 +61,9 @@
 
 .label {
   color: var(--text-muted);
-  font-size: 0.6875rem;
-  line-height: 0.875rem;
+  /* 12px: mínimo do design system para texto informativo. */
+  font-size: 0.75rem;
+  line-height: 1rem;
   font-weight: 800;
 }
 

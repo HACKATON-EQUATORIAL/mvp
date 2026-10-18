@@ -211,6 +211,18 @@
   text-decoration: none;
 }
 
+/* O brilho (6px) e a pulsação da etapa atual não podem encostar no selo “Próximo”. */
+[data-state="current"] .node {
+  gap: var(--spacing-sm);
+}
+
+/* Desktop: zigue-zague mais aberto para distribuir o caminho pela largura. */
+@media (min-width: 992px) {
+  .roadmap .path li > a {
+    transform: translateX(calc(var(--offset, 0px) * 2.5));
+  }
+}
+
 .node:focus-visible {
   outline: 3px solid var(--primary-400);
   outline-offset: 4px;

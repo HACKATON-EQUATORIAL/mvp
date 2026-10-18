@@ -188,3 +188,53 @@ o progresso aparece sem animação de desenho e sem pulso. Escopo e verificaçõ
 - **WhatsApp sem rolagem interna (revisão final, DEC-EQT-040):** `.device` com
   `width: 100%`, sem altura fixa; `ChatFrame` chama `revealInJourney(frame)` a cada
   mensagem (só o miolo rola). Substitui as notas anteriores de 85%, altura fixa e scrollbar.
+
+## Telas maiores, voltar e legibilidade (aplicado sobre DEC-EQT-038 a 040)
+
+O celular não muda; tudo abaixo vale a partir de 768px, salvo onde indicado.
+
+- **Moldura:** o shell ocupa a tela toda; a coluna (`.body`) fica centralizada sobre
+  `--surface-subtle`, com borda lateral. O conteúdo do cabeçalho segue a coluna: logo e
+  “Serviços” alinhados às bordas dela, faixa azul de ponta a ponta. 24px a mais antes
+  do conteúdo.
+- **Tablet (768–991px):** coluna de 720px (margens de ~24px no iPad retrato).
+- **Desktop (≥992px):** `--app-content-max-width` passa a 960px (redefinido no `.shell`,
+  porque `@media` só com variáveis é descartado no `globals.css`) e margem interna de
+  32px no miolo, na barra e no Eletriquinho.
+- **Largura toda:** o conteúdo de todas as telas ocupa a coluna inteira (mapa, etapas,
+  chat e conclusão). Cards de escolha (`ChoiceCard`) em 1 coluna no tablet (em 2,
+  texto e selo “Em breve” ficavam espremidos) e em 2 colunas com a mesma altura no
+  desktop; no mapa, zigue-zague de ±120px e os 6 selos numa linha.
+- **Chat:** respostas e campo com recuo simétrico de 80px, deixando à direita a faixa do
+  Eletriquinho, que não cobre mais a última opção. O balão de fala ainda pode passar
+  por cima, mas se fecha no X.
+- **Barra de ações:** botões lado a lado, dividindo a largura igualmente. Ordem da
+  esquerda para a direita: etapa anterior → secundário → **principal na direita**
+  (avançar fecha a leitura). A faixa de feedback fica na linha de cima. No celular, com
+  os botões empilhados, o principal continua em cima.
+- **Voltar no topo (prop `back` do `JourneyPage`):** sub-ação em pílula `ghost` (fundo
+  suave, borda fina, sem relevo, 44px de toque), acima do rótulo azul. Nas etapas
+  (demonstração, partes, simulação, conclusão) leva ao mapa (“Voltar às etapas”); mapa e
+  escolha do canal voltam aos serviços (quem já começou chega ao mapa direto da home; a
+  troca de canal fica no “Trocar” do mapa).
+- **Etapa anterior (prop `previous`):** botão secundário na barra de ações, à esquerda a
+  partir de 768px. No celular vira botão quadrado só com a seta (52×52, nome completo
+  para leitores de tela), na linha do secundário ou, sem ele, da principal; a barra
+  passa de ~125px para 77px. A partir de 768px, com 3 botões (parte concluída), ela
+  também vira só a seta e os outros dois dividem o resto. Partes 2–4 → parte anterior; parte 1 →
+  demonstração; simulação → parte 4; conclusão → etapa 3 (substitui o antigo “Ver as
+  etapas”, que repetia o voltar do topo). A demonstração, primeira etapa, não tem.
+- **Legibilidade (todas as larguras):** rótulo acima do título em `--header-bg` (~12:1;
+  o `--primary-400` dava ~4,4:1 a 12px); “MA” como etiqueta amarela com texto escuro;
+  rótulos dos selos com 12px; botões `ghost`/`link` sem a sombra interna de pressionado.
+- **Mapa:** 16px entre o círculo da etapa atual e o selo “Próximo”, para o brilho e a
+  pulsação não encostarem nele.
+- **Fim da rolagem (todas as larguras):** 72px a mais no fim do miolo, a altura do
+  Eletriquinho; o último bloco (ex.: aviso de treino seguro do mapa) não fica sob ele.
+  Selos em 3 colunas com 16px entre as linhas.
+- **Telas largas e baixas (≥768px e altura ≤860px, ex.: iPad deitado, notebook 1366×768):**
+  sem o respiro extra antes do conteúdo e conversa curta com altura mínima de 96px.
+  “Como funciona” fica sempre acima do chat (lado a lado foi testado e descartado).
+- **Mantido como está:** nas partes 2 a 4, o histórico das partes anteriores aumenta a
+  conversa e as respostas pedem rolagem em qualquer tela; depois de cada mensagem, o
+  chat já desce sozinho até elas.

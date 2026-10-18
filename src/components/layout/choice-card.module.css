@@ -6,6 +6,28 @@
   list-style: none;
 }
 
+/*
+ * Em grade só no desktop: no tablet retrato, duas colunas apertavam texto e selo.
+ * Todos os cards têm a mesma altura (a barra de progresso não destoa).
+ */
+@media (min-width: 992px) {
+  .list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
+  }
+  .card {
+    height: 100%;
+  }
+}
+
+@media (min-width: 992px) {
+  .card {
+    gap: 18px;
+    min-height: 112px;
+    padding: 20px 24px;
+  }
+}
+
 .card {
   display: flex;
   align-items: center;

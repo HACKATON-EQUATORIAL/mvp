@@ -991,10 +991,12 @@ a {
   min-width: 52px;
   padding: var(--spacing-xxs);
 }
+/* Sem fundo, a sombra interna de “pressionado” virava uma linha solta no topo. */
 .ui-button-ghost,
 .ui-button-link {
   --button-bg: transparent;
   --button-border: transparent;
+  --button-pressed-shadow: none;
 }
 .ui-button-link {
   text-decoration: underline;

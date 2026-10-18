@@ -13,8 +13,11 @@ export function Header({ className, ...props }: HeaderProps) {
   return (
     <header {...props} className={classes}>
       <div className={styles.content}>
+        {/* Aba nova: um toque sem querer no logo não tira a pessoa da prática. */}
         <a
           href="https://www.equatorialenergia.com.br/"
+          target="_blank"
+          rel="noopener noreferrer"
           className={styles.partner}
         >
           <Image
@@ -28,6 +31,7 @@ export function Header({ className, ...props }: HeaderProps) {
           <abbr title="Maranhão" className={styles.state}>
             MA
           </abbr>
+          <span className="sr-only"> (abre em nova aba)</span>
         </a>
         <Link
           href="/"

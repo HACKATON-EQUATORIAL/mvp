@@ -34,6 +34,7 @@ export default function Page() {
       intro="Escolha o canal. Você vai ver como funciona, praticar e depois fazer de verdade."
       voiceContext={voiceContext}
       actions={null}
+      back={{ href: routes.inicio, label: "Voltar aos serviços" }}
     >
       <ChannelChoice />
     </JourneyPage>

@@ -11,8 +11,6 @@ export type JourneyProgress = {
   independentDone: boolean;
   /** Simulações de canal concluídas (IDs da API). */
   simulated: string[];
-  /** Dias (AAAA-MM-DD) com algum avanço, para a sequência de dias. */
-  days: string[];
   /** Alguma prática concluída sem nenhum erro. */
   perfect: boolean;
   /** Prática individual concluída sem pedir ajuda. */
@@ -20,14 +18,12 @@ export type JourneyProgress = {
 };
 
 const KEY = "digitaliza:segunda-via:progress";
-export const STREAK_EVENT = "digitaliza:streak";
 export const BADGE_EVENT = "digitaliza:badge";
 const empty: JourneyProgress = {
   learned: [],
   guidedDone: false,
   independentDone: false,
   simulated: [],
-  days: [],
   perfect: false,
   unassisted: false,
 };
@@ -59,8 +55,6 @@ export function updateProgress(change: Partial<JourneyProgress>) {
   next.perfect = current.perfect || !!change.perfect;
   next.unassisted = current.unassisted || !!change.unassisted;
   if (JSON.stringify(next) === JSON.stringify(current)) return;
-  const firstToday = !current.days.includes(today());
-  next.days = [...new Set([...current.days, today()])].slice(-60);
   cache = next;
   try {
     localStorage.setItem(KEY, JSON.stringify(next));
@@ -68,11 +62,6 @@ export function updateProgress(change: Partial<JourneyProgress>) {
     // Sem armazenamento: o progresso vale só enquanto a página estiver aberta.
   }
   for (const listener of listeners) listener();
-  // Primeiro avanço do dia: avisa a interface para celebrar a ofensiva.
-  if (firstToday)
-    window.dispatchEvent(
-      new CustomEvent(STREAK_EVENT, { detail: { streak: streakOf(next) } }),
-    );
   // Selos recém-desbloqueados também são celebrados.
   const before = new Set(
     badgesOf(current)
@@ -114,24 +103,6 @@ export function energyOf(progress: JourneyProgress) {
     (progress.independentDone ? ENERGY.independent : 0) +
     (progress.simulated.length ? ENERGY.simulated : 0)
   );
-}
-
-function today(offset = 0) {
-  const date = new Date();
-  date.setDate(date.getDate() - offset);
-  return date.toLocaleDateString("en-CA");
-}
-
-/** Dias seguidos com avanço, contando até hoje (ou até ontem, se hoje ainda não). */
-export function streakOf(progress: JourneyProgress) {
-  const days = new Set(progress.days);
-  let start = days.has(today()) ? 0 : 1;
-  let streak = 0;
-  while (days.has(today(start))) {
-    streak += 1;
-    start += 1;
-  }
-  return streak;
 }
 
 export type Badge = {

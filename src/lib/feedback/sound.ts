@@ -72,7 +72,7 @@ export const feedback = {
     ]);
     vibrate([20, 60, 20, 60, 40]);
   },
-  /** Ofensiva ou selo: brilho curto. */
+  /** Novo selo: brilho curto. */
   sparkle() {
     play([
       { freq: 1319, at: 0, length: 0.1, type: "sine" },

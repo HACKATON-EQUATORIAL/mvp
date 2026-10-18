@@ -131,6 +131,38 @@ Verificações desta alteração:
 - Capturas em `output/playwright/resultado-sem-certificado.png` e
   `output/playwright/trilha-sem-certificado.png`.
 
+## Atualização: resumo da prática e progresso sem ofensiva (18/10/2026)
+
+Por pedido do usuário, tempo e ofensiva foram retirados do resumo compartilhado
+pelas práticas com apoio, individual e revisão. O resumo mantém energia (ou itens
+revisados) e acertos, em duas colunas. O medidor da trilha mantém energia em kWh e
+a barra de progresso, sem “X dias seguidos”.
+
+Foram removidos o cronômetro local, o cálculo de dias e os avisos de ofensiva.
+O componente de avisos passou a se chamar `BadgeMoment` e mantém a fila de novos
+selos. A sequência de acertos durante as perguntas, os selos e os avanços existentes
+permanecem. Registros antigos no navegador continuam legíveis, mesmo com o campo
+legado `days`; nenhum progresso é apagado. Contratos e métricas do backend não mudam.
+
+Os relatos de tempo e ofensiva nas seções originais desta spec são históricos.
+O comportamento vigente está em [direção visual](../structure/visual-direction.md).
+
+Validação desta alteração em 18/10/2026:
+
+- `bun run lint` e `bun run build --webpack` aprovados, incluindo TypeScript.
+  O build padrão com Turbopack foi tentado e bloqueado pelo ambiente ao abrir
+  uma porta interna (`Operation not permitted`).
+- Navegador em 375×812 com API local: prática com apoio concluída pelas três
+  perguntas reais; resumo com apenas +20 kWh e 100% de acertos. A ação “Agora tente
+  sozinho” abriu a prática individual já concluída na sessão, com +30 kWh e acertos,
+  também sem tempo e ofensiva. Revisão usa o mesmo resumo, mas não foi repetida.
+- O selo “Lição perfeita” gerou o aviso “Novo selo!”, sem aviso de ofensiva.
+- Progresso legado preparado no navegador com `days` e uma lição concluída:
+  após as práticas, o mapa mostrou 60/90 kWh e a barra em 66,7%, sem dias seguidos.
+  Não houve perda dos avanços nem excesso de largura.
+- Capturas em `output/playwright/pratica-guiada-sem-tempo-ofensiva.png` e
+  `output/playwright/trilha-sem-ofensiva.png`. Verificação em navegador, sem celular físico.
+
 ## Configuração necessária
 
 - **`mvp/.env`:**

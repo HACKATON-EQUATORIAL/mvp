@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { StreakMoment } from "@/components/brand/streak-moment";
+import { BadgeMoment } from "@/components/brand/badge-moment";
 import { Header } from "@/components/layout/header/header";
 import { VoiceAssistantHost } from "@/components/voice/voice-assistant-host";
 import styles from "./journey.module.css";
@@ -12,7 +12,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {children}
       </div>
       <VoiceAssistantHost />
-      <StreakMoment />
+      <BadgeMoment />
     </div>
   );
 }

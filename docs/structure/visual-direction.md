@@ -67,8 +67,8 @@ regra nova não aparecer, pare o servidor, apague `.next/dev/cache` e suba de no
   das fontes de apps de ensino. Texto base com peso 500; títulos 900; botões 800.
 - Botões e opções com cantos de 16px (`--radius-lg`); rótulo de seção em azul, caixa alta
   espaçada; perguntas e lições com título 1.375rem/900.
-- Barras de progresso mais grossas com brilho interno; medidor de energia com
-  **sequência de dias** (`streakOf`, dias com avanço guardados no navegador).
+- Barras de progresso mais grossas com brilho interno; medidor de energia em kWh,
+  sem contagem de dias seguidos.
 
 ## Efeitos e gamificação gentil (DEC-EQT-036)
 
@@ -76,9 +76,10 @@ regra nova não aparecer, pare o servidor, apague `.next/dev/cache` e suba de no
   conclusão, brilho), com vibração curta. Preferência única em `lib/feedback/preferences.ts`
   (botão de som do Drawer controla voz e efeitos; ligado por padrão).
 - **Prática:** faixa colorida na barra inferior (verde/laranja, via `:has`), “N seguidas!”,
-  selo “Lição perfeita” e resumo animado (energia, acertos, tempo, ofensiva).
-- **Celebrações** (`components/brand/streak-moment.tsx`): fila de avisos de ofensiva e selos
-  no topo; só comemoram.
+  selo “Lição perfeita” e resumo animado (energia e acertos; revisão mostra itens
+  revisados e acertos). Tempo e ofensiva foram removidos em 18/10/2026.
+- **Celebrações** (`components/brand/badge-moment.tsx`): fila de avisos de novos selos
+  no topo; só comemoram. Não há avisos de ofensiva nem contagem diária de avanços.
 - **Selos** (`badge-shelf.tsx`) e **revisão** (`review-card.tsx`) no mapa da trilha.
 - A conclusão da trilha e o resultado da prática não oferecem certificado,
   geração de imagem, download ou compartilhamento de certificado (removido em 18/10/2026).

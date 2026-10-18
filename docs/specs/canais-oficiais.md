@@ -42,3 +42,11 @@ mostra “Etapa ilustrativa”. Números de WhatsApp variam por estado e aparece
 
 Com isso, basta atualizar `channel_simulations` (e, se a mudança for grande, criar
 `segunda-via.v2.json`), trocar `verified` para `true` nas telas conferidas e reiniciar a API.
+
+## Saída real (18/10/2026)
+
+Ao fim da trilha, a página do canal abre os destinos oficiais. O conteúdo descreve cada
+destino (`channel_exit.destinations`: rótulo, descrição, tipo, região e mensagem) e os
+links ficam em `CHANNEL_EXIT_LINKS` no `.env` do backend (regra do conteúdo sem URL nem
+telefone). Destinos atuais: Agência Virtual (Pagamento Simplificado) e WhatsApp da Clara
+(MA), que abre com “Olá, Clara! Quero a segunda via da fatura.” já escrito.

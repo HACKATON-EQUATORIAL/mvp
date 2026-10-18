@@ -28,6 +28,11 @@ function write(next: string[]) {
   for (const listener of listeners) listener();
 }
 
+/** Leitura direta (no cliente), para fixar a lista ao abrir a revisão. */
+export function readMissed() {
+  return [...read()];
+}
+
 export function addMissed(itemId: string) {
   if (!read().includes(itemId)) write([...read(), itemId]);
 }

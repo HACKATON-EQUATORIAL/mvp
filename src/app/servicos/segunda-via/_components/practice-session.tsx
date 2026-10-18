@@ -30,7 +30,7 @@ import {
   updateProgress,
   useJourneyProgress,
 } from "../_lib/progress";
-import { useMissedItems } from "../_lib/review";
+import { readMissed } from "../_lib/review";
 import { localStep } from "../_lib/steps";
 import { usePracticeSession } from "../_lib/use-practice-session";
 import styles from "./practice.module.css";
@@ -49,9 +49,14 @@ export function PracticeSession({
   review?: boolean;
 }) {
   const router = useRouter();
-  const missed = useMissedItems();
-  // A lista é fixada ao abrir; acertos durante a revisão não mudam a tentativa.
-  const [reviewItems] = useState(() => (review ? missed : undefined));
+  // A lista é fixada ao abrir (já no cliente); acertos durante a revisão não
+  // mudam a tentativa em andamento.
+  const [reviewItems, setReviewItems] = useState<string[] | null | undefined>(
+    review ? null : undefined,
+  );
+  useEffect(() => {
+    if (review) setReviewItems(readMissed());
+  }, [review]);
   const session = usePracticeSession(mode, reviewItems);
   const progress = useJourneyProgress();
   const elapsed = useRef(0);
@@ -177,10 +182,14 @@ export function PracticeSession({
         </div>
         <ul className={styles.stats} aria-label="Resumo da prática">
           <Stat
-            icon={Zap}
+            icon={review ? RotateCcw : Zap}
             tone="energy"
-            label="Energia"
-            value={`+${review ? 0 : guided ? ENERGY.guided : ENERGY.independent} kWh`}
+            label={review ? "Revisão" : "Energia"}
+            value={
+              review
+                ? `${state.progress.total} ${state.progress.total === 1 ? "revisada" : "revisadas"}`
+                : `+${guided ? ENERGY.guided : ENERGY.independent} kWh`
+            }
             delay={0.1}
           />
           <Stat

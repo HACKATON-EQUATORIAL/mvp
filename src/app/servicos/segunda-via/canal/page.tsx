@@ -8,7 +8,6 @@ import {
   withContext,
 } from "@/app/servicos/segunda-via/_lib/navigation";
 import { JourneyPage } from "@/components/layout/journey-page";
-import { PageActions as BottomActions } from "@/components/layout/page-actions";
 import { ActionLink } from "@/components/ui/action-link";
 import { VoiceHelp } from "@/components/voice/voice-help";
 import type { VoicePageContext } from "@/components/voice/voice-page-context";
@@ -71,11 +70,9 @@ async function PageActions({
   return (
     <>
       <ChannelExit context={context} />
-      <BottomActions>
-        <ActionLink href={returnTo(context, "canal", routes.preparacao)}>
-          Voltar
-        </ActionLink>
-      </BottomActions>
+      <ActionLink href={returnTo(context, "canal", routes.preparacao)}>
+        Voltar
+      </ActionLink>
     </>
   );
 }

@@ -8,6 +8,9 @@ Contratos atuais de tokens, componentes e configuração não são duplicados aq
 
 | Spec | Conteúdo |
 | --- | --- |
+| [Sessão Claude (out/2026)](sessao-claude-2026-10.md) | Tudo o que foi feito na sessão longa: integração com o backend, assistente, design, gamificação e canal oficial |
+| [Mega revisão](mega-revisao.md) | Diagnóstico, status por item, verificação e estudo Duolingo |
+| [Canais oficiais](canais-oficiais.md) | Mapeamento da Agência Virtual e da Clara, simulador e saída real |
 | [Checklist manual do assistente](voice-assistant-manual-checklist.md) | Perguntas, casos positivos/negativos e espaço para registrar resultados |
 | [Interpretação inicial LLM](voice-interpretation.md) | Groq, confirmação e fallbacks reais |
 | [Handoff da jornada](backend-journey-handoff.md) | Tarefas de integração Python atribuídas à outra pessoa/IA |

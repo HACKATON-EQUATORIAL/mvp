@@ -99,3 +99,20 @@ Severidade: **A** (quebra a proposta ou dados), **M** (confunde/engana), **B** (
   pagamento → fora de escopo com canal oficial; “sim” após pergunta → confirma.
 - Simulador dos canais oficiais (Agência Virtual e WhatsApp da Clara) guiado por
   conteúdo do backend; ver [canais oficiais](canais-oficiais.md) e o backlog de fluxos.
+
+## 7. Estudo Duolingo e concorrentes (18/10/2026)
+
+Pesquisa e plano completos em `~/.claude/plans/velvety-herding-eich.md` (resumo em DEC-EQT-036).
+Implementado: Eletriquinho no Drawer; feedback na barra com som/vibração; sequência e
+lição perfeita; resumo de fim de lição; aviso de ofensiva e selos; revisão de erros
+(backend `item_ids`, migration `0002`); desafio de toque nas lições; “comece em 2
+minutos”; certificado; canal oficial com links reais e WhatsApp com mensagem pronta.
+
+Verificado no navegador (375×812): faixa verde/laranja na barra, “2 seguidas!”, resumo
+(energia, acertos, tempo, ofensiva), revisão “1 de 1” limpando a lista, aviso de selo,
+desafio de toque nas duas lições, home levando à lição 1, canal com os dois links oficiais,
+Drawer com o Eletriquinho. Não verificado: som e vibração reais (testes com som desligado),
+certificado gerado e compartilhado, humores “escutando/falando” com microfone real.
+
+Backlog: painel de autonomia para a Equatorial (precisa de endpoint público agregado),
+lembretes (Web Push), meta diária configurável, repetição espaçada entre sessões.

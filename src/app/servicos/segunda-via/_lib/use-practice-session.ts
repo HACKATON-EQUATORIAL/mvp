@@ -52,10 +52,14 @@ type Answer = {
  */
 export function usePracticeSession(
   mode: PracticeMode,
-  /** Revisão de erros: cria a tentativa só com estes itens. */
-  reviewItems?: string[],
+  /**
+   * Revisão de erros: cria a tentativa só com estes itens. `null` = revisão
+   * ainda lendo a lista no navegador (não cria nada até lá).
+   */
+  reviewItems?: string[] | null,
 ) {
-  const kind: SessionKind = reviewItems ? "review" : mode;
+  const kind: SessionKind = reviewItems !== undefined ? "review" : mode;
+  const waiting = reviewItems === null || reviewItems?.length === 0;
   const body = {
     track_id: TRACK_ID,
     mode,
@@ -107,8 +111,8 @@ export function usePracticeSession(
   // `body` deriva só de `mode` e dos itens da revisão, fixos na sessão.
   // biome-ignore lint/correctness/useExhaustiveDependencies: body estável na sessão
   useEffect(() => {
-    if (needsNew && !creating && !createFailed) createAttempt(body);
-  }, [needsNew, creating, createFailed, createAttempt]);
+    if (needsNew && !waiting && !creating && !createFailed) createAttempt(body);
+  }, [needsNew, waiting, creating, createFailed, createAttempt]);
 
   useEffect(() => {
     setPracticeActivity(

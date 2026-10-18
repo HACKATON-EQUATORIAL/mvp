@@ -69,3 +69,16 @@ regra nova não aparecer, pare o servidor, apague `.next/dev/cache` e suba de no
   espaçada; perguntas e lições com título 1.375rem/900.
 - Barras de progresso mais grossas com brilho interno; medidor de energia com
   **sequência de dias** (`streakOf`, dias com avanço guardados no navegador).
+
+## Efeitos e gamificação gentil (DEC-EQT-036)
+
+- **Sons** (`lib/feedback/sound.ts`): sintetizados com Web Audio (acerto, erro suave,
+  conclusão, brilho), com vibração curta. Preferência única em `lib/feedback/preferences.ts`
+  (botão de som do Drawer controla voz e efeitos; ligado por padrão).
+- **Prática:** faixa colorida na barra inferior (verde/laranja, via `:has`), “N seguidas!”,
+  selo “Lição perfeita” e resumo animado (energia, acertos, tempo, ofensiva).
+- **Celebrações** (`components/brand/streak-moment.tsx`): fila de avisos de ofensiva e selos
+  no topo; só comemoram.
+- **Selos** (`badge-shelf.tsx`) e **revisão** (`review-card.tsx`) no mapa da trilha.
+- **Lições:** desafio de toque na ilustração antes do destaque.
+- **Eletriquinho no Drawer** com humor pelo estado; botão flutuante só com o microfone.

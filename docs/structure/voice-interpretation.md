@@ -59,8 +59,8 @@ retornada; a listagem de serviços usa a ordem do catálogo recebido.
 
 O Drawer mantém o microfone no rodapé, Motion e espectro. Exibe a última interação,
 sem histórico longo. Respostas informativas e esclarecimentos mostram somente a mensagem seguida dos botões pertinentes, sem título genérico, textos intercalados ou botão auxiliar abaixo. A listagem menciona apenas o que pode ser acessado agora. O texto de apresentação do catálogo é normalizado pelo servidor, evitando promessas de funcionalidades futuras. A resposta
-é texto React, nunca HTML. Não há TTS, respostas didáticas, execução de exercício
-ou emissão de conta real. Perguntas de procedimento encaminham às explicações.
+é texto React, nunca HTML. Respostas didáticas, execução de exercício
+ou emissão de conta real não existem. Perguntas de procedimento encaminham às explicações.
 
 Fechar aborta captura/envio/interpretação, descarta áudio/retry e invalida callbacks
 tardios. Na mesma página, preserva texto, resposta, botões e estado estável. Reabrir
@@ -163,3 +163,36 @@ disparam troca. O modelo limitado entra em cooldown em memória pelo `Retry-Afte
   `whisper-large-v3`).
 - Cooldown vale por processo (reinício ou instância serverless nova o zera).
 - Limites e IDs conferidos na documentação da Groq em 2026-10-17; podem mudar.
+
+## Respostas em voz (TTS nativo)
+
+`hooks/use-speech-synthesis.ts` usa `speechSynthesis` (pt-BR; prefere voz local pt-BR, depois
+qualquer `pt`). A Groq não tem TTS em português, então não há rota nem chave. O host fala
+respostas que não navegam (informação, esclarecimento, cancelamento, fora de escopo) e a
+pergunta de confirmação do guard; propostas que navegam não são faladas. O botão de
+alto-falante no cabeçalho liga/desliga (padrão ligado, só em memória). A fala é cancelada ao
+fechar, navegar, iniciar nova gravação ou desligar. `prime()` roda no toque do microfone para
+liberar a fala assíncrona no iOS. Sem suporte do navegador, o botão não aparece.
+
+## Nível de cautela decidido pela LLM
+
+Tipos: `information`, `clarification`, `proposal` (navega), `confirmation_request` (pede
+confirmação: `actionId` + até 2 `optionIds` alternativos), `confirmation`, `cancellation`,
+`out_of_scope`. O prompt traz a matriz por situação:
+
+| Situação | Resposta |
+| --- | --- |
+| Dentro da trilha, tela específica ou voltar ao início | `proposal` |
+| Pedido que leva a outra trilha (ex.: na home, “quero segunda via”) | `confirmation_request` na entrada da trilha, com alternativas específicas |
+| Pedido específico vindo de fora (ex.: “quero praticar” na home) | `confirmation_request` na tela pedida, com a entrada como alternativa |
+| Amplo, confuso ou vários destinos | `clarification` (2–3 opções) |
+| Já está na tela pedida | `information` |
+
+No cliente, `confirmation_request` guarda `pendingActionId`, fala a pergunta e mostra Sim, as
+alternativas e “Não, ver opções”. “Sim” por voz chega como `confirmation` do mesmo ID. O servidor
+normaliza `confirmation_request` dentro da mesma trilha para `proposal`. O guard de interrupção
+de prática segue determinístico no app; cliques em botões navegam direto. Resposta inválida de
+um modelo aciona o próximo da cadeia (ver “Limite de uso”).
+
+Verificação: cenários reais na Groq (home, trilha, prática, fala confusa, sim/alternativa/não) em
+17/10/2026; falta o teste por microfone no aparelho.

@@ -342,9 +342,20 @@ h2 {
   line-height: var(--line-height-sm);
 }
 
-.voice-close-button {
+.voice-header-actions {
   grid-column: 2;
   grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.voice-replies-button {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.voice-close-button {
   width: auto;
   min-height: 44px;
   padding-inline: 16px;
@@ -380,6 +391,26 @@ h2 {
 .voice-step-description {
   margin: 0;
   color: var(--text-muted);
+}
+
+.voice-reply {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.voice-reply .voice-step-description {
+  min-width: 0;
+  flex: 1;
+}
+
+.voice-drawer-scroll .voice-reply .voice-listen-button {
+  flex: none;
+  width: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  margin-block: -8px;
 }
 
 .voice-step-body {

@@ -20,6 +20,7 @@ export const interpretationResultSchema = z
       "clarification",
       "proposal",
       "confirmation",
+      "confirmation_request",
       "cancellation",
       "out_of_scope",
     ]),
@@ -31,12 +32,19 @@ export const interpretationResultSchema = z
   .strict()
   .superRefine((data, ctx) => {
     const needsAction =
-      data.type === "proposal" || data.type === "confirmation";
+      data.type === "proposal" ||
+      data.type === "confirmation" ||
+      data.type === "confirmation_request";
+    const asking = data.type === "confirmation_request";
     if (
       (data.showCatalog && data.type !== "information") ||
       needsAction !== (data.actionId !== null) ||
       new Set(data.optionIds).size !== data.optionIds.length ||
-      (needsAction && data.optionIds.length > 0) ||
+      (needsAction && !asking && data.optionIds.length > 0) ||
+      (asking &&
+        (data.optionIds.length > 2 ||
+          (data.actionId !== null &&
+            data.optionIds.includes(data.actionId)))) ||
       (data.type === "clarification" && !data.optionIds.length) ||
       (data.type === "cancellation" && data.optionIds.length > 0)
     ) {

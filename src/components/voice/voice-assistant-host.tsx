@@ -1,5 +1,6 @@
 "use client";
 
+import { Volume2, VolumeX } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useSpeechSynthesis } from "@/hooks/use-speech-synthesis";
 import { useSpeechToText } from "@/hooks/use-speech-to-text";
 import { useVoiceAssistant } from "@/hooks/use-voice-assistant";
 import { useVoiceCatalog } from "@/hooks/use-voice-catalog";
@@ -38,6 +40,10 @@ import { VoiceStep } from "./voice-step";
 import { VoiceSuggestionConfirmation } from "./voice-suggestion-confirmation";
 import { VoiceWelcomeStep } from "./voice-welcome-step";
 
+function leaveConfirmation(label: string) {
+  return `Sair desta tela pode interromper a prática atual. Quer continuar para ${label.toLocaleLowerCase("pt-BR")}?`;
+}
+
 const activeSpeechPhases = new Set(["requesting", "recording", "transcribing"]);
 
 export function VoiceAssistantHost() {
@@ -54,6 +60,10 @@ export function VoiceAssistantHost() {
   const [presentedOptionIds, setPresentedOptionIds] = useState<string[]>([]);
   const assistant = useVoiceAssistant();
   const speech = useSpeechToText();
+  const tts = useSpeechSynthesis();
+  const [voiceReplies, setVoiceReplies] = useState(true);
+  // Ref: respostas assíncronas devem ver o mute atual, não o do render que as iniciou.
+  const voiceRepliesRef = useRef(true);
   const interpretation = useVoiceInterpretation();
   const { catalog, retry } = useVoiceCatalog(used);
   const actions = context ? buildVoiceActions(context, catalog) : [];
@@ -95,6 +105,7 @@ export function VoiceAssistantHost() {
     previousLocation.current = locationKey;
     interpretation.reset();
     speech.dismissCapture();
+    tts.cancel();
     setPendingActionId(null);
     setOpen(false);
     assistant.reset();
@@ -105,6 +116,7 @@ export function VoiceAssistantHost() {
     locationKey,
     interpretation.reset,
     speech.dismissCapture,
+    tts.cancel,
     assistant.reset,
   ]);
 
@@ -112,6 +124,7 @@ export function VoiceAssistantHost() {
   const pageContext = { ...context, suggestions: options };
 
   function resetPageSession() {
+    tts.cancel();
     interpretation.reset();
     speech.dismissCapture();
     assistant.reset();
@@ -158,12 +171,15 @@ export function VoiceAssistantHost() {
     }
     interpretation.cancel();
     speech.dismissCapture();
+    tts.cancel();
     setOpen(false);
   }
 
   function startRecording() {
     if (assistant.step === "welcome")
       setPresentedOptionIds(options.map((item) => item.id));
+    tts.cancel();
+    tts.prime();
     interpretation.reset();
     assistant.setStep("capture");
     void speech.startRecording();
@@ -197,21 +213,42 @@ export function VoiceAssistantHost() {
       returnToOptions();
       return;
     }
-    const leavingPractice =
-      context?.id.startsWith("segunda-via.pratica-") &&
-      !context.id.startsWith("segunda-via.pratica-concluida") &&
-      current.href.split("?")[0] !== pathname;
-    if (leavingPractice && !confirmed) {
+    if (leavingPracticeTo(current.href) && !confirmed) {
       interpretation.reset();
       setPendingActionId(current.id);
       setPresentedOptionIds([]);
       setLastResponse(null);
       assistant.setStep("suggestion-confirmation");
+      speakReply(leaveConfirmation(current.label));
       return;
     }
     resetPageSession();
     setOpen(false);
     router.push(current.href);
+  }
+
+  function leavingPracticeTo(href: string) {
+    return (
+      !!context?.id.startsWith("segunda-via.pratica-") &&
+      !context.id.startsWith("segunda-via.pratica-concluida") &&
+      href.split("?")[0] !== pathname
+    );
+  }
+
+  function speakReply(text: string) {
+    if (voiceRepliesRef.current) tts.speak(text);
+  }
+
+  function listenAgain(text: string) {
+    if (tts.speaking) tts.cancel();
+    else speakReply(text);
+  }
+
+  function toggleVoiceReplies() {
+    const next = !voiceRepliesRef.current;
+    voiceRepliesRef.current = next;
+    if (!next) tts.cancel();
+    setVoiceReplies(next);
   }
 
   async function interpretTranscript(text: string) {
@@ -286,7 +323,21 @@ export function VoiceAssistantHost() {
       else returnToOptions();
       return;
     }
+    if (result.type === "confirmation_request") {
+      const action = currentActions.current.find(
+        (item) => item.id === result.actionId,
+      );
+      if (!action) {
+        returnToOptions();
+        return;
+      }
+      // Fica pendente: o usuário confirma pelo botão ou dizendo "sim".
+      setPendingActionId(action.id);
+      speakReply(result.message);
+      return;
+    }
     setPendingActionId(null);
+    speakReply(result.message);
   }
 
   const interpretationState =
@@ -309,17 +360,40 @@ export function VoiceAssistantHost() {
       <DrawerContent className="voice-drawer-popup">
         <DrawerHeader className="voice-drawer-header">
           <DrawerTitle>Assistente Digitaliza Aí</DrawerTitle>
-          <DrawerClose
-            render={
+          <div className="voice-header-actions">
+            {tts.supported && (
               <Button
                 type="button"
-                variant="secondary"
-                className="voice-close-button"
+                variant="ghost"
+                size="icon"
+                className="voice-replies-button"
+                aria-pressed={voiceReplies}
+                aria-label={
+                  voiceReplies
+                    ? "Desativar respostas em voz"
+                    : "Ativar respostas em voz"
+                }
+                onClick={toggleVoiceReplies}
               >
-                Fechar
+                {voiceReplies ? (
+                  <Volume2 size={22} aria-hidden="true" />
+                ) : (
+                  <VolumeX size={22} aria-hidden="true" />
+                )}
               </Button>
-            }
-          />
+            )}
+            <DrawerClose
+              render={
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="voice-close-button"
+                >
+                  Fechar
+                </Button>
+              }
+            />
+          </div>
         </DrawerHeader>
         <VoiceConversation
           stage={
@@ -370,7 +444,7 @@ export function VoiceAssistantHost() {
             <VoiceSuggestionConfirmation
               suggestion={{
                 ...selected,
-                confirmation: `Sair desta tela pode interromper a prática atual. Quer continuar para ${selected.label.toLocaleLowerCase("pt-BR")}?`,
+                confirmation: leaveConfirmation(selected.label),
               }}
               onContinue={() => continueToAction(selected, true)}
               onBack={returnToOptions}
@@ -387,6 +461,18 @@ export function VoiceAssistantHost() {
                 assistant.setStep(lastResponse ? "interpretation" : "welcome");
               }}
               onBack={returnToOptions}
+              onConfirm={(id) => {
+                const action = currentActions.current.find(
+                  (item) => item.id === id,
+                );
+                if (action) continueToAction(action, true);
+              }}
+              canListen={tts.supported && voiceReplies}
+              speaking={tts.speaking}
+              onListen={() =>
+                interpretationState.status === "success" &&
+                listenAgain(interpretationState.result.message)
+              }
             />
           )}
         </VoiceConversation>

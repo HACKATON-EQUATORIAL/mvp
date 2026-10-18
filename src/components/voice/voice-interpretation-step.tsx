@@ -1,4 +1,4 @@
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, Square, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { VoiceInterpretationState } from "@/hooks/use-voice-interpretation";
 import type { VoiceAction } from "@/lib/assistant/journey";
@@ -13,6 +13,10 @@ export function VoiceInterpretationStep({
   onRetry,
   onCancel,
   onBack,
+  onConfirm,
+  canListen,
+  speaking,
+  onListen,
 }: {
   state: VoiceInterpretationState;
   actions: VoiceAction[];
@@ -21,6 +25,10 @@ export function VoiceInterpretationStep({
   onRetry: () => void;
   onCancel: () => void;
   onBack: () => void;
+  onConfirm: (id: string) => void;
+  canListen: boolean;
+  speaking: boolean;
+  onListen: () => void;
 }) {
   if (state.status === "pending")
     return (
@@ -57,6 +65,8 @@ export function VoiceInterpretationStep({
       </VoiceStep>
     );
   const result = state.result;
+  const askedId =
+    result.type === "confirmation_request" ? result.actionId : null;
   const options = result.showCatalog
     ? catalog.tracks.flatMap((track) => {
         const action = actions.find(
@@ -72,9 +82,37 @@ export function VoiceInterpretationStep({
       });
   return (
     <section className="voice-step" aria-label="Resposta do assistente">
-      <p className="voice-step-description">{result.message}</p>
-      {options.length > 0 && (
+      <div className="voice-reply">
+        <p className="voice-step-description">{result.message}</p>
+        {canListen && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="voice-listen-button"
+            aria-label={speaking ? "Parar de ouvir" : "Ouvir resposta"}
+            onClick={onListen}
+          >
+            {speaking ? (
+              <Square
+                size={18}
+                fill="currentColor"
+                strokeWidth={0}
+                aria-hidden="true"
+              />
+            ) : (
+              <Volume2 size={22} aria-hidden="true" />
+            )}
+          </Button>
+        )}
+      </div>
+      {(options.length > 0 || askedId) && (
         <div className="voice-suggestions">
+          {askedId && (
+            <Button variant="primary" onClick={() => onConfirm(askedId)}>
+              Sim
+            </Button>
+          )}
           {options.map((item) => (
             <Button
               key={item.id}
@@ -84,6 +122,11 @@ export function VoiceInterpretationStep({
               {item.label}
             </Button>
           ))}
+          {askedId && (
+            <Button variant="secondary" onClick={onBack}>
+              Não, ver opções
+            </Button>
+          )}
         </div>
       )}
     </section>

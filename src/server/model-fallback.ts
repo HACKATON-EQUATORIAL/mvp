@@ -9,13 +9,26 @@ const DEFAULT_COOLDOWN_MS = 60_000;
 
 const cooldownUntil = new Map<string, number>();
 
-type RateLimitedError = Error & { status: number; retryAfter?: string };
+type ProviderError = Error & {
+  status: number;
+  code?: string;
+  retryAfter?: string;
+};
 
-function isRateLimited(error: unknown): error is RateLimitedError {
-  return error instanceof Error && "status" in error && error.status === 429;
+function isProviderError(error: unknown): error is ProviderError {
+  return error instanceof Error && "status" in error;
 }
 
-function cooldownFor(error: RateLimitedError) {
+// 429: modelo sem cota. Resposta inválida: modelo menor errou o contrato; o próximo
+// da cadeia costuma acertar. Os demais erros não trocam de modelo.
+function shouldTryNext(error: unknown): error is ProviderError {
+  return (
+    isProviderError(error) &&
+    (error.status === 429 || error.code === "INVALID_PROVIDER_RESPONSE")
+  );
+}
+
+function cooldownFor(error: ProviderError) {
   const seconds = Number(error.retryAfter);
   const ms = Number.isFinite(seconds) ? seconds * 1000 : DEFAULT_COOLDOWN_MS;
   return Math.min(Math.max(ms, MIN_COOLDOWN_MS), MAX_COOLDOWN_MS);
@@ -43,9 +56,17 @@ export async function withModelFallback<T>(
     try {
       return await attempt(model);
     } catch (error) {
-      if (!isRateLimited(error)) throw error;
-      cooldownUntil.set(model, Date.now() + cooldownFor(error));
-      console.warn(`[groq] limite atingido em ${model}; tentando alternativa.`);
+      if (!shouldTryNext(error)) throw error;
+      if (error.status === 429) {
+        cooldownUntil.set(model, Date.now() + cooldownFor(error));
+        console.warn(
+          `[groq] limite atingido em ${model}; tentando alternativa.`,
+        );
+      } else {
+        console.warn(
+          `[groq] resposta inválida de ${model}; tentando alternativa.`,
+        );
+      }
       lastError = error;
     }
   }

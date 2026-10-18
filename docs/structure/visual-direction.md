@@ -80,5 +80,7 @@ regra nova não aparecer, pare o servidor, apague `.next/dev/cache` e suba de no
 - **Celebrações** (`components/brand/streak-moment.tsx`): fila de avisos de ofensiva e selos
   no topo; só comemoram.
 - **Selos** (`badge-shelf.tsx`) e **revisão** (`review-card.tsx`) no mapa da trilha.
+- A conclusão da trilha e o resultado da prática não oferecem certificado,
+  geração de imagem, download ou compartilhamento de certificado (removido em 18/10/2026).
 - **Lições:** desafio de toque na ilustração antes do destaque.
 - **Eletriquinho no Drawer** com humor pelo estado; botão flutuante só com o microfone.

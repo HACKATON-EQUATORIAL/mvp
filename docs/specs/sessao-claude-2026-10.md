@@ -76,7 +76,7 @@ culpa, e som e animação são opcionais.
 | Aviso de ofensiva e selos (fila) | `components/brand/streak-moment.tsx`, `_lib/progress.ts` (`streakOf`, `badgesOf`) |
 | Revisão de erros | `back/.../practice/*` (`item_ids`, migration `0002`), `_lib/review.ts`, `pratica/revisao` |
 | Desafio de toque nas lições e “Comece em 2 minutos” | `lesson-illustration.tsx`, `track-selection.tsx` |
-| Certificado compartilhável | `certificate-button.tsx` |
+| Certificado compartilhável (removido em 18/10/2026; ver atualização abaixo) | Componente removido: `certificate-button.tsx` |
 | Eletriquinho no Drawer com humor pelo estado; botão flutuante só com microfone | `voice-conversation.tsx`, `voice-assistant-host.tsx` |
 | Saída real para o canal oficial, com WhatsApp e mensagem pronta | `channel-exit.tsx`, `back/.../channel/router.py`, `CHANNEL_EXIT_LINKS` |
 
@@ -96,7 +96,8 @@ Data e ambiente: 17 e 18/10/2026, navegador do painel em 375×812, backend local
   - Eletriquinho no Drawer.
 - [x] Layout: 13 telas sem rolagem da página, barra na base e microfone visível sem sobreposição.
 - [ ] Som e vibração reais no celular (os testes rodaram com o som desligado).
-- [ ] Certificado gerado e compartilhado no aparelho.
+- Certificado gerado e compartilhado no aparelho: não verificado na sessão original;
+  validação cancelada com a remoção do recurso em 18/10/2026.
 - [ ] Humores “escutando” e “falando” com microfone real; STT e TTS no celular via ngrok.
 - [ ] Testes de integração do backend (dependem do Postgres).
 
@@ -107,6 +108,28 @@ Data e ambiente: 17 e 18/10/2026, navegador do painel em 375×812, backend local
 - Telas reais da Agência Virtual depois da identificação e o menu exato da Clara por estado. A lista do que mandar está em [canais-oficiais.md](canais-oficiais.md).
 - Trilha indisponível ou com `content_version` diferente ainda não tem tela própria.
 - Dica de desenvolvimento: se o CSS parecer desatualizado no `bun dev`, apague `.next/dev/cache` e reinicie. É o cache do Turbopack.
+
+## Atualização: remoção do certificado (18/10/2026)
+
+Por pedido do usuário, o certificado deixou de fazer parte da aplicação. Foram
+removidos o botão no mapa da trilha completa, o botão no resultado da prática e o
+componente exclusivo que gerava, baixava e compartilhava o PNG. Energia, selos,
+revisão, celebração e navegação para o canal oficial foram preservados. Nenhuma
+dependência, contrato de API ou registro de progresso precisou ser alterado.
+
+Verificações desta alteração:
+
+- `bun run lint` aprovado; nenhuma referência ao certificado permanece em `src`.
+- `bun run build --webpack` aprovado, incluindo TypeScript. O build padrão com
+  Turbopack ficou bloqueado pelo ambiente (download da Nunito e, na nova tentativa,
+  abertura de porta interna com `Operation not permitted`).
+- Navegador em 375×812 com API Python local: mapa inicial e resultado após concluir
+  uma prática individual real (3 perguntas), sem certificado e sem excesso de largura.
+- Mapa completo conferido em sessão isolada com progresso local preparado apenas
+  para verificar esse estado: 90 kWh, 5 selos, mensagem de conclusão e ação para o
+  canal oficial, sem certificado. Isso não comprova realização de toda a trilha.
+- Capturas em `output/playwright/resultado-sem-certificado.png` e
+  `output/playwright/trilha-sem-certificado.png`.
 
 ## Configuração necessária
 

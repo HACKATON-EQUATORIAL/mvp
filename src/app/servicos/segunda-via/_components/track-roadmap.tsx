@@ -21,7 +21,6 @@ import { routes, withContext } from "../_lib/navigation";
 import { useJourneyProgress } from "../_lib/progress";
 import { localStep, TRACK_ID } from "../_lib/steps";
 import { BadgeShelf } from "./badge-shelf";
-import { CertificateButton } from "./certificate-button";
 import { EnergyMeter } from "./energy-meter";
 import { LoadState } from "./load-state";
 import { ReviewCard } from "./review-card";
@@ -186,7 +185,6 @@ export function TrackRoadmap() {
       </ol>
 
       <BadgeShelf />
-      {!next && <CertificateButton />}
       {track.data.simulated_notice && (
         <p className={styles.notice}>{track.data.simulated_notice}</p>
       )}

@@ -9,7 +9,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useGetAttempt } from "@/http/practice/get-attempt";
 import { routes, withContext } from "../_lib/navigation";
 import { readAttemptId } from "../_lib/use-practice-session";
-import { CertificateButton } from "./certificate-button";
 import styles from "./practice.module.css";
 import { ReviewCard } from "./review-card";
 
@@ -77,7 +76,6 @@ export function PracticeResult() {
         </ActionLink>
         <ActionLink href={routes.simulador}>Treinar no simulador</ActionLink>
       </PageActions>
-      <CertificateButton />
       <ReviewCard />
       <ActionLink href={routes["pratica-individual"]}>
         {attempt.assisted ? "Tentar sem ajuda" : "Praticar de novo"}

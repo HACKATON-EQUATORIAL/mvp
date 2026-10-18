@@ -235,6 +235,6 @@ O celular não muda; tudo abaixo vale a partir de 768px, salvo onde indicado.
 - **Telas largas e baixas (≥768px e altura ≤860px, ex.: iPad deitado, notebook 1366×768):**
   sem o respiro extra antes do conteúdo e conversa curta com altura mínima de 96px.
   “Como funciona” fica sempre acima do chat (lado a lado foi testado e descartado).
-- **Pendente, sem prioridade no MVP:** celular deitado (altura até ~500px). Nas partes
-  2 a 4, o histórico das partes anteriores aumenta a conversa e as respostas pedem
-  rolagem em qualquer tela; depois de cada mensagem, o chat já desce sozinho até elas.
+- **Mantido como está:** nas partes 2 a 4, o histórico das partes anteriores aumenta a
+  conversa e as respostas pedem rolagem em qualquer tela; depois de cada mensagem, o
+  chat já desce sozinho até elas.

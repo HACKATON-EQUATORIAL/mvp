@@ -72,3 +72,7 @@ navegador nesta etapa, pois não havia navegador disponível nas ferramentas.
 `bun run build` foi tentado: no sandbox, o download da Nunito falhou; na nova
 tentativa fora do sandbox, o Turbopack falhou ao abrir a porta de seu processo
 auxiliar (`Operation not permitted`). O build não foi concluído neste ambiente.
+
+Atualização (18/10/2026): a pedido do usuário, o link passou a abrir em nova aba
+(`target="_blank"`, `rel="noopener noreferrer"`, aviso só para leitores de tela), para
+um toque sem querer no logo não interromper a prática.

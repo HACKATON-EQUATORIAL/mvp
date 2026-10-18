@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { FaiscaTip } from "@/components/brand/faisca";
+import { EletriquinhoTip } from "@/components/brand/eletriquinho";
 import { PageActions } from "@/components/layout/page-actions";
 import { ActionLink } from "@/components/ui/action-link";
 import { postEvent } from "@/http/events/post-events";
@@ -80,7 +80,7 @@ export function StepLesson({
       <h2 className={styles.question}>{step.data.consult_title}</h2>
       <p className={styles.text}>{step.data.explanation.text}</p>
       <LessonIllustration step={etapa} />
-      <FaiscaTip mood="think">{takeaways[etapa]}</FaiscaTip>
+      <EletriquinhoTip mood="think">{takeaways[etapa]}</EletriquinhoTip>
       <p className={styles.gain}>+{ENERGY.lesson} kWh de conhecimento</p>
       <PageActions>
         {fromPractice ? (

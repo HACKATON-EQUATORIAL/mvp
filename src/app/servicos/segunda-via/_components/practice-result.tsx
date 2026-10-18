@@ -2,14 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { Celebration } from "@/components/brand/celebration";
-import { Faisca, FaiscaTip } from "@/components/brand/faisca";
+import { Eletriquinho, EletriquinhoTip } from "@/components/brand/eletriquinho";
 import { PageActions } from "@/components/layout/page-actions";
 import { ActionLink } from "@/components/ui/action-link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetAttempt } from "@/http/practice/get-attempt";
 import { routes, withContext } from "../_lib/navigation";
 import { readAttemptId } from "../_lib/use-practice-session";
+import { CertificateButton } from "./certificate-button";
 import styles from "./practice.module.css";
+import { ReviewCard } from "./review-card";
 
 /**
  * Resultado só existe com tentativa individual concluída nesta sessão. Abrir a
@@ -40,10 +42,10 @@ export function PracticeResult() {
   if (attempt?.status !== "completed")
     return (
       <div className={styles.practice}>
-        <FaiscaTip mood="think">
+        <EletriquinhoTip mood="think">
           Seu resultado aparece quando você termina a prática individual. Leva
           poucos minutos!
-        </FaiscaTip>
+        </EletriquinhoTip>
         <PageActions>
           <ActionLink variant="primary" href={routes["pratica-guiada"]}>
             Começar a prática
@@ -57,7 +59,7 @@ export function PracticeResult() {
     <div className={styles.practice}>
       <div className={`${styles.panel} ${styles.done}`} role="status">
         <Celebration burst={1} />
-        <Faisca mood="cheer" size={96} />
+        <Eletriquinho mood="cheer" size={96} />
         <h2>
           {attempt.assisted
             ? "Treino concluído com apoio"
@@ -75,6 +77,8 @@ export function PracticeResult() {
         </ActionLink>
         <ActionLink href={routes.simulador}>Treinar no simulador</ActionLink>
       </PageActions>
+      <CertificateButton />
+      <ReviewCard />
       <ActionLink href={routes["pratica-individual"]}>
         {attempt.assisted ? "Tentar sem ajuda" : "Praticar de novo"}
       </ActionLink>

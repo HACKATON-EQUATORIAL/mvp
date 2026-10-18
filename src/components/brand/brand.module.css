@@ -1,4 +1,4 @@
-.faisca {
+.mascot {
   flex: none;
   overflow: visible;
 }
@@ -37,4 +37,72 @@
   height: 10px;
   margin: -5px;
   border-radius: 3px;
+}
+
+/* Eletriquinho no topo da conversa do assistente. */
+.drawerMascot {
+  display: flex;
+  justify-content: center;
+  margin: -8px 0 4px;
+}
+
+/* Aviso da ofensiva no topo da tela. */
+.streakMoment {
+  position: absolute;
+  top: calc(72px + env(safe-area-inset-top));
+  right: 16px;
+  left: 16px;
+  margin-inline: auto;
+  z-index: var(--z-index-toast, 60);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 420px;
+  padding: 10px 12px;
+  border: 2px solid var(--warning-200);
+  border-bottom-width: 5px;
+  border-radius: var(--radius-lg);
+  background: var(--surface-page);
+  color: var(--warning-800);
+  font: inherit;
+  text-align: left;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 12%);
+  cursor: pointer;
+}
+
+.flame {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--warning-50);
+  color: var(--warning-400);
+}
+
+.streakText {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+}
+
+.streakText strong {
+  font-size: 1.0625rem;
+  font-weight: 900;
+}
+
+.streakText span {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.streakMoment[data-kind="badge"] {
+  border-color: var(--primary-200);
+  color: var(--primary-700);
+}
+
+.streakMoment[data-kind="badge"] .flame {
+  background: var(--primary-50);
+  color: var(--primary-500);
 }

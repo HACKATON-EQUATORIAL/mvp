@@ -3,6 +3,10 @@
 import { Volume2, VolumeX } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import {
+  Eletriquinho,
+  type EletriquinhoMood,
+} from "@/components/brand/eletriquinho";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -30,6 +34,11 @@ import {
   type InterpretationResult,
   MAX_CONVERSATION_TURNS,
 } from "@/lib/assistant/schemas";
+import {
+  getSoundEnabled,
+  setSoundEnabled,
+  useSoundEnabled,
+} from "@/lib/feedback/preferences";
 import {
   getPracticeActivity,
   usePracticeActivity,
@@ -81,9 +90,8 @@ export function VoiceAssistantHost() {
   const assistant = useVoiceAssistant();
   const speech = useSpeechToText();
   const tts = useSpeechSynthesis();
-  const [voiceReplies, setVoiceReplies] = useState(true);
-  // Ref: respostas assíncronas devem ver o mute atual, não o do render que as iniciou.
-  const voiceRepliesRef = useRef(true);
+  // Preferência única de som (voz do assistente e efeitos da prática).
+  const voiceReplies = useSoundEnabled();
   const interpretation = useVoiceInterpretation();
   const { catalog, retry } = useVoiceCatalog(used);
   const actions = context ? buildVoiceActions(context, catalog) : [];
@@ -286,7 +294,8 @@ export function VoiceAssistantHost() {
   }
 
   function speakReply(text: string) {
-    if (voiceRepliesRef.current) tts.speak(text);
+    // Lê o valor atual: respostas assíncronas não usam o do render que as iniciou.
+    if (getSoundEnabled()) tts.speak(text);
   }
 
   function listenAgain(text: string) {
@@ -295,10 +304,9 @@ export function VoiceAssistantHost() {
   }
 
   function toggleVoiceReplies() {
-    const next = !voiceRepliesRef.current;
-    voiceRepliesRef.current = next;
+    const next = !getSoundEnabled();
     if (!next) tts.cancel();
-    setVoiceReplies(next);
+    setSoundEnabled(next);
   }
 
   async function interpretTranscript(text: string) {
@@ -398,6 +406,29 @@ export function VoiceAssistantHost() {
     speakReply(result.message);
   }
 
+  // Humor do Eletriquinho segue o estado real da conversa.
+  const mascotMood: EletriquinhoMood = tts.speaking
+    ? "talk"
+    : assistant.step === "capture"
+      ? speech.phase === "recording"
+        ? "listen"
+        : speech.phase === "transcribing"
+          ? "think"
+          : speech.phase === "error"
+            ? "oops"
+            : "happy"
+      : assistant.step === "suggestion-confirmation"
+        ? "think"
+        : assistant.step === "interpretation"
+          ? interpretation.state.status === "pending"
+            ? "think"
+            : interpretation.state.status === "error"
+              ? "oops"
+              : lastResponse?.type === "out_of_scope"
+                ? "oops"
+                : "happy"
+          : "wave";
+
   const interpretationState =
     interpretation.state.status === "idle" && lastResponse
       ? { status: "success" as const, result: lastResponse }
@@ -419,7 +450,7 @@ export function VoiceAssistantHost() {
         <DrawerHeader className="voice-drawer-header">
           <DrawerTitle>Assistente Digitaliza Aí</DrawerTitle>
           <div className="voice-header-actions">
-            {tts.supported && (
+            {
               <Button
                 type="button"
                 variant="ghost"
@@ -428,8 +459,8 @@ export function VoiceAssistantHost() {
                 aria-pressed={voiceReplies}
                 aria-label={
                   voiceReplies
-                    ? "Desativar respostas em voz"
-                    : "Ativar respostas em voz"
+                    ? "Desativar sons e respostas em voz"
+                    : "Ativar sons e respostas em voz"
                 }
                 onClick={toggleVoiceReplies}
               >
@@ -439,7 +470,7 @@ export function VoiceAssistantHost() {
                   <VolumeX size={22} aria-hidden="true" />
                 )}
               </Button>
-            )}
+            }
             <DrawerClose
               render={
                 <Button
@@ -454,6 +485,7 @@ export function VoiceAssistantHost() {
           </div>
         </DrawerHeader>
         <VoiceConversation
+          header={<Eletriquinho mood={mascotMood} size={92} />}
           stage={
             assistant.step === "capture"
               ? `capture-${speech.phase}`

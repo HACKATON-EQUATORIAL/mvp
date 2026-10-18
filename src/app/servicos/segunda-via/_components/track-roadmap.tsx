@@ -12,7 +12,7 @@ import {
 import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { useEffect } from "react";
-import { FaiscaTip } from "@/components/brand/faisca";
+import { EletriquinhoTip } from "@/components/brand/eletriquinho";
 import { PageActions } from "@/components/layout/page-actions";
 import { ActionLink } from "@/components/ui/action-link";
 import { postEvent } from "@/http/events/post-events";
@@ -20,8 +20,11 @@ import { useGetTrack } from "@/http/track/get-track";
 import { routes, withContext } from "../_lib/navigation";
 import { useJourneyProgress } from "../_lib/progress";
 import { localStep, TRACK_ID } from "../_lib/steps";
+import { BadgeShelf } from "./badge-shelf";
+import { CertificateButton } from "./certificate-button";
 import { EnergyMeter } from "./energy-meter";
 import { LoadState } from "./load-state";
+import { ReviewCard } from "./review-card";
 import styles from "./roadmap.module.css";
 
 type Node = {
@@ -101,14 +104,17 @@ export function TrackRoadmap() {
   return (
     <div className={styles.roadmap}>
       <EnergyMeter />
-      <FaiscaTip mood={next ? "happy" : "cheer"}>
+      <EletriquinhoTip
+        mood={doneCount === 0 ? "wave" : next ? "happy" : "cheer"}
+      >
         {doneCount === 0
-          ? "Oi! Eu sou a Faísca. Vamos acender a sua primeira lição?"
+          ? "Oi! Eu sou o Eletriquinho. Vamos acender a sua primeira lição?"
           : next
             ? `${nodes.length - doneCount === 1 ? "Falta 1 passo" : `Faltam ${nodes.length - doneCount} passos`}. Próximo: ${short(next.title)}.`
             : "Trilha completa! Agora é hora de usar o canal oficial."}
-      </FaiscaTip>
+      </EletriquinhoTip>
 
+      <ReviewCard />
       <ol className={styles.path} aria-label="Passos da trilha">
         {nodes.map((node, index) => {
           const state = node.done
@@ -179,6 +185,8 @@ export function TrackRoadmap() {
         </li>
       </ol>
 
+      <BadgeShelf />
+      {!next && <CertificateButton />}
       {track.data.simulated_notice && (
         <p className={styles.notice}>{track.data.simulated_notice}</p>
       )}

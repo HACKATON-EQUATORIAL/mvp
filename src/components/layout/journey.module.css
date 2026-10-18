@@ -50,18 +50,19 @@
 }
 .eyebrow {
   margin: 0;
-  color: var(--text-muted);
+  color: var(--primary-400);
   font-size: 0.75rem;
   line-height: 1.0625rem;
-  font-weight: var(--font-weight-medium);
+  font-weight: 800;
+  letter-spacing: 0.06em;
 }
 .title {
   margin: 0;
   color: var(--text-heading);
-  font-size: 1.625rem;
-  line-height: 2.375rem;
-  font-weight: var(--font-weight-bold);
-  letter-spacing: normal;
+  font-size: 1.75rem;
+  line-height: 2.25rem;
+  font-weight: 900;
+  letter-spacing: -0.015em;
 }
 .intro {
   margin: 0;
@@ -190,4 +191,16 @@
     scrollbar-width: thin;
     scrollbar-color: var(--primary-200) transparent;
   }
+}
+
+/* A barra inteira ganha a cor do feedback da prática (acerto ou erro). */
+.actions:has([data-feedback="correct"]) {
+  border-top-color: var(--success-200);
+  background: var(--success-50);
+  color: var(--success-700);
+}
+.actions:has([data-feedback="wrong"]) {
+  border-top-color: var(--warning-200);
+  background: var(--warning-50);
+  color: var(--warning-800);
 }

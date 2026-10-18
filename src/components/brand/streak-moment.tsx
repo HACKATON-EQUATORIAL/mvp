@@ -1,0 +1,109 @@
+"use client";
+
+import { Award, Flame } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useEffect, useState } from "react";
+import { feedback } from "@/lib/feedback/sound";
+import styles from "./brand.module.css";
+import { Eletriquinho } from "./eletriquinho";
+
+/** Eventos disparados pelo progresso (ver `segunda-via/_lib/progress.ts`). */
+const STREAK_EVENT = "digitaliza:streak";
+const BADGE_EVENT = "digitaliza:badge";
+
+type Moment =
+  | { kind: "streak"; streak: number }
+  | { kind: "badge"; label: string };
+
+/**
+ * Celebrações curtas (ofensiva e selos), uma de cada vez. Só comemoram, nunca
+ * cobram; somem sozinhas em poucos segundos ou ao toque.
+ */
+export function StreakMoment() {
+  const [queue, setQueue] = useState<Moment[]>([]);
+  const reduced = useReducedMotion();
+  const current = queue[0];
+
+  useEffect(() => {
+    function onStreak(event: Event) {
+      const { streak } = (event as CustomEvent<{ streak: number }>).detail;
+      setQueue((items) => [
+        ...items,
+        { kind: "streak", streak: Math.max(streak, 1) },
+      ]);
+    }
+    function onBadge(event: Event) {
+      const { label } = (event as CustomEvent<{ label: string }>).detail;
+      setQueue((items) => [...items, { kind: "badge", label }]);
+    }
+    window.addEventListener(STREAK_EVENT, onStreak);
+    window.addEventListener(BADGE_EVENT, onBadge);
+    return () => {
+      window.removeEventListener(STREAK_EVENT, onStreak);
+      window.removeEventListener(BADGE_EVENT, onBadge);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!current) return;
+    feedback.sparkle();
+    const timer = setTimeout(() => setQueue((items) => items.slice(1)), 3400);
+    return () => clearTimeout(timer);
+  }, [current]);
+
+  const streak = current?.kind === "streak";
+  return (
+    <AnimatePresence mode="wait">
+      {current && (
+        <motion.button
+          key={streak ? `s-${current.streak}` : `b-${current.label}`}
+          type="button"
+          className={styles.streakMoment}
+          data-kind={current.kind}
+          onClick={() => setQueue((items) => items.slice(1))}
+          initial={
+            reduced ? { opacity: 0 } : { y: -40, opacity: 0, scale: 0.9 }
+          }
+          animate={{ y: 0, opacity: 1, scale: 1 }}
+          exit={reduced ? { opacity: 0 } : { y: -30, opacity: 0, scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 360, damping: 22 }}
+          aria-live="polite"
+        >
+          <motion.span
+            className={styles.flame}
+            aria-hidden="true"
+            animate={
+              reduced
+                ? undefined
+                : { scale: [0.6, 1.35, 1], rotate: [-8, 6, 0] }
+            }
+            transition={{ duration: 0.7, ease: "easeOut" }}
+          >
+            {streak ? (
+              <Flame size={34} fill="currentColor" />
+            ) : (
+              <Award size={34} />
+            )}
+          </motion.span>
+          <span className={styles.streakText}>
+            <strong>
+              {current.kind === "streak"
+                ? current.streak === 1
+                  ? "Ofensiva começou!"
+                  : `${current.streak} dias seguidos!`
+                : "Novo selo!"}
+            </strong>
+            <span>
+              {current.kind === "streak"
+                ? current.streak === 1
+                  ? "Volte amanhã para acender mais um dia."
+                  : "Você está criando um ótimo hábito."
+                : current.label}
+            </span>
+          </span>
+          <Eletriquinho mood="cheer" size={52} />
+        </motion.button>
+      )}
+    </AnimatePresence>
+  );
+}

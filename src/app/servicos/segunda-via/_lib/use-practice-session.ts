@@ -9,17 +9,20 @@ import {
   useSubmitAction,
 } from "@/http/practice/practice-commands";
 import { ApiError } from "@/lib/error/api-error";
+import { feedback as sfx } from "@/lib/feedback/sound";
 import { setPracticeActivity } from "@/lib/practice/activity";
 import type {
   AttemptState,
   HelpKind,
   PracticeMode,
 } from "@/schemas/http/practice";
+import { addMissed, clearMissed } from "./review";
 import { TRACK_ID } from "./steps";
 
-const storageKey = (mode: PracticeMode) => `digitaliza:attempt:${mode}`;
+type SessionKind = PracticeMode | "review";
+const storageKey = (kind: SessionKind) => `digitaliza:attempt:${kind}`;
 
-export function readAttemptId(mode: PracticeMode) {
+export function readAttemptId(mode: SessionKind) {
   try {
     return sessionStorage.getItem(storageKey(mode));
   } catch {
@@ -27,7 +30,7 @@ export function readAttemptId(mode: PracticeMode) {
   }
 }
 
-function writeAttemptId(mode: PracticeMode, id: string | null) {
+function writeAttemptId(mode: SessionKind, id: string | null) {
   try {
     if (id) sessionStorage.setItem(storageKey(mode), id);
     else sessionStorage.removeItem(storageKey(mode));
@@ -47,7 +50,17 @@ type Answer = {
  * Sessão de prática ligada ao motor do backend. Retoma a tentativa salva no
  * navegador ou cria uma nova; o acerto vem sempre da resposta da API.
  */
-export function usePracticeSession(mode: PracticeMode) {
+export function usePracticeSession(
+  mode: PracticeMode,
+  /** Revisão de erros: cria a tentativa só com estes itens. */
+  reviewItems?: string[],
+) {
+  const kind: SessionKind = reviewItems ? "review" : mode;
+  const body = {
+    track_id: TRACK_ID,
+    mode,
+    ...(reviewItems ? { item_ids: reviewItems } : {}),
+  };
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [answer, setAnswer] = useState<Answer | null>(null);
@@ -56,6 +69,10 @@ export function usePracticeSession(mode: PracticeMode) {
     null,
   );
   const engaged = useRef(false);
+  // Estatísticas da sessão (só para motivação; o acerto vem da API).
+  const [combo, setCombo] = useState(0);
+  const [mistakes, setMistakes] = useState(0);
+  const startedAt = useRef<number | null>(null);
 
   const query = useGetAttempt(attemptId ?? "", {
     enabled: !!attemptId,
@@ -63,7 +80,7 @@ export function usePracticeSession(mode: PracticeMode) {
   });
   const create = useCreateAttempt({
     onSuccess: (state) => {
-      writeAttemptId(mode, state.attempt_id);
+      writeAttemptId(kind, state.attempt_id);
       setAttemptId(state.attempt_id);
     },
   });
@@ -72,9 +89,10 @@ export function usePracticeSession(mode: PracticeMode) {
   const abandon = useAbandonAttempt();
 
   useEffect(() => {
-    setAttemptId(readAttemptId(mode));
+    // Revisão sempre começa do zero, com a lista de erros atual.
+    setAttemptId(kind === "review" ? null : readAttemptId(kind));
     setLoaded(true);
-  }, [mode]);
+  }, [kind]);
 
   const missing = query.error instanceof ApiError && query.error.status === 404;
   const state = query.data ?? null;
@@ -86,10 +104,11 @@ export function usePracticeSession(mode: PracticeMode) {
     isError: createFailed,
   } = create;
 
+  // `body` deriva só de `mode` e dos itens da revisão, fixos na sessão.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: body estável na sessão
   useEffect(() => {
-    if (needsNew && !creating && !createFailed)
-      createAttempt({ track_id: TRACK_ID, mode });
-  }, [needsNew, creating, createFailed, createAttempt, mode]);
+    if (needsNew && !creating && !createFailed) createAttempt(body);
+  }, [needsNew, creating, createFailed, createAttempt]);
 
   useEffect(() => {
     setPracticeActivity(
@@ -104,6 +123,10 @@ export function usePracticeSession(mode: PracticeMode) {
     );
   }, [state, mode]);
   useEffect(() => () => setPracticeActivity(null), []);
+  useEffect(() => {
+    if (state?.status === "in_progress" && startedAt.current === null)
+      startedAt.current = Date.now();
+  }, [state?.status]);
 
   function choose(optionId: string) {
     const item = state?.current_item;
@@ -116,6 +139,11 @@ export function usePracticeSession(mode: PracticeMode) {
           const feedback = next.last_feedback;
           if (!feedback) return;
           if (feedback.is_expected) {
+            sfx.correct();
+            // Sequência conta perguntas acertadas de primeira.
+            const firstTry = wrongIds.length === 0;
+            setCombo((value) => (firstTry ? value + 1 : 0));
+            if (firstTry) clearMissed([item.id]);
             setAnswer({
               item,
               optionId,
@@ -125,6 +153,10 @@ export function usePracticeSession(mode: PracticeMode) {
             setWrongIds([]);
             setHelp(null);
           } else {
+            sfx.wrong();
+            setCombo(0);
+            setMistakes((value) => value + 1);
+            addMissed(item.id);
             setAnswer({
               item,
               optionId,
@@ -154,22 +186,29 @@ export function usePracticeSession(mode: PracticeMode) {
 
   function restart() {
     engaged.current = false;
+    setCombo(0);
+    setMistakes(0);
+    startedAt.current = null;
     setAnswer(null);
     setWrongIds([]);
     setHelp(null);
     create.reset();
-    createAttempt({ track_id: TRACK_ID, mode });
+    createAttempt(body);
   }
 
   async function leave() {
     if (state?.status === "in_progress")
       await abandon.mutateAsync(state.attempt_id).catch(() => undefined);
-    writeAttemptId(mode, null);
+    writeAttemptId(kind, null);
     setPracticeActivity(null);
   }
 
   return {
     state,
+    combo,
+    mistakes,
+    elapsedMs: () =>
+      startedAt.current === null ? 0 : Date.now() - startedAt.current,
     // Enquanto o acerto é exibido, a tela mantém o item respondido.
     item: answer?.correct ? answer.item : (state?.current_item ?? null),
     answer,

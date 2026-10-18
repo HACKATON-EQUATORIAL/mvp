@@ -14,9 +14,9 @@
 .lesson .question {
   margin: 0;
   color: var(--text-heading);
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-  font-weight: var(--font-weight-bold);
+  font-size: 1.375rem;
+  line-height: 1.875rem;
+  font-weight: 900;
 }
 
 .text {
@@ -167,4 +167,163 @@
   margin: 0;
   padding-left: 1.25rem;
   color: var(--primary-600);
+}
+
+/* Desafio de toque nas ilustrações (aprender fazendo). */
+.tapPrompt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-lg);
+  background: var(--primary-50);
+  color: var(--primary-600);
+  font-weight: 800;
+}
+
+.tapPrompt[data-found] {
+  background: var(--success-50);
+  color: var(--success-700);
+}
+
+.menu li {
+  display: block;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  padding: 0 12px;
+  border: 2px solid var(--border-default);
+  border-bottom-width: 4px;
+  border-radius: var(--radius-lg);
+  background: var(--surface-page);
+  color: var(--text-heading);
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.menuItem[data-highlight] {
+  border-color: var(--success-400);
+  background: var(--success-50);
+  font-weight: 900;
+}
+
+.menuItem[data-wrong] {
+  border-color: var(--error-200);
+  background: var(--error-50);
+}
+
+.menuItem:focus-visible,
+.billTap:focus-visible {
+  outline: 3px solid var(--primary-400);
+  outline-offset: 2px;
+}
+
+.bill dl div[data-wrong] {
+  outline: 2px solid var(--error-200);
+  background: var(--error-50);
+}
+
+.billTap {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-decoration: underline dotted;
+  cursor: pointer;
+}
+
+.steps {
+  display: grid;
+  gap: 8px;
+  padding: var(--spacing-sm);
+  border: 2px solid var(--border-default);
+  border-radius: var(--radius-lg);
+}
+
+.steps ol {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.destinations {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.destination {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 2px solid var(--primary-200);
+  border-bottom-width: 5px;
+  border-radius: var(--radius-lg);
+  background: var(--surface-page);
+  color: var(--text-heading);
+  text-decoration: none;
+}
+
+.destination[data-kind="whatsapp"] {
+  border-color: #9fe2b7;
+}
+
+.destination:active {
+  transform: translateY(2px);
+}
+
+.destination:focus-visible {
+  outline: 3px solid var(--primary-400);
+  outline-offset: 2px;
+}
+
+.destination > span:nth-child(2) {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+}
+
+.destination strong {
+  font-weight: 900;
+}
+
+.destination > span:nth-child(2) > span {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.destinationIcon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--primary-50);
+  color: var(--primary-500);
+}
+
+.destination[data-kind="whatsapp"] .destinationIcon {
+  background: #e7f8ee;
+  color: #128c4b;
 }

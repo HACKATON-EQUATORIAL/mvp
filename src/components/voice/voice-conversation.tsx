@@ -7,12 +7,16 @@ import {
   useReducedMotion,
 } from "motion/react";
 import { type ReactNode, useLayoutEffect, useRef } from "react";
+import brand from "@/components/brand/brand.module.css";
 
 export function VoiceConversation({
   stage,
+  header,
   children,
 }: {
   stage: string;
+  /** Fica fora da transição entre etapas (ex.: o Eletriquinho persistente). */
+  header?: ReactNode;
   children: ReactNode;
 }) {
   const reducedMotion = useReducedMotion();
@@ -34,6 +38,7 @@ export function VoiceConversation({
       tabIndex={-1}
       aria-label="Conversa com o assistente"
     >
+      {header && <div className={brand.drawerMascot}>{header}</div>}
       <AnimatePresence initial={false} mode="wait">
         <ConversationContent key={stage} reducedMotion={!!reducedMotion}>
           {children}

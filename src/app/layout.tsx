@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Nunito } from "next/font/google";
 import { AppShell } from "@/components/layout/app-shell";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { VoiceAssistantProvider } from "@/components/voice/voice-assistant-provider";
 import { APP_NAME } from "@/config/app";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+// Fonte arredondada e amigável, no estilo dos apps de ensino.
+const nunito = Nunito({
+  variable: "--font-nunito",
   subsets: ["latin"],
   display: "swap",
 });
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className={`${inter.variable} h-full antialiased`}>
+    <html lang="pt-BR" className={`${nunito.variable} h-full antialiased`}>
       <body>
         <a className="skip-link" href="#conteudo">
           Ir para o conteúdo

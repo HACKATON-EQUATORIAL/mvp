@@ -7,7 +7,7 @@ institucional nas partes de serviço real.
 
 | Área | Tom | Elementos |
 | --- | --- | --- |
-| Home, mapa da trilha, lições, prática, resultado | Aprendizagem (lúdico) | Faísca, energia em kWh, passos que acendem, celebração, botões 3D |
+| Home, mapa da trilha, lições, prática, resultado | Aprendizagem (lúdico) | Eletriquinho, energia em kWh, passos que acendem, celebração, botões 3D |
 | Canal oficial, dificuldades, simulador, avisos | Institucional (calmo) | Sem mascote, selo “Atendimento oficial”, azul claro, aviso de simulação |
 
 ## Peças
@@ -15,7 +15,7 @@ institucional nas partes de serviço real.
 - **Botões:** `.ui-button-primary` passa a ser azul Equatorial (`--header-bg`) com texto
   branco; primário e secundário têm borda inferior de 4px e “afundam” ao tocar. Botões do
   assistente (microfone e ajuda) ficam fora dessa regra e mantêm o amarelo.
-- **Faísca** (`components/brand/faisca.tsx`): guia da trilha em SVG, humores `happy`,
+- **Eletriquinho** (`components/brand/eletriquinho.tsx`): guia da trilha em SVG, humores `happy`,
   `cheer` e `think`; `FaiscaTip` mostra uma dica em balão. Decorativa (`aria-hidden`).
 - **Celebração** (`components/brand/celebration.tsx`): faíscas curtas no acerto e na
   conclusão. Desligada com `prefers-reduced-motion`.
@@ -24,7 +24,7 @@ institucional nas partes de serviço real.
   local; a prova de realização continua sendo a tentativa no backend.
 - **Mapa da trilha:** caminho em zigue-zague com nós de 72px (concluído verde, próximo
   amarelo com brilho e selo “Próximo”, meta tracejada).
-- **Lições:** “Guarde” da Faísca com a ideia que a prática cobra e bônus de energia.
+- **Lições:** “Guarde” da Eletriquinho com a ideia que a prática cobra e bônus de energia.
 
 ## Layout de app (todas as telas)
 
@@ -60,3 +60,12 @@ para leitores de tela (“concluído”), animações respeitando movimento redu
 
 O Turbopack às vezes mantém uma versão antiga de `app/globals.css` no `bun dev`. Se uma
 regra nova não aparecer, pare o servidor, apague `.next/dev/cache` e suba de novo.
+
+## Tipografia e UI de app de ensino (DEC-EQT-035)
+
+- Fonte **Nunito** (`next/font/google`, `--font-nunito`): arredondada e legível, no estilo
+  das fontes de apps de ensino. Texto base com peso 500; títulos 900; botões 800.
+- Botões e opções com cantos de 16px (`--radius-lg`); rótulo de seção em azul, caixa alta
+  espaçada; perguntas e lições com título 1.375rem/900.
+- Barras de progresso mais grossas com brilho interno; medidor de energia com
+  **sequência de dias** (`streakOf`, dias com avanço guardados no navegador).

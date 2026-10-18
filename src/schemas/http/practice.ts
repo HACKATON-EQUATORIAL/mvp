@@ -33,6 +33,7 @@ export const attemptStateSchema = z.object({
     .nullable(),
   assisted: z.boolean(),
   outcome_label: z.string().nullable(),
+  review: z.boolean().default(false),
 });
 
 export const helpResponseSchema = z.object({

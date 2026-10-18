@@ -169,7 +169,7 @@
   --transition-base: 0.3s ease-in-out;
   --transition-slow: 0.5s ease-in-out;
   --font-sans:
-    var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    var(--font-nunito), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
   --text-error: var(--error-500);
   --text-recording: var(--error-500);
@@ -685,7 +685,7 @@ a {
   flex: 1 1 auto;
   font-size: 1.25rem;
   line-height: 1.5rem;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: -0.025em;
 }
 .site-header-equatorial {
@@ -762,7 +762,7 @@ a {
   gap: var(--spacing-xxs);
   padding: var(--spacing-xxs) var(--spacing-sm);
   border: 1px solid var(--button-border);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-lg);
   background: var(--button-bg);
   color: var(--button-text);
   text-align: center;
@@ -950,7 +950,8 @@ a {
 /* Variants share presentation with semantic navigation links. */
 .ui-button {
   font-size: var(--font-size-desktop-sm);
-  font-weight: var(--font-weight-semibold);
+  font-weight: 800;
+  letter-spacing: 0.01em;
 }
 .ui-button-content {
   display: flex;
@@ -976,7 +977,7 @@ a {
   width: 100%;
   font-size: 1rem;
   line-height: 1.5rem;
-  font-weight: var(--font-weight-medium);
+  font-weight: 800;
 }
 .journey-page .voice-help-button {
   width: 60px;
@@ -1121,4 +1122,12 @@ a {
   .ui-button:active:not(:disabled) {
     transform: none;
   }
+}
+
+/* ---------------------------------------------------------------------------
+   Tipografia e UI no padrão de apps de ensino (DEC-EQT-035): Nunito, pesos
+   fortes em títulos e botões, cantos de 16px e texto mais encorpado.
+   ------------------------------------------------------------------------- */
+body {
+  font-weight: 500;
 }

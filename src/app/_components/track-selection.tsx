@@ -15,7 +15,7 @@ import {
   energyOf,
   useJourneyProgress,
 } from "@/app/servicos/segunda-via/_lib/progress";
-import { FaiscaTip } from "@/components/brand/faisca";
+import { EletriquinhoTip } from "@/components/brand/eletriquinho";
 import { JourneyPage } from "@/components/layout/journey-page";
 import { Button } from "@/components/ui/button";
 import type { VoicePageContext } from "@/components/voice/voice-page-context";
@@ -63,9 +63,10 @@ export function TrackSelection() {
       actions={null}
       voiceContext={voiceContext}
     >
-      <FaiscaTip>
-        Oi! Eu sou a Faísca. Escolha uma trilha e vamos juntos, no seu ritmo.
-      </FaiscaTip>
+      <EletriquinhoTip mood="wave">
+        Oi! Eu sou o Eletriquinho. Escolha uma trilha e vamos juntos, no seu
+        ritmo.
+      </EletriquinhoTip>
       <section
         className={styles.catalog}
         aria-label="Trilhas disponíveis"
@@ -109,6 +110,11 @@ function TrackItem({ track }: { track: TrackSummary }) {
   const Icon = icons[track.id] ?? FileText;
   const energy = energyOf(useJourneyProgress());
   const started = track.id === "segunda-via" && energy > 0;
+  // Comece já: quem ainda não começou vai direto para a primeira lição.
+  const target =
+    available && !started && track.id === "segunda-via"
+      ? "/servicos/segunda-via/etapas/encontrar"
+      : href;
   const content = (
     <>
       <span className={styles.icon} aria-hidden="true">
@@ -120,7 +126,7 @@ function TrackItem({ track }: { track: TrackSummary }) {
           <span>
             {started
               ? `Continuar · ${energy} de ${ENERGY_MAX} kWh`
-              : "Começar agora · 5 passos"}
+              : "Comece em 2 minutos"}
           </span>
         ) : (
           <span className={styles.status}>Em breve</span>
@@ -140,7 +146,7 @@ function TrackItem({ track }: { track: TrackSummary }) {
   return (
     <li className={styles.item} data-available={available || undefined}>
       {available ? (
-        <Link href={href} className={styles.card}>
+        <Link href={target ?? "/"} className={styles.card}>
           {content}
         </Link>
       ) : (

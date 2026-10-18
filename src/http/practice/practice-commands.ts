@@ -19,7 +19,12 @@ import {
 
 const base = "practice/attempts";
 
-const createAttemptFn = (body: { track_id: string; mode: PracticeMode }) =>
+const createAttemptFn = (body: {
+  track_id: string;
+  mode: PracticeMode;
+  /** Revisão de erros: só estes itens. */
+  item_ids?: string[];
+}) =>
   apiRequest(base, attemptStateSchema, { method: "POST", body, session: true });
 
 const submitActionFn = ({

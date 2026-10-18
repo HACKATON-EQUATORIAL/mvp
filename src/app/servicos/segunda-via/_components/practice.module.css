@@ -5,7 +5,7 @@
 }
 
 .progress {
-  height: 12px;
+  height: 16px;
   overflow: hidden;
   border-radius: var(--radius-full);
   background: var(--surface-muted);
@@ -16,6 +16,9 @@
   height: 100%;
   border-radius: inherit;
   background: var(--success-400);
+  box-shadow:
+    inset 0 4px 0 rgb(255 255 255 / 35%),
+    inset 0 -3px 0 rgb(0 0 0 / 10%);
   transition: width 400ms ease;
 }
 
@@ -29,9 +32,9 @@
 .practice .prompt {
   margin: 0;
   color: var(--text-heading);
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-  font-weight: var(--font-weight-bold);
+  font-size: 1.375rem;
+  line-height: 1.875rem;
+  font-weight: 900;
 }
 
 .options {
@@ -51,11 +54,12 @@
   padding: 12px 16px;
   border: 2px solid var(--border-default);
   border-bottom-width: 4px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   background: var(--surface-page);
   color: var(--text-heading);
   font: inherit;
-  font-weight: var(--font-weight-medium);
+  font-size: 1.0625rem;
+  font-weight: 700;
   text-align: left;
   cursor: pointer;
   transition:
@@ -207,4 +211,124 @@
 .practice .inlineActions [data-slot="button"] {
   width: auto;
   min-height: 44px;
+}
+
+.stepRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.combo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: var(--warning-50);
+  color: var(--warning-600);
+  font-size: 0.875rem;
+  font-weight: 900;
+}
+
+/* Faixa de feedback na barra inferior (padrão dos apps de ensino). */
+.feedbackStrip {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.feedbackStrip strong {
+  font-size: 1.125rem;
+  font-weight: 900;
+}
+
+.feedbackStrip p {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.3rem;
+}
+
+.feedbackStrip.correct,
+.feedbackStrip.wrong {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.perfect {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: var(--primary-500);
+  color: var(--highlight-500);
+  font-size: 0.875rem;
+  font-weight: 900;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stat {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 2px solid var(--border-default);
+  border-bottom-width: 4px;
+  border-radius: var(--radius-lg);
+  background: var(--surface-page);
+}
+
+.stat span {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.stat strong {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+
+.stat[data-tone="energy"] {
+  border-color: var(--highlight-300);
+}
+.stat[data-tone="energy"] strong {
+  color: var(--highlight-700);
+}
+.stat[data-tone="success"] {
+  border-color: var(--success-200);
+}
+.stat[data-tone="success"] strong {
+  color: var(--success-600);
+}
+.stat[data-tone="primary"] {
+  border-color: var(--primary-200);
+}
+.stat[data-tone="primary"] strong {
+  color: var(--primary-500);
+}
+.stat[data-tone="streak"] {
+  border-color: var(--warning-200);
+}
+.stat[data-tone="streak"] strong {
+  color: var(--warning-600);
 }

@@ -13,6 +13,7 @@ export const routes = {
   dificuldades: `${base}/dificuldades`,
   canal: `${base}/canal`,
   simulador: `${base}/simulador`,
+  revisao: `${base}/pratica/revisao`,
 } as const;
 
 export const stepSchema = z.enum(["encontrar", "conferir"]);

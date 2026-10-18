@@ -11,14 +11,25 @@ export type JourneyProgress = {
   independentDone: boolean;
   /** Simulações de canal concluídas (IDs da API). */
   simulated: string[];
+  /** Dias (AAAA-MM-DD) com algum avanço, para a sequência de dias. */
+  days: string[];
+  /** Alguma prática concluída sem nenhum erro. */
+  perfect: boolean;
+  /** Prática individual concluída sem pedir ajuda. */
+  unassisted: boolean;
 };
 
 const KEY = "digitaliza:segunda-via:progress";
+export const STREAK_EVENT = "digitaliza:streak";
+export const BADGE_EVENT = "digitaliza:badge";
 const empty: JourneyProgress = {
   learned: [],
   guidedDone: false,
   independentDone: false,
   simulated: [],
+  days: [],
+  perfect: false,
+  unassisted: false,
 };
 let cache: JourneyProgress | null = null;
 const listeners = new Set<() => void>();
@@ -44,7 +55,12 @@ export function updateProgress(change: Partial<JourneyProgress>) {
       ...new Set([...current.simulated, ...(change.simulated ?? [])]),
     ],
   };
+  // Conquistas só se ganham, nunca se perdem.
+  next.perfect = current.perfect || !!change.perfect;
+  next.unassisted = current.unassisted || !!change.unassisted;
   if (JSON.stringify(next) === JSON.stringify(current)) return;
+  const firstToday = !current.days.includes(today());
+  next.days = [...new Set([...current.days, today()])].slice(-60);
   cache = next;
   try {
     localStorage.setItem(KEY, JSON.stringify(next));
@@ -52,6 +68,24 @@ export function updateProgress(change: Partial<JourneyProgress>) {
     // Sem armazenamento: o progresso vale só enquanto a página estiver aberta.
   }
   for (const listener of listeners) listener();
+  // Primeiro avanço do dia: avisa a interface para celebrar a ofensiva.
+  if (firstToday)
+    window.dispatchEvent(
+      new CustomEvent(STREAK_EVENT, { detail: { streak: streakOf(next) } }),
+    );
+  // Selos recém-desbloqueados também são celebrados.
+  const before = new Set(
+    badgesOf(current)
+      .filter((b) => b.earned)
+      .map((b) => b.id),
+  );
+  for (const badge of badgesOf(next))
+    if (badge.earned && !before.has(badge.id))
+      window.dispatchEvent(
+        new CustomEvent(BADGE_EVENT, {
+          detail: { id: badge.id, label: badge.label },
+        }),
+      );
 }
 
 function subscribe(listener: () => void) {
@@ -80,4 +114,65 @@ export function energyOf(progress: JourneyProgress) {
     (progress.independentDone ? ENERGY.independent : 0) +
     (progress.simulated.length ? ENERGY.simulated : 0)
   );
+}
+
+function today(offset = 0) {
+  const date = new Date();
+  date.setDate(date.getDate() - offset);
+  return date.toLocaleDateString("en-CA");
+}
+
+/** Dias seguidos com avanço, contando até hoje (ou até ontem, se hoje ainda não). */
+export function streakOf(progress: JourneyProgress) {
+  const days = new Set(progress.days);
+  let start = days.has(today()) ? 0 : 1;
+  let streak = 0;
+  while (days.has(today(start))) {
+    streak += 1;
+    start += 1;
+  }
+  return streak;
+}
+
+export type Badge = {
+  id: string;
+  label: string;
+  detail: string;
+  earned: boolean;
+};
+
+/** Selos da trilha, derivados do progresso (motivacionais, só no navegador). */
+export function badgesOf(progress: JourneyProgress): Badge[] {
+  return [
+    {
+      id: "achei",
+      label: "Achei a segunda via",
+      detail: "Concluiu a lição de encontrar o serviço.",
+      earned: progress.learned.includes("encontrar"),
+    },
+    {
+      id: "conferi",
+      label: "Conferi a conta",
+      detail: "Concluiu a lição de conferir a conta.",
+      earned: progress.learned.includes("conferir"),
+    },
+    {
+      id: "perfeita",
+      label: "Lição perfeita",
+      detail: "Terminou uma prática sem errar.",
+      earned: progress.perfect,
+    },
+    {
+      id: "sozinho",
+      label: "Sem ajuda",
+      detail: "Fez a prática individual sem pedir ajuda.",
+      earned: progress.unassisted,
+    },
+    {
+      id: "canal",
+      label: "Treinei no canal",
+      detail: "Concluiu um simulador do atendimento digital.",
+      earned: progress.simulated.length > 0,
+    },
+  ];
 }

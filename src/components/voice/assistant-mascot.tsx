@@ -44,10 +44,13 @@ export function MascotCorner({
   text,
   hidden,
   compact,
+  holdOpen,
   children,
 }: {
   text?: string;
   hidden?: boolean;
+  /** Enquanto a fala é lida em voz alta, o balão não fecha sozinho. */
+  holdOpen?: boolean;
   /** Telas de chat: mascote menor. */
   compact?: boolean;
   children: ReactNode;
@@ -65,7 +68,9 @@ export function MascotCorner({
   // O balão some sozinho e ao tocar fora dele, para não atrapalhar a tela.
   useEffect(() => {
     if (!show) return;
-    const timer = setTimeout(() => setDismissed(text ?? null), SPEECH_MS);
+    const timer = holdOpen
+      ? undefined
+      : setTimeout(() => setDismissed(text ?? null), SPEECH_MS);
     const onPointer = (event: PointerEvent) => {
       if (!corner.current?.contains(event.target as Node))
         setDismissed(text ?? null);
@@ -75,7 +80,7 @@ export function MascotCorner({
       clearTimeout(timer);
       document.removeEventListener("pointerdown", onPointer);
     };
-  }, [show, text]);
+  }, [show, text, holdOpen]);
 
   return (
     <div

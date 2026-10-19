@@ -103,6 +103,7 @@ export function usePracticeRun({
             stepTitle: lesson?.title,
             prompt: item.prompt,
             hint: item.hint,
+            explanation: item.explanation.text,
             lesson: lesson?.explanation.text,
             expected: item.options.find((option) => option.is_expected)?.label,
           },

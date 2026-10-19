@@ -1,5 +1,6 @@
 import "server-only";
 import { z } from "zod";
+import { type ElevenLabsEnv, parseElevenLabsEnv } from "@/lib/tts/elevenlabs";
 
 // Ordem de reserva quando o modelo principal atinge o limite (429). Todos
 // suportam JSON Schema estrito na Groq, exigido pela interpretação.
@@ -39,3 +40,9 @@ export function getGroqInterpretationEnv() {
   });
 }
 export type GroqInterpretationEnv = z.infer<typeof interpretationEnvSchema>;
+
+// Voz do ElevenLabs: schema compartilhado com o script de pré-geração.
+export function getElevenLabsEnv() {
+  return parseElevenLabsEnv(process.env);
+}
+export type { ElevenLabsEnv };

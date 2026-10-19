@@ -88,8 +88,8 @@ oficial da Equatorial à esquerda, junto de “MA” em amarelo; o nome Maranhã
 disponível para tecnologia assistiva. Esse grupo é um link para
 `https://www.equatorialenergia.com.br/`, em nova aba (um toque sem querer não tira a
 pessoa da prática; “abre em nova aba” fica para leitores de tela), com área de toque de pelo
-menos 44px de altura e foco visível. “Digitaliza Aí” fica no centro e leva ao início;
-o atalho “Serviços” fica à direita, oculto na home. O cabeçalho permanece
+menos 44px de altura e foco visível. “Digitaliza Aí” fica à esquerda e leva ao início;
+a logo com MA fica à direita. Não há atalho “Serviços”. O cabeçalho permanece
 sticky em todas as rotas pelo `AppShell` do layout raiz, ocupa a largura da aplicação,
 sem margem, borda ou raio, e respeita a área segura. O foco no conteúdo considera
 sua altura.
@@ -100,9 +100,9 @@ sua altura.
 | Comportamento | `position: sticky`, no topo e abaixo do Drawer modal |
 | Superfície | Fundo azul na largura da aplicação, sem margem, borda ou raio; padding lateral de 16px |
 | Dimensões | Mínimo 60px mais área segura; limitado pelo AppShell de até 648px |
-| Marca | Logotipo oficial branco em `next/image`, com `alt="Equatorial Energia"`, e MA amarelo à esquerda; Digitaliza Aí em destaque no centro |
+| Marca | Logotipo oficial branco em `next/image`, com `alt="Equatorial Energia"`, e MA amarelo à direita; Digitaliza Aí em destaque à esquerda |
 | Tipografia | Fonte da aplicação; marca central pelos tokens de `.site-header-brand`, MA em 0.75rem com peso bold |
-| Organização | Grid em três colunas (`1fr auto 1fr`), mantendo o título centralizado mesmo sem o atalho da direita |
+| Organização | Grid em duas colunas (`1fr auto`): Digitaliza Aí à esquerda, logo + MA à direita |
 
 A Eyebrow fica fora do Header e pertence à tela. `JourneyPage` contém um `main`
 focável, Eyebrow, `h1`, introdução, conteúdo, ações e voz. `AppShell` mantém o

@@ -25,3 +25,7 @@ export const partHref = (slug: PartSlug) => `${routes.licoes}/${slug}`;
 export function partBySlug(slug: string) {
   return PARTS.find((part) => part.slug === slug) ?? null;
 }
+
+/** O que a parte ensina (contexto do assistente e fala pré-gerada da ajuda). */
+export const partTeaches = (number: number, label: string) =>
+  `Parte ${number} de ${PARTS.length} da prática: ${label}. A pessoa responde à Clara no chat simulado e recebe feedback na hora.`;

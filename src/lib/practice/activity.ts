@@ -14,6 +14,8 @@ export type PracticeActivity = {
   prompt?: string;
   /** Dica do item (orienta sem dar a resposta). */
   hint?: string;
+  /** Explicação do item (“Explicar melhor” na etapa 2). */
+  explanation?: string;
   /** Explicação curta da parte. */
   lesson?: string;
   /**

@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/drawer";
 import { assistantAiEnabled } from "@/config/assistant";
 import { useIdle } from "@/hooks/use-idle";
-import { useSpeechSynthesis } from "@/hooks/use-speech-synthesis";
+import { useSpeech } from "@/hooks/use-speech";
 import { useSpeechToText } from "@/hooks/use-speech-to-text";
 import { useVoiceAssistant } from "@/hooks/use-voice-assistant";
 import { useVoiceCatalog } from "@/hooks/use-voice-catalog";
@@ -50,6 +50,7 @@ import {
   notifyAssistantHelp,
   usePracticeActivity,
 } from "@/lib/practice/activity";
+import { DEFAULT_HELP, SAME_SCREEN_MESSAGE } from "@/lib/tts/fixed-phrases";
 import { MascotButton, MascotCorner } from "./assistant-mascot";
 import { AudioRecorder } from "./audio-recorder";
 import { useVoicePage } from "./voice-assistant-provider";
@@ -70,7 +71,7 @@ function leaveConfirmation(label: string) {
 
 const sameScreen: InterpretationResult = {
   type: "information",
-  message: "Você já está nesta tela. Posso ajudar com outra coisa?",
+  message: SAME_SCREEN_MESSAGE,
   showCatalog: false,
   optionIds: [],
   actionId: null,
@@ -131,7 +132,7 @@ export function VoiceAssistantHost() {
   const practice = usePracticeActivity();
   const assistant = useVoiceAssistant();
   const speech = useSpeechToText();
-  const tts = useSpeechSynthesis();
+  const tts = useSpeech();
   // Preferência única de som (voz do assistente e efeitos da prática).
   const voiceReplies = useSoundEnabled();
   const interpretation = useVoiceInterpretation();
@@ -197,6 +198,37 @@ export function VoiceAssistantHost() {
     tts.cancel,
     assistant.reset,
   ]);
+
+  // Falas prováveis desta tela (ajuda local, “já está aqui”) ficam prontas
+  // antes do toque: arquivos pré-gerados, baixados com prioridade baixa.
+  const { preload } = tts;
+  const helpTexts = [
+    practice?.hint,
+    practice?.explanation,
+    practice?.lesson,
+    context?.screen?.teaches,
+  ];
+  const helpKey = helpTexts.join("|");
+  // biome-ignore lint/correctness/useExhaustiveDependencies: helpKey resume os textos
+  useEffect(() => {
+    if (getSoundEnabled()) preload(...helpTexts, SAME_SCREEN_MESSAGE);
+  }, [helpKey, preload]);
+  const guidance = bundle.data?.difficulties.map((item) => item.guidance);
+  useEffect(() => {
+    if (problems && guidance && getSoundEnabled()) preload(...guidance);
+  }, [problems, guidance, preload]);
+
+  // Fala viva com `speak` (ex.: dica pedida na etapa 2): o balão também é lido
+  // em voz alta. Trocar ou limpar essa fala corta a voz.
+  const { speak: speakNow, cancel: cancelSpeech } = tts;
+  const spokenSpeech = useRef<typeof mascotSpeech>(null);
+  useEffect(() => {
+    const before = spokenSpeech.current;
+    spokenSpeech.current = mascotSpeech;
+    if (mascotSpeech?.speak) {
+      if (getSoundEnabled()) speakNow(mascotSpeech.text);
+    } else if (before?.speak) cancelSpeech();
+  }, [mascotSpeech, speakNow, cancelSpeech]);
 
   if (!context) return null;
   const pageContext = {
@@ -265,6 +297,8 @@ export function VoiceAssistantHost() {
       setPresentedOptionIds(options.map((item) => item.id));
     tts.cancel();
     tts.prime();
+    // A resposta virá da LLM: a conexão com a voz já fica aberta.
+    if (getSoundEnabled()) tts.warm();
     interpretation.reset();
     assistant.setStep("capture");
     void speech.startRecording();
@@ -311,7 +345,7 @@ export function VoiceAssistantHost() {
         : activity?.lesson) ??
         context?.screen?.teaches ??
         context?.tip ??
-        "Toque em uma das opções abaixo.",
+        DEFAULT_HELP,
     );
   }
 
@@ -469,6 +503,7 @@ export function VoiceAssistantHost() {
       rejectedOptionIds: rejectedIds.filter((id) => allowed.has(id)),
     };
     assistant.setStep("interpretation");
+    if (getSoundEnabled()) tts.warm();
     const raw = await interpretation.interpret(input);
     if (!raw) return;
     // Chips nunca levam à própria tela.
@@ -580,6 +615,7 @@ export function VoiceAssistantHost() {
             // da tela só quando a pessoa fica um tempo parada.
             text={mascotSpeech?.text ?? (idle ? context.tip : undefined)}
             hidden={open}
+            holdOpen={!!mascotSpeech?.speak && tts.speaking}
             compact={!!practice}
           >
             <DrawerTrigger

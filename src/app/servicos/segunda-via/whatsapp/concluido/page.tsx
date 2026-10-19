@@ -36,7 +36,6 @@ export default function Page() {
       actions={null}
       back={{ href: routes.whatsapp, label: "Voltar às etapas" }}
       // Na barra, a etapa anterior (o mapa já está no “Voltar às etapas” do topo).
-      previous={{ href: routes.simulacao, label: "Voltar à etapa 3" }}
     >
       <JourneyDone />
     </JourneyPage>

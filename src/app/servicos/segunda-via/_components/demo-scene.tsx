@@ -2,17 +2,18 @@
 
 import { Pause, Play, RotateCcw, SkipBack, SkipForward } from "lucide-react";
 import { useReducedMotion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Celebration } from "@/components/brand/celebration";
 import { PageActions } from "@/components/layout/page-actions";
 import { ActionLink } from "@/components/ui/action-link";
 import { Button } from "@/components/ui/button";
-import { useSpeechSynthesis } from "@/hooks/use-speech-synthesis";
+import { useSpeech } from "@/hooks/use-speech";
 import { useGetBundle } from "@/http/track/get-bundle";
 import { setMascotSpeech } from "@/lib/assistant/mascot-speech";
 import { useSoundEnabled } from "@/lib/feedback/preferences";
 import { feedback as sfx } from "@/lib/feedback/sound";
 import { setPracticeActivity } from "@/lib/practice/activity";
+import { END_SPEECH } from "@/lib/tts/fixed-phrases";
 import type { TrackBundle } from "@/schemas/http/track";
 import { updateProgress } from "../_lib/progress";
 import { PARTS, partHref, TRACK_ID } from "../_lib/steps";
@@ -22,6 +23,7 @@ import {
   ChatFrame,
   type ChatLine,
   ChatLines,
+  Composer,
   QuickReplies,
   ResultCard,
   Typing,
@@ -32,9 +34,8 @@ type Step = TrackBundle["simulations"][number]["steps"][number];
 
 const TYPING_MS = 900;
 const TAP_MS = 1400;
-const END_SPEECH =
-  "Viu como é simples? Quando quiser, vamos praticar na etapa 2.";
-
+// Pausa curta depois que a voz termina, antes do próximo passo.
+const AFTER_VOICE_MS = 500;
 /** Etapa 1: a conversa com a Clara toca sozinha, narrada pelo Eletriquinho. */
 export function DemoScene() {
   const bundle = useGetBundle(TRACK_ID);
@@ -57,19 +58,37 @@ const expected = (step: Step) =>
 function Scene({ steps }: { steps: Step[] }) {
   const reduced = useReducedMotion();
   const sound = useSoundEnabled();
-  const tts = useSpeechSynthesis();
+  const tts = useSpeech();
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<Phase>(reduced ? "narrate" : "typing");
   // Com movimento reduzido, nada avança sozinho.
   const [playing, setPlaying] = useState(!reduced);
   const [finished, setFinished] = useState(false);
   const [burst, setBurst] = useState(0);
+  // Som bloqueado até um toque (página aberta direto): espera o ▶ para narrar.
+  const [needsTap, setNeedsTap] = useState(false);
   const step = steps[index];
   const last = index === steps.length - 1;
-  const { speak, cancel } = tts;
+  const { speak, cancel, preload } = tts;
+  // Passo já narrado nesta passagem e se a voz chegou a tocar nele.
+  const spoken = useRef<number | null>(null);
+  const voiced = useRef(false);
+
+  // Com som, gera todas as falas ao abrir (em fila, na ordem): a voz sai junto
+  // com o balão, inclusive ao pular passos pelo player.
+  useEffect(() => {
+    if (sound) preload(...steps.map((item) => item.instruction), END_SPEECH);
+  }, [sound, steps, preload]);
+
+  function resetVoice() {
+    spoken.current = null;
+    voiced.current = false;
+    setNeedsTap(false);
+  }
 
   function goTo(next: number) {
     cancel();
+    resetVoice();
     setFinished(false);
     setIndex(next);
     setPhase(reduced || !playing ? "narrate" : "typing");
@@ -91,17 +110,40 @@ function Scene({ steps }: { steps: Step[] }) {
     goTo(index + 1);
   }
 
-  // Narração: o balão do Eletriquinho mostra a instrução; com som, ele lê em voz alta.
+  // Narração: balão e voz começam junto com o “digitando…” da Clara (sem
+  // esperar a mensagem aparecer). Cada passo é lido uma vez por passagem.
   useEffect(() => {
     if (finished) {
       setMascotSpeech({ text: END_SPEECH, mood: "cheer" });
       if (sound) speak(END_SPEECH);
       return;
     }
-    if (phase !== "narrate") return;
+    if (phase === "tap") return;
     setMascotSpeech({ text: step.instruction, mood: "talk" });
-    if (sound && (playing || reduced)) speak(step.instruction);
-  }, [finished, phase, step, sound, playing, reduced, speak]);
+    if (!sound || !(playing || reduced) || spoken.current === index) return;
+    // Sem nenhum toque nesta página, o navegador não deixa tocar som: em vez de
+    // seguir mudo, a demonstração para no primeiro balão e espera o ▶.
+    if (playing && navigator.userActivation?.hasBeenActive === false) {
+      setPhase("narrate");
+      setPlaying(false);
+      setNeedsTap(true);
+      return;
+    }
+    spoken.current = index;
+    speak(step.instruction);
+  }, [finished, phase, step, index, sound, playing, reduced, speak]);
+
+  useEffect(() => {
+    if (tts.speaking) voiced.current = true;
+  }, [tts.speaking]);
+
+  // O navegador recusou a voz mesmo assim: pausa e pede o ▶ (que relê o passo).
+  useEffect(() => {
+    if (!tts.blocked || !playing) return;
+    spoken.current = null;
+    setPlaying(false);
+    setNeedsTap(true);
+  }, [tts.blocked, playing]);
 
   // Linha do tempo: cada fase agenda a próxima enquanto estiver tocando.
   // biome-ignore lint/correctness/useExhaustiveDependencies: `advance` lê o estado atual a cada fase
@@ -115,9 +157,11 @@ function Scene({ steps }: { steps: Step[] }) {
           ? TAP_MS
           : tts.speaking
             ? 15_000 // segurança caso o navegador não avise o fim da fala
-            : sound && tts.supported
-              ? Math.max(700, reading - 4000)
-              : reading;
+            : voiced.current
+              ? AFTER_VOICE_MS // a fala terminou: segue logo
+              : sound && tts.supported
+                ? Math.max(700, reading - 4000)
+                : reading;
     const timer = setTimeout(advance, ms);
     return () => clearTimeout(timer);
   }, [playing, finished, phase, index, tts.speaking, sound, tts.supported]);
@@ -139,6 +183,10 @@ function Scene({ steps }: { steps: Step[] }) {
     () => () => {
       setMascotSpeech(null);
       setPracticeActivity(null);
+      // Remontagem (ex.: Strict Mode no dev) lê o passo de novo: a desmontagem
+      // pausou a voz, então o passo não conta como narrado.
+      spoken.current = null;
+      voiced.current = false;
     },
     [],
   );
@@ -147,32 +195,46 @@ function Scene({ steps }: { steps: Step[] }) {
     if (finished) return replay();
     if (playing) {
       cancel();
+      // Ao retomar, o passo atual é relido.
+      resetVoice();
       setPlaying(false);
       return;
     }
+    setNeedsTap(false);
     setPlaying(true);
-    // Retoma relendo o passo atual.
-    if (phase === "narrate" && sound) speak(step.instruction);
   }
 
   function replay() {
     cancel();
+    resetVoice();
     setFinished(false);
     setIndex(0);
     setPhase(reduced ? "narrate" : "typing");
     setPlaying(!reduced);
   }
 
-  // Histórico: passos anteriores com a resposta certa já enviada.
+  // Histórico: passos anteriores com a resposta certa já enviada, citando a
+  // mensagem respondida (como “responder” no WhatsApp).
   const history: ChatLine[] = steps.slice(0, index).flatMap((past) => {
     const reply = expected(past);
     return [
       ...past.bot_messages.map((text) => ({ from: "bot" as const, text })),
-      ...(reply ? [{ from: "user" as const, text: reply.label }] : []),
+      ...(reply
+        ? [
+            {
+              from: "user" as const,
+              text: reply.label,
+              quote: past.bot_messages.at(-1),
+            },
+          ]
+        : []),
     ];
   });
   const showCurrent = phase !== "typing" || finished;
   const reply = expected(step);
+  // Passo respondido digitando (documento): o dedo usa o campo de mensagem.
+  const typed = step.options.length === 1;
+  const tapping = phase === "tap" && !finished;
 
   function stepBack() {
     // Depois do fim, “voltar” reabre o último passo.
@@ -210,10 +272,12 @@ function Scene({ steps }: { steps: Step[] }) {
           ))}
         </ol>
         <div className={styles.playerRow}>
-          <p aria-live="polite">
+          <p aria-live="polite" data-attention={needsTap || undefined}>
             {finished
               ? "Demonstração concluída"
-              : `Passo ${index + 1} de ${steps.length}`}
+              : needsTap
+                ? "Toque em ▶ para começar"
+                : `Passo ${index + 1} de ${steps.length}`}
           </p>
           <div>
             <button
@@ -237,6 +301,7 @@ function Scene({ steps }: { steps: Step[] }) {
               type="button"
               className={styles.playerButton}
               data-main
+              data-attention={needsTap || undefined}
               aria-label={
                 finished ? "Ver de novo" : playing ? "Pausar" : "Continuar"
               }
@@ -265,19 +330,12 @@ function Scene({ steps }: { steps: Step[] }) {
         <Celebration burst={burst} />
         <ChatFrame
           label="Demonstração da conversa com a Clara"
-          footer={
-            showCurrent && step.kind !== "result" ? (
-              <QuickReplies
-                options={step.options.map((option) => ({
-                  id: option.id,
-                  label: option.label,
-                  state:
-                    phase === "tap" && option.id === reply?.id
-                      ? "pointed"
-                      : undefined,
-                }))}
-              />
-            ) : null
+          composer={
+            <Composer
+              waiting={!showCurrent}
+              value={typed && tapping ? reply?.label : undefined}
+              pointed={typed && tapping ? "send" : undefined}
+            />
           }
         >
           <ChatLines lines={history} />
@@ -287,6 +345,18 @@ function Scene({ steps }: { steps: Step[] }) {
                 lines={step.bot_messages.map((text) => ({ from: "bot", text }))}
               />
               {step.kind === "result" && <ResultCard lines={step.lines} />}
+              {step.kind !== "result" && !typed && (
+                <QuickReplies
+                  options={step.options.map((option) => ({
+                    id: option.id,
+                    label: option.label,
+                    state:
+                      tapping && option.id === reply?.id
+                        ? "pointed"
+                        : undefined,
+                  }))}
+                />
+              )}
             </>
           ) : (
             <Typing />

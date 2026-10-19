@@ -20,6 +20,16 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      {
+        // Voz pré-gerada: o caminho muda com a voz e o texto, então nunca expira.
+        source: "/voz/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
     ];
   },
   cacheComponents: true,

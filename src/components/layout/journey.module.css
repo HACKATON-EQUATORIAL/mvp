@@ -122,7 +122,11 @@
 .dock:has(+ .actions:empty) {
   bottom: env(safe-area-inset-bottom);
 }
-/* Barra de ações: principal na largura toda; secundária logo abaixo, discreta. */
+/*
+ * Barra de ações: sempre empilhada, em qualquer tela. Faixa de feedback em cima,
+ * depois a principal (seguir em frente) e, abaixo, no máximo uma secundária.
+ * `[class~=…]` porque o CSS Modules renomeia seletores de classe.
+ */
 .actions {
   flex-shrink: 0;
   display: grid;
@@ -138,49 +142,14 @@
 .actions > * {
   min-width: 0;
 }
+.actions > :not([data-slot="button"]) {
+  order: -2;
+}
+.actions > [class~="ui-button-primary"] {
+  order: -1;
+}
 .actions:empty {
   display: none;
-}
-/*
- * Celular: a etapa anterior vira um botão quadrado só com a seta (52×52), na mesma
- * linha do último botão, e poupa uma linha inteira da barra. Com secundário, ela fica
- * ao lado dele e a principal segue sozinha em cima; sem secundário, ao lado da principal.
- */
-@media (max-width: 767.98px) {
-  .actions:has(> .previous) {
-    grid-template-columns: 52px minmax(0, 1fr);
-  }
-  .actions:has(> .previous) > * {
-    grid-column: 1 / -1;
-  }
-  .actions > :not([data-slot="button"]) {
-    order: -2;
-  }
-  .page .actions > .previous {
-    grid-column: 1;
-    order: 1;
-    width: 52px;
-    padding: 0;
-  }
-  .actions:has(> .previous)
-    > [data-slot="button"]:not(.previous):not([class~="ui-button-primary"]),
-  .actions:has(> .previous):not(
-      :has(
-        > [data-slot="button"]:not(.previous):not([class~="ui-button-primary"])
-      )
-    )
-    > [class~="ui-button-primary"] {
-    grid-column: 2;
-    order: 2;
-  }
-  .previousLabel {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
 }
 .voice {
   display: flex;
@@ -283,7 +252,7 @@
   color: var(--warning-800);
 }
 
-/* Tablet e desktop: coluna emoldurada e ações lado a lado. */
+/* Tablet e desktop: coluna emoldurada (a barra continua empilhada). */
 @media (min-width: 768px) {
   /* Tablet: coluna de 720px (margens de ~24px no iPad retrato); o desktop alarga a seguir. */
   .shell {
@@ -297,54 +266,6 @@
   .body {
     border-inline: 1px solid var(--border-default);
     background: var(--surface-page);
-  }
-  .actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-  /* Faixa de feedback na linha de cima; “etapa anterior” à esquerda (voltar = esquerda). */
-  .actions > :not([data-slot="button"]) {
-    flex-basis: 100%;
-    order: -2;
-  }
-  .actions > .previous {
-    order: -1;
-  }
-  /*
-   * Ação principal à direita (avançar fecha a leitura); secundárias à esquerda.
-   * `[class~=…]` porque o CSS Modules renomeia seletores de classe.
-   */
-  .actions > [class~="ui-button-primary"] {
-    order: 1;
-  }
-  /* Os botões dividem a barra igualmente (um só ocupa a largura toda). */
-  .page .actions > [data-slot="button"] {
-    flex: 1 1 0;
-    width: auto;
-    min-width: 220px;
-  }
-  /* Com 3 botões, a etapa anterior vira só a seta (como no celular); os outros dois dividem o resto. */
-  .page
-    .actions:has(
-      > [data-slot="button"] ~ [data-slot="button"] ~ [data-slot="button"]
-    )
-    > .previous {
-    flex: none;
-    width: 52px;
-    min-width: 0;
-    padding: 0;
-  }
-  .actions:has(
-      > [data-slot="button"] ~ [data-slot="button"] ~ [data-slot="button"]
-    )
-    .previousLabel {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
   }
 }
 

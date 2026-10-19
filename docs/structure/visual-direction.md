@@ -42,6 +42,12 @@ institucional nas partes de serviço real.
 - Botões principais vão para a barra: pelo prop `actions` (servidor) ou pelo
   `PageActions` (portal, para componentes de cliente e trechos dentro de `Suspense`).
   Limite de 1 a 2 botões na barra; escolhas e caminhos extras ficam no miolo.
+- **Padrão da barra (DEC-EQT-042):**
+  - sempre empilhada, em qualquer tamanho de tela;
+  - faixa de feedback em cima, depois a principal (seguir em frente) e, embaixo, no
+    máximo uma secundária;
+  - só ações da tela: o único voltar é o “Voltar às etapas” do topo (`back`), e não há
+    mais a seta de etapa anterior (`previous`).
 - Barra vazia some (`:empty`). Telas sem ações (ex.: home) mantêm só o assistente.
 - Na trilha e nas lições, “Consultar uma dúvida” usa `ActionLink` com variante
   `secondary` e tamanho padrão, abaixo da ação principal. Na consulta rápida, só “Voltar”
@@ -52,8 +58,9 @@ institucional nas partes de serviço real.
   Nova pergunta da prática e novo passo do simulador voltam ao topo (`scrollJourneyToTop`);
   no WhatsApp simulado, a conversa rola até a mensagem mais nova. O feedback da prática é
   revelado com rolagem suave (`revealInJourney`).
-- Cabeçalho: “Digitaliza Aí” leva à home e o botão “Serviços” (oculto na home) permite
-  trocar de serviço de qualquer tela.
+- Cabeçalho: “Digitaliza Aí” à esquerda leva à home; a logo da Equatorial + MA fica à
+  direita. Não há mais botão “Serviços” (trocar de serviço é pelo “Voltar” das telas ou
+  pelo início).
 
 Verificado a 375×812 em home, trilha, lições, visão geral, consulta, dificuldades,
 canal, conta de exemplo, prática (pergunta e conclusão), resultado e simulador: a página
@@ -161,7 +168,8 @@ o progresso aparece sem animação de desenho e sem pulso. Escopo e verificaçõ
 
 ## Ajustes após teste (DEC-EQT-039)
 
-- **Header:** grade `1fr auto 1fr` (logo + MA / “Digitaliza Aí” / Serviços).
+- **Header:** duas pontas (`1fr auto`): “Digitaliza Aí” à esquerda e logo + MA à direita
+  (atualizado em 19/10/2026, sem o botão Serviços).
 - **Assistente:** `.voice-icon-button` (44px, redondo, sem borda 3D); `.voice-chips` em
   lista vertical de largura total; “Voltar às opções” quando não há IA.
 - **Etapa 1:** player (`.player`, segmentos clicáveis e botões redondos).
@@ -194,8 +202,8 @@ o progresso aparece sem animação de desenho e sem pulso. Escopo e verificaçõ
 O celular não muda; tudo abaixo vale a partir de 768px, salvo onde indicado.
 
 - **Moldura:** o shell ocupa a tela toda; a coluna (`.body`) fica centralizada sobre
-  `--surface-subtle`, com borda lateral. O conteúdo do cabeçalho segue a coluna: logo e
-  “Serviços” alinhados às bordas dela, faixa azul de ponta a ponta. 24px a mais antes
+  `--surface-subtle`, com borda lateral. O conteúdo do cabeçalho segue a coluna: “Digitaliza
+  Aí” e a logo alinhados às bordas dela, faixa azul de ponta a ponta. 24px a mais antes
   do conteúdo.
 - **Tablet (768–991px):** coluna de 720px (margens de ~24px no iPad retrato).
 - **Desktop (≥992px):** `--app-content-max-width` passa a 960px (redefinido no `.shell`,
@@ -238,3 +246,19 @@ O celular não muda; tudo abaixo vale a partir de 768px, salvo onde indicado.
 - **Mantido como está:** nas partes 2 a 4, o histórico das partes anteriores aumenta a
   conversa e as respostas pedem rolagem em qualquer tela; depois de cada mensagem, o
   chat já desce sozinho até elas.
+
+## WhatsApp simulado (DEC-EQT-042)
+
+- **Moldura:** cabeçalho “Equatorial Energia Maranhão”, com “Clara · assistente virtual”
+  embaixo (`SENDER` em `whatsapp-chat.tsx`).
+- **Opções:** botões presos logo abaixo do balão recebido, na largura do balão (85%, até
+  400px), texto verde centralizado e 2px entre eles, como os botões interativos do
+  WhatsApp.
+- **Resposta da pessoa:** balão verde com a citação da mensagem respondida (`SENDER` em
+  vermelho, trecho em até 2 linhas), hora e ✓✓.
+- **Campo de mensagem com enviar:** sempre visível nas 3 etapas (`Composer`).
+  - Desabilitado (“Mensagem”) quando a resposta é por botão.
+  - “Toque para preencher o exemplo” na pergunta do documento, que é respondida só pelo
+    campo nas 3 etapas, sem botões de opção, igual à demonstração.
+  - Na demonstração, o dedo toca a opção ou, no documento, o enviar com o exemplo
+    preenchido.

@@ -1,35 +1,65 @@
 "use client";
 
+import { SendHorizontal } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
-import { type ReactNode, useEffect, useRef } from "react";
+import {
+  createContext,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { revealInJourney } from "@/components/layout/journey-scroll";
 import { cn } from "@/lib/utils";
 import styles from "./chat.module.css";
 
-export type ChatLine = { from: "bot" | "user"; text: string; past?: boolean };
+/** Remetente como aparece no WhatsApp da Equatorial (cabeçalho e citações). */
+export const SENDER = "Equatorial Energia Maranhão";
+/** Pergunta respondida digitando (campo de mensagem), não por botão. */
+export const DOCUMENT_ITEM = "item-documento";
+/** Exemplo fixo: o treino nunca pede dado real. */
+export const EXAMPLE_DOCUMENT = "000.000.000-00 (exemplo)";
+
+export type ChatLine = {
+  from: "bot" | "user";
+  text: string;
+  past?: boolean;
+  /** Resposta do usuário: a mensagem da Equatorial que ela responde. */
+  quote?: string;
+};
 export type ReplyOption = {
   id: string;
   label: string;
   state?: "correct" | "wrong" | "pointed";
 };
 
+// Hora das mensagens: a de quando a conversa abriu (como no print do WhatsApp).
+const ChatTime = createContext("");
+const clock = () =>
+  new Date().toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
 /**
- * Moldura do WhatsApp simulado: cabeçalho da Clara, aviso de treino, conversa
- * (sem rolagem interna: cresce com a página) e rodapé para respostas rápidas ou
- * o campo de mensagem.
+ * Moldura do WhatsApp simulado: cabeçalho da Equatorial, aviso de treino,
+ * conversa (sem rolagem interna: cresce com a página) e, sempre embaixo, o campo
+ * de mensagem com o botão de enviar.
  */
 export function ChatFrame({
   label,
-  footer,
+  composer,
   children,
 }: {
   label: string;
-  footer?: ReactNode;
+  composer: ReactNode;
   children: ReactNode;
 }) {
   const frame = useRef<HTMLElement>(null);
   const body = useRef<HTMLDivElement>(null);
   const foot = useRef<HTMLDivElement>(null);
+  const [time] = useState(clock);
   useEffect(() => {
     const element = body.current;
     if (!element) return;
@@ -54,20 +84,22 @@ export function ChatFrame({
       data-chat-screen
     >
       <div className={styles.header} aria-hidden="true">
-        <span className={styles.avatar}>C</span>
+        <span className={styles.avatar}>E</span>
         <span>
-          <strong>Clara · Equatorial</strong>
-          <small>assistente virtual</small>
+          <strong>{SENDER}</strong>
+          <small>Clara · assistente virtual</small>
         </span>
       </div>
       <p className={styles.notice}>
         Simulação para treino · não é o canal oficial
       </p>
-      <div ref={body} className={styles.body}>
-        {children}
-      </div>
-      <div ref={foot} className={styles.footer} hidden={!footer}>
-        {footer}
+      <ChatTime.Provider value={time}>
+        <div ref={body} className={styles.body}>
+          {children}
+        </div>
+      </ChatTime.Provider>
+      <div ref={foot} className={styles.footer}>
+        {composer}
       </div>
     </section>
   );
@@ -76,8 +108,9 @@ export function ChatFrame({
 /** Balões da conversa; cada um entra com uma pequena animação. */
 export function ChatLines({ lines }: { lines: ChatLine[] }) {
   const reduced = useReducedMotion();
+  const time = useContext(ChatTime);
   return lines.map((line, position) => (
-    <motion.p
+    <motion.div
       // A conversa só cresce; a posição identifica cada balão.
       // biome-ignore lint/suspicious/noArrayIndexKey: lista append-only
       key={position}
@@ -90,11 +123,23 @@ export function ChatLines({ lines }: { lines: ChatLine[] }) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.18, ease: "easeOut" }}
     >
-      <span className="sr-only">
-        {line.from === "bot" ? "Clara: " : "Você: "}
+      {line.quote && (
+        <span className={styles.quote}>
+          <strong>{SENDER}</strong>
+          <span>{line.quote}</span>
+        </span>
+      )}
+      <p>
+        <span className="sr-only">
+          {line.from === "bot" ? `${SENDER}: ` : "Você: "}
+        </span>
+        {line.text}
+      </p>
+      <span className={styles.meta} aria-hidden="true">
+        {time}
+        {line.from === "user" && <span className={styles.ticks}>✓✓</span>}
       </span>
-      {line.text}
-    </motion.p>
+    </motion.div>
   ));
 }
 
@@ -110,9 +155,30 @@ export function Typing() {
   );
 }
 
+/** Dedo animado da demonstração (aponta onde a pessoa tocaria). */
+function Finger() {
+  const reduced = useReducedMotion();
+  return (
+    <motion.span
+      className={styles.finger}
+      aria-hidden="true"
+      initial={reduced ? false : { x: 40, y: 40, opacity: 0 }}
+      animate={
+        reduced
+          ? { opacity: 1 }
+          : { x: 0, y: [40, 0, 4, 0], opacity: 1, scale: [1, 1, 0.85, 1] }
+      }
+      transition={{ duration: 0.9, times: [0, 0.6, 0.8, 1] }}
+    >
+      👆
+    </motion.span>
+  );
+}
+
 /**
- * Respostas rápidas. Na demonstração (`onChoose` ausente) são só ilustração,
- * com o dedo animado tocando a opção `pointed`.
+ * Respostas rápidas presas ao balão da Equatorial, como os botões do WhatsApp.
+ * Na demonstração (`onChoose` ausente) são só ilustração, com o dedo animado
+ * tocando a opção `pointed`.
  */
 export function QuickReplies({
   options,
@@ -123,8 +189,8 @@ export function QuickReplies({
   onChoose?: (id: string) => void;
   locked?: boolean;
 }) {
-  const reduced = useReducedMotion();
   const interactive = !!onChoose;
+  if (!options.length) return null;
   return (
     <fieldset
       className={styles.replies}
@@ -143,29 +209,65 @@ export function QuickReplies({
           onClick={() => onChoose?.(option.id)}
         >
           {option.label}
-          {option.state === "pointed" && (
-            <motion.span
-              className={styles.finger}
-              aria-hidden="true"
-              initial={reduced ? false : { x: 40, y: 40, opacity: 0 }}
-              animate={
-                reduced
-                  ? { opacity: 1 }
-                  : {
-                      x: 0,
-                      y: [40, 0, 4, 0],
-                      opacity: 1,
-                      scale: [1, 1, 0.85, 1],
-                    }
-              }
-              transition={{ duration: 0.9, times: [0, 0.6, 0.8, 1] }}
-            >
-              👆
-            </motion.span>
-          )}
+          {option.state === "pointed" && <Finger />}
         </button>
       ))}
     </fieldset>
+  );
+}
+
+/**
+ * Campo de mensagem do WhatsApp, sempre visível. Só preenche o exemplo (nunca
+ * dado real): parado quando a resposta é por botão; com `onFill`, tocar preenche
+ * e o enviar fica ativo. `pointed` mostra o dedo da demonstração.
+ */
+export function Composer({
+  value,
+  onFill,
+  onSend,
+  waiting,
+  pointed,
+}: {
+  /** Texto já preenchido (exemplo). */
+  value?: string;
+  /** Pergunta respondida digitando: tocar no campo preenche o exemplo. */
+  onFill?: () => void;
+  onSend?: () => void;
+  /** A Clara está digitando. */
+  waiting?: boolean;
+  pointed?: "input" | "send";
+}) {
+  const placeholder = waiting
+    ? "Aguarde a resposta da Clara…"
+    : onFill
+      ? "Toque para preencher o exemplo"
+      : "Mensagem";
+  return (
+    <div className={styles.composer}>
+      <button
+        type="button"
+        className={styles.composerInput}
+        data-filled={value ? true : undefined}
+        disabled={!onFill || !!value}
+        tabIndex={onFill ? undefined : -1}
+        aria-label={value ? `Mensagem: ${value}` : placeholder}
+        onClick={onFill}
+      >
+        {value || placeholder}
+        {pointed === "input" && <Finger />}
+      </button>
+      <button
+        type="button"
+        className={styles.composerSend}
+        aria-label="Enviar mensagem"
+        disabled={!onSend || !value}
+        tabIndex={onSend ? undefined : -1}
+        onClick={onSend}
+      >
+        <SendHorizontal size={20} aria-hidden="true" />
+        {pointed === "send" && <Finger />}
+      </button>
+    </div>
   );
 }
 

@@ -24,6 +24,9 @@ import {
   ChatFrame,
   type ChatLine,
   ChatLines,
+  Composer,
+  DOCUMENT_ITEM,
+  EXAMPLE_DOCUMENT,
   QuickReplies,
 } from "./whatsapp-chat";
 
@@ -41,8 +44,19 @@ export function PracticeChat(props: { part: PartSlug }) {
   return <Practice key={props.part} bundle={bundle.data} part={props.part} />;
 }
 
-const expectedLabel = (item: BundleItem) =>
-  item.options.find((option) => option.is_expected)?.label ?? "";
+const expectedOption = (item: BundleItem) =>
+  item.options.find((option) => option.is_expected);
+/** O que a pessoa envia ao acertar: o documento vai digitado (exemplo). */
+const sentText = (item: BundleItem) =>
+  item.id === DOCUMENT_ITEM
+    ? EXAMPLE_DOCUMENT
+    : (expectedOption(item)?.label ?? "");
+const sent = (item: BundleItem, past?: boolean): ChatLine => ({
+  from: "user",
+  text: sentText(item),
+  quote: item.prompt,
+  past,
+});
 
 function Practice({ bundle, part }: { bundle: TrackBundle; part: PartSlug }) {
   const all = bundle.practice.items;
@@ -57,17 +71,25 @@ function Practice({ bundle, part }: { bundle: TrackBundle; part: PartSlug }) {
   });
   const lesson = bundle.steps.find((step) => step.id === config.stepId);
   const [burst, setBurst] = useState(0);
+  const [filled, setFilled] = useState(false);
   const { item, answer, done } = run;
+
+  // Pergunta nova: o campo de mensagem volta vazio.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: zera a cada pergunta
+  useEffect(() => {
+    setFilled(false);
+  }, [item?.id]);
 
   useEffect(() => {
     if (answer?.correct || done) setBurst((value) => value + 1);
   }, [answer?.correct, done]);
 
-  // Dicas e ajudas saem do balão do Eletriquinho.
+  // Dicas e ajudas saem do balão do Eletriquinho e são lidas em voz alta
+  // (áudio pré-gerado). Responder ou avançar limpa a fala e corta a voz.
   useEffect(() => {
     setMascotSpeech(
       run.help && !answer?.correct
-        ? { text: run.help.content, mood: "think" }
+        ? { text: run.help.content, mood: "think", speak: true }
         : null,
     );
   }, [run.help, answer?.correct]);
@@ -101,17 +123,20 @@ function Practice({ bundle, part }: { bundle: TrackBundle; part: PartSlug }) {
   const history: ChatLine[] = [
     ...before.flatMap((entry) => [
       { from: "bot" as const, text: entry.prompt, past: true },
-      { from: "user" as const, text: expectedLabel(entry), past: true },
+      sent(entry, true),
     ]),
-    ...items.slice(0, run.index).flatMap((entry) => [
-      { from: "bot" as const, text: entry.prompt },
-      { from: "user" as const, text: expectedLabel(entry) },
-    ]),
+    ...items
+      .slice(0, run.index)
+      .flatMap((entry) => [
+        { from: "bot" as const, text: entry.prompt },
+        sent(entry),
+      ]),
     { from: "bot" as const, text: item.prompt },
-    ...(answer?.correct
-      ? [{ from: "user" as const, text: expectedLabel(item) }]
-      : []),
+    ...(answer?.correct ? [sent(item)] : []),
   ];
+  const typed = item.id === DOCUMENT_ITEM;
+  const expected = expectedOption(item);
+  const answering = !answer?.correct;
 
   return (
     <div className={styles.practice}>
@@ -123,20 +148,30 @@ function Practice({ bundle, part }: { bundle: TrackBundle; part: PartSlug }) {
       )}
       <ChatFrame
         label="Conversa simulada com a Clara"
-        footer={
-          answer?.correct ? null : (
-            <QuickReplies
-              options={run.options.map((option) => ({
-                id: option.id,
-                label: option.label,
-                state: run.wrongIds.includes(option.id) ? "wrong" : undefined,
-              }))}
-              onChoose={run.choose}
+        composer={
+          answering && typed ? (
+            <Composer
+              value={filled ? EXAMPLE_DOCUMENT : undefined}
+              onFill={() => setFilled(true)}
+              onSend={() => expected && run.choose(expected.id)}
             />
+          ) : (
+            <Composer />
           )
         }
       >
         <ChatLines lines={history} />
+        {/* Documento: só o campo de mensagem, como na demonstração (sem botões). */}
+        {answering && !typed && (
+          <QuickReplies
+            options={run.options.map((option) => ({
+              id: option.id,
+              label: option.label,
+              state: run.wrongIds.includes(option.id) ? "wrong" : undefined,
+            }))}
+            onChoose={run.choose}
+          />
+        )}
       </ChatFrame>
 
       <PageActions>

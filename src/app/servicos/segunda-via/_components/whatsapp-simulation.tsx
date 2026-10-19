@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Check,
-  LogOut,
-  RotateCcw,
-  SendHorizontal,
-  Target,
-  Zap,
-} from "lucide-react";
+import { Check, RotateCcw, Target, Zap } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Celebration } from "@/components/brand/celebration";
 import { scrollJourneyToTop } from "@/components/layout/journey-scroll";
@@ -24,21 +17,21 @@ import { routes } from "../_lib/navigation";
 import { usePracticeRun } from "../_lib/practice-run";
 import { ENERGY, updateProgress } from "../_lib/progress";
 import { TRACK_ID } from "../_lib/steps";
-import chat from "./chat.module.css";
 import { LoadState } from "./load-state";
 import styles from "./practice.module.css";
 import {
   ChatFrame,
   type ChatLine,
   ChatLines,
+  Composer,
+  DOCUMENT_ITEM,
+  EXAMPLE_DOCUMENT,
   QuickReplies,
   ResultCard,
   Typing,
 } from "./whatsapp-chat";
 
 const TYPING_MS = 450;
-const DOCUMENT_ITEM = "item-documento";
-const EXAMPLE_DOCUMENT = "000.000.000-00 (exemplo)";
 
 /**
  * Etapa 3: a conversa inteira com a Clara, como no WhatsApp. Sem “Continuar”,
@@ -151,7 +144,15 @@ function Simulation({ bundle }: { bundle: TrackBundle }) {
   }, [ended]);
 
   function send(optionId: string, text: string) {
-    setLines((current) => [...current, { from: "user", text }]);
+    // A resposta cita a última mensagem da Equatorial, como no WhatsApp.
+    setLines((current) => [
+      ...current,
+      {
+        from: "user",
+        text,
+        quote: current.findLast((line) => line.from === "bot")?.text,
+      },
+    ]);
     setFilled(false);
     run.choose(optionId);
   }
@@ -205,68 +206,35 @@ function Simulation({ bundle }: { bundle: TrackBundle }) {
 
       <ChatFrame
         label="Conversa simulada com a Clara no WhatsApp"
-        footer={
-          ended ? null : waiting && item && !isDocument ? (
-            <QuickReplies
-              options={run.options.map((option) => ({
-                id: option.id,
-                label: option.label,
-              }))}
-              onChoose={(id) =>
-                send(
-                  id,
-                  item.options.find((option) => option.id === id)?.label ?? id,
-                )
-              }
+        composer={
+          waiting && item && isDocument ? (
+            <Composer
+              value={filled ? EXAMPLE_DOCUMENT : undefined}
+              onFill={() => setFilled(true)}
+              onSend={() => expected && send(expected.id, EXAMPLE_DOCUMENT)}
             />
           ) : (
-            <div className={chat.composerArea}>
-              {waiting && item && isDocument && (
-                <QuickReplies
-                  options={run.options
-                    .filter((option) => !option.is_expected)
-                    .map((option) => ({ id: option.id, label: option.label }))}
-                  onChoose={(id) =>
-                    send(
-                      id,
-                      item.options.find((option) => option.id === id)?.label ??
-                        id,
-                    )
-                  }
-                />
-              )}
-              <div className={chat.composer}>
-                <button
-                  type="button"
-                  className={chat.composerInput}
-                  data-filled={filled || undefined}
-                  disabled={!waiting || !isDocument}
-                  onClick={() => setFilled(true)}
-                >
-                  {!waiting
-                    ? "Aguarde a resposta da Clara…"
-                    : filled
-                      ? EXAMPLE_DOCUMENT
-                      : "Toque para preencher o exemplo"}
-                </button>
-                <button
-                  type="button"
-                  className={chat.composerSend}
-                  aria-label="Enviar mensagem"
-                  disabled={!waiting || !filled || !expected}
-                  onClick={() =>
-                    expected && send(expected.id, EXAMPLE_DOCUMENT)
-                  }
-                >
-                  <SendHorizontal size={20} aria-hidden="true" />
-                </button>
-              </div>
-            </div>
+            <Composer waiting={!ended && typing} />
           )
         }
       >
         <ChatLines lines={lines} />
         {typing && <Typing />}
+        {/* Documento: só o campo de mensagem, como na demonstração (sem botões). */}
+        {waiting && item && !isDocument && (
+          <QuickReplies
+            options={run.options.map((option) => ({
+              id: option.id,
+              label: option.label,
+            }))}
+            onChoose={(id) =>
+              send(
+                id,
+                item.options.find((option) => option.id === id)?.label ?? id,
+              )
+            }
+          />
+        )}
         {ended && result && <ResultCard lines={result.lines} />}
       </ChatFrame>
 
@@ -281,10 +249,10 @@ function Simulation({ bundle }: { bundle: TrackBundle }) {
             </Button>
           </>
         ) : (
-          // Durante a conversa a barra fica, como nas outras telas: dá para sair.
-          <ActionLink variant="secondary" href={routes.whatsapp}>
-            <LogOut size={18} aria-hidden="true" /> Sair da simulação
-          </ActionLink>
+          // Durante a conversa a barra fica, como nas outras telas (voltar só no topo).
+          <Button variant="secondary" onClick={restart}>
+            <RotateCcw size={18} aria-hidden="true" /> Recomeçar a conversa
+          </Button>
         )}
       </PageActions>
     </div>

@@ -29,6 +29,19 @@ valor `on`; ausente ou outro valor vale desligado (DEC-EQT-039). Desligada, as r
 segue sem microfone, com chips e ajuda local (`src/config/assistant.ts`). Como é
 `NEXT_PUBLIC_`, a mudança exige reiniciar o dev server ou refazer o build.
 
+`NEXT_PUBLIC_TTS_ELEVENLABS` liga a voz em tempo real pelo ElevenLabs só com `on`
+(DEC-EQT-041, `src/config/tts.ts`). Desligada:
+- nenhum pedido sai para o serviço, e `/api/tts` responde `503 TTS_DISABLED`;
+- as falas fixas pré-geradas (`public/voz`) continuam tocando;
+- o resto fica só no texto, sem a voz do navegador, para o timbre não divergir. Variáveis só do servidor, validadas em
+`getElevenLabsEnv()` (`src/server/env.ts`): `ELEVENLABS_API_KEY` e `ELEVENLABS_VOICE_ID`
+(obrigatórias), `ELEVENLABS_MODEL_ID` (padrão `eleven_flash_v2_5`) e os ajustes
+`ELEVENLABS_STABILITY` (0.4), `ELEVENLABS_SIMILARITY` (0.75), `ELEVENLABS_STYLE` (0) e
+`ELEVENLABS_SPEED` (0.93, de 0.7 a 1.2). Sem configuração válida a rota responde 503 e
+a fala cai para a voz nativa. `bun run voice:generate` usa as mesmas variáveis (mais
+`NEXT_PUBLIC_API_URL`, com o backend rodando) para pré-gerar as falas fixas em
+`public/voz` e o manifesto `src/lib/tts/voice-manifest.json`. Os dois vão para o Git.
+
 `NEXT_PUBLIC_API_URL` define o backend Python com `/api/v1`. Validada por Zod em
 `src/config/api.ts`; disponível no navegador e incorporada ao build, sem segredos.
 Para celular/ngrok e CORS, seguir [HTTP e queries](http-and-queries.md).

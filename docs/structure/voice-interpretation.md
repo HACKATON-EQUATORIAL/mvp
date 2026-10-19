@@ -166,10 +166,69 @@ disparam troca. O modelo limitado entra em cooldown em memória pelo `Retry-Afte
 - Cooldown vale por processo (reinício ou instância serverless nova o zera).
 - Limites e IDs conferidos na documentação da Groq em 2026-10-17; podem mudar.
 
-## Respostas em voz (TTS nativo)
+## Respostas em voz (ElevenLabs ou TTS nativo)
 
-`hooks/use-speech-synthesis.ts` usa `speechSynthesis` (pt-BR; prefere voz local pt-BR, depois
-qualquer `pt`). A Groq não tem TTS em português, então não há rota nem chave. O host fala
+Os chamadores usam `hooks/use-speech.ts` (DEC-EQT-041), com a mesma interface do hook
+nativo e mais `preload` e `warm`. A fala vem de uma de duas fontes. A primeira vale sempre; a
+segunda, só com `NEXT_PUBLIC_TTS_ELEVENLABS=on`. Desligada, fala sem arquivo fica só no texto,
+sem a voz do navegador.
+
+1. **Falas fixas pré-geradas.** `bun run voice:generate` (`scripts/generate-voice.ts`)
+   coleta as falas que não dependem da LLM e gera um MP3 por fala em
+   `public/voz/<versão>/<chave>.mp3`, com o manifesto em `src/lib/tts/voice-manifest.json`.
+   - **Falas coletadas:** as de `lib/tts/fixed-phrases.ts`, os `teaches` das telas, o da
+     etapa 2 (`partTeaches`) e o conteúdo do backend (narração da demonstração, dicas,
+     lições e orientações das dificuldades).
+   - **Chave e versão:** a chave é `phraseKey(texto)` (síncrona, também no navegador). A
+     versão muda quando voz, modelo, ajustes ou formato mudam.
+   - **Regenerar:** o script não refaz o que já existe e apaga versões e falas antigas.
+     Rodar de novo depois de mudar texto fixo, conteúdo do backend ou voz.
+   - **Entrega:** `next.config.ts` serve `/voz` com cache `immutable`. A fala toca em
+     poucos milissegundos e não gasta créditos.
+2. **Tempo real** (respostas da LLM, confirmação de saída com “pergunta X de Y”). O
+   `<audio>` toca `GET /api/tts?t=<texto>` em stream.
+   - **Provedor:** `server/tts/elevenlabs.ts` usa um `Agent` do undici com keep-alive de
+     120 s, porque o fetch do Node fecha em 4 s e reabrir TCP + TLS custa ~0,4 s.
+   - **Aquecimento:** `GET /api/tts?warm=1` abre a conexão ao tocar no microfone e ao
+     começar a interpretação.
+   - **Medido:** 0,52–0,63 s até o primeiro byte, contra 1,0–1,7 s antes.
+   - **Cache:** 200 falas em memória, pedidos iguais em andamento compartilham uma
+     geração, e o navegador guarda com `private, max-age=86400`.
+
+Formato `mp3_22050_32`: voz nítida com metade do tamanho, igual no estático e no tempo
+real.
+
+**Pré-carga:**
+- A demonstração baixa todas as suas falas ao abrir.
+- O assistente baixa as falas prováveis da tela (dica, lição, `teaches`, “já está nesta
+  tela”) e, ao abrir “Estou com problema”, as orientações.
+- Arquivo estático vai direto para o cache. Fala sem arquivo entra em fila, uma geração
+  por vez.
+
+**Sincronia e falhas:**
+- Na demonstração, voz e balão começam junto com o “digitando…”. Depois que a voz
+  termina, o próximo passo vem em 0,5 s.
+- `speaking` fica verdadeiro desde o pedido.
+- Se o `<audio>` falhar, aquela fala sai pela voz nativa. Em 503/403 da rota, o tempo
+  real fica desligado até recarregar; os arquivos estáticos continuam valendo.
+- **Proteção:** a rota recusa outras origens (`Sec-Fetch-Site`) e aceita até 400
+  caracteres.
+
+**Som bloqueado:** sem toque anterior na página, o navegador recusa tocar (`NotAllowedError`). O hook
+expõe `blocked` e toca a fala atual no primeiro toque. A demonstração não começa sozinha
+nesse caso (`navigator.userActivation.hasBeenActive === false`): espera o ▶ (“Toque em ▶ para
+começar”) e narra o passo 1.
+
+**Fala do mascote com `speak`:** `setMascotSpeech({ text, speak: true })` faz o host ler o balão em voz
+alta, respeitando o som. O balão não fecha sozinho enquanto a voz toca, e trocar ou limpar a
+fala corta a voz. É usada nas dicas da etapa 2 (“Ver uma dica” e “Explicar melhor”), que
+entram na pré-geração (`hint` e `explanation.text` dos itens).
+
+Só falam a narração da etapa 1 e as respostas do assistente (incluindo o botão “ouvir”),
+as dicas pedidas na etapa 2, e só com o som ligado. Dica ociosa do balão, chat e feedbacks não geram áudio.
+
+Fallback e flag desligada: `hooks/use-speech-synthesis.ts` usa `speechSynthesis` (pt-BR;
+prefere voz local pt-BR, depois qualquer `pt`). O host fala
 respostas que não navegam (informação, esclarecimento, cancelamento, fora de escopo) e a
 pergunta de confirmação do guard; propostas que navegam não são faladas. O botão de
 alto-falante no cabeçalho liga/desliga (padrão ligado, só em memória). A fala é cancelada ao

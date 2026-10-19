@@ -62,27 +62,11 @@
   padding: 14px 12px 16px;
 }
 
-.footer[hidden] {
-  display: none;
-}
-
+/* Campo de mensagem: sempre presente, como no WhatsApp. */
 .footer {
   flex-shrink: 0;
-  display: grid;
-  gap: 8px;
-  padding: 10px 12px 12px;
-  border-top: 1px solid rgb(0 0 0 / 6%);
+  padding: 8px 10px 10px;
   background: #f0f2f5;
-}
-
-/*
- * Tablet e desktop: respostas recuadas dos dois lados (simétrico), deixando à direita
- * a faixa do Eletriquinho (72px + folga), que fica no canto e não cobre mais a opção.
- */
-@media (min-width: 768px) {
-  .footer {
-    padding-inline: 80px;
-  }
 }
 
 /* Telas baixas: conversa curta ocupa menos altura, deixando as respostas à vista. */
@@ -96,8 +80,8 @@
   justify-self: start;
   max-width: 85%;
   margin: 0;
-  padding: 8px 12px;
-  border-radius: 4px 12px 12px;
+  padding: 6px 10px 4px;
+  border-radius: 4px 10px 10px;
   background: #fff;
   color: #111b21;
   font-size: 0.9375rem;
@@ -105,10 +89,56 @@
   box-shadow: 0 1px 0 rgb(0 0 0 / 8%);
 }
 
+.bubble p {
+  margin: 0;
+}
+
 .user {
   justify-self: end;
-  border-radius: 12px 4px 12px 12px;
+  border-radius: 10px 4px 10px 10px;
   background: #d9fdd3;
+}
+
+/* Hora e confirmação de leitura, no canto do balão. */
+.meta {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 2px;
+  color: #667781;
+  font-size: 0.6875rem;
+  line-height: 1rem;
+}
+
+.ticks {
+  color: #53bdeb;
+  letter-spacing: -0.2em;
+}
+
+/* Citação da mensagem respondida (como “responder” no WhatsApp). */
+.quote {
+  display: grid;
+  gap: 2px;
+  margin-bottom: 4px;
+  padding: 4px 8px;
+  border-left: 4px solid #f15c6d;
+  border-radius: 6px;
+  background: rgb(0 0 0 / 5%);
+  font-size: 0.8125rem;
+  line-height: 1.125rem;
+}
+
+.quote strong {
+  color: #e2584f;
+  font-weight: var(--font-weight-bold);
+}
+
+.quote span {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #54656f;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .past {
@@ -117,6 +147,7 @@
 
 .typing {
   display: flex;
+  justify-self: start;
   gap: 4px;
   padding: 12px 14px;
 }
@@ -150,10 +181,14 @@
   }
 }
 
+/* Botões presos ao balão da Equatorial, na largura do balão (como no WhatsApp). */
 .replies {
   display: grid;
-  gap: 6px;
-  margin: 0;
+  justify-self: start;
+  gap: 2px;
+  width: 85%;
+  max-width: 400px;
+  margin: -6px 0 0;
   padding: 0;
   border: 0;
 }
@@ -164,16 +199,21 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  min-height: 48px;
+  min-height: 46px;
   padding: 8px 14px;
-  border: 2px solid #25d366;
-  border-radius: var(--radius-full);
+  border: 2px solid transparent;
+  border-radius: 8px;
   background: #fff;
-  color: #075e54;
+  color: #008069;
   font: inherit;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-semibold);
   text-align: center;
   cursor: pointer;
+  box-shadow: 0 1px 0 rgb(0 0 0 / 8%);
+}
+
+.reply:hover:not(:disabled) {
+  background: #f5f6f6;
 }
 
 .reply:focus-visible {
@@ -393,18 +433,39 @@
   background: var(--primary-500);
 }
 
+/* Som bloqueado até um toque: o ▶ pulsa e o texto pede o toque. */
+.playerRow p[data-attention] {
+  color: var(--primary-500);
+}
+
+.playerButton[data-attention] {
+  animation: attention 1.4s ease-in-out infinite;
+}
+
+@keyframes attention {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(255 196 0 / 70%);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgb(255 196 0 / 0%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .playerButton[data-attention] {
+    animation: none;
+    outline: 3px solid var(--highlight-500);
+  }
+}
+
 .playerButton:focus-visible,
 .segments button:focus-visible {
   outline: 3px solid var(--primary-400);
   outline-offset: 2px;
 }
 
-/* Campo de mensagem do WhatsApp (etapa 3): só preenche o exemplo, nunca dado real. */
-.composerArea {
-  display: grid;
-  gap: 8px;
-}
-
+/* Campo de mensagem do WhatsApp: só preenche o exemplo, nunca dado real. */
 .composer {
   display: flex;
   align-items: center;
@@ -412,6 +473,7 @@
 }
 
 .composerInput {
+  position: relative;
   flex: 1;
   min-width: 0;
   min-height: 48px;
@@ -431,6 +493,7 @@
 }
 
 .composerSend {
+  position: relative;
   display: grid;
   flex: none;
   place-items: center;

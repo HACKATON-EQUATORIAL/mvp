@@ -18,15 +18,14 @@ type JourneyPageProps = {
   actions: ReactNode;
   voiceContext?: VoicePageContext;
   voiceSlot?: ReactNode;
-  /** Sub-ação no topo: volta a um nível da jornada (ex.: o mapa), dizendo o destino. */
+  /** Único “voltar” da tela, no topo: sobe um nível da jornada (ex.: o mapa). */
   back?: { href: string; label: string };
-  /** Etapa anterior da sequência, como botão secundário na barra de ações. */
-  previous?: { href: string; label: string };
 };
 
 /**
  * Tela no formato de app: só o miolo rola; a barra de ações fica presa embaixo,
- * com espaço para o assistente na última linha. Componentes de cliente podem enviar botões para
+ * com espaço para o assistente na última linha. Barra: só ações da tela,
+ * empilhadas (principal em cima, no máximo uma secundária); voltar só no topo. Componentes de cliente podem enviar botões para
  * a barra com `PageActions`.
  */
 export function JourneyPage({
@@ -38,7 +37,6 @@ export function JourneyPage({
   voiceContext,
   voiceSlot,
   back,
-  previous,
 }: JourneyPageProps) {
   return (
     <main tabIndex={-1} className={`${styles.page} journey-page`}>
@@ -62,17 +60,6 @@ export function JourneyPage({
       <div id={ASSISTANT_DOCK_ID} className={styles.dock} />
       <div id={JOURNEY_ACTIONS_ID} className={styles.actions}>
         {actions}
-        {previous && (
-          <ActionLink
-            href={previous.href}
-            variant="secondary"
-            className={styles.previous}
-          >
-            <ArrowLeft size={20} aria-hidden="true" />
-            {/* No celular, só a seta aparece; o nome segue para leitores de tela. */}
-            <span className={styles.previousLabel}>{previous.label}</span>
-          </ActionLink>
-        )}
       </div>
       {voiceSlot ??
         (voiceContext ? <VoiceHelp context={voiceContext} /> : null)}

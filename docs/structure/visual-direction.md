@@ -270,4 +270,4 @@ O celular não muda; tudo abaixo vale a partir de 768px, salvo onde indicado.
 - A escolha de canal tem eyebrow “TREINO”, intro que explica “treina aqui, depois faz de
   verdade” e a linha das etapas no card disponível.
 - O Eletriquinho avisa “Aqui é treino…” ao abrir a escolha de canal (e dá boas-vindas na
-  home), uma vez por sessão (F5 fala de novo). O botão de som do balão muta e desmuta.
+  home), uma vez por entrada no site (F5 ou novo acesso falam de novo). O botão de som do balão muta e desmuta.

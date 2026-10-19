@@ -8,18 +8,19 @@ import { setMascotSpeech } from "@/lib/assistant/mascot-speech";
 const IGNORE =
   "a, [data-sound-toggle], [data-assistant-trigger], .voice-drawer-popup";
 
-// Aberturas já ditas nesta sessão (sessionStorage): navegar e voltar não repete.
-// Recarregar (F5) conta como sessão nova: as marcas são apagadas uma vez, ao
-// carregar o site.
+// Aberturas já ditas nesta sessão (sessionStorage): navegar dentro do app e
+// voltar não repete. Entrar no site carregando a página (endereço digitado, link
+// ou F5) conta como sessão nova: as marcas são apagadas uma vez, ao carregar.
+// Só o voltar/avançar do navegador (`back_forward`) mantém as marcas.
 const PREFIX = "digitaliza:fala:";
-let checkedReload = false;
-function resetOnReload() {
-  if (checkedReload) return;
-  checkedReload = true;
+let checkedLoad = false;
+function resetOnLoad() {
+  if (checkedLoad) return;
+  checkedLoad = true;
   const navigation = performance.getEntriesByType("navigation")[0] as
     | PerformanceNavigationTiming
     | undefined;
-  if (navigation?.type !== "reload") return;
+  if (navigation?.type === "back_forward") return;
   try {
     for (const name of Object.keys(sessionStorage))
       if (name.startsWith(PREFIX)) sessionStorage.removeItem(name);
@@ -44,7 +45,7 @@ function markSpoken(key: string) {
 
 /**
  * Fala de abertura do Eletriquinho numa tela (`key`): balão e voz juntos, uma
- * vez por sessão (F5 conta como nova), se o som estiver ligado; quem não quiser, muta
+ * vez por entrada no site (F5 ou novo acesso contam como nova), se o som estiver ligado; quem não quiser, muta
  * pelo botão do balão. Sem nenhuma interação antes na página (link direto,
  * recarregar), o navegador bloqueia o som: nada aparece até o primeiro clique
  * ou tecla, e aí balão e voz abrem juntos. `click`/`keydown` porque no celular
@@ -52,7 +53,7 @@ function markSpoken(key: string) {
  */
 export function useIntroSpeech(text: string, key: string) {
   useEffect(() => {
-    resetOnReload();
+    resetOnLoad();
     // A tela pode voltar a aparecer (o Next mantém telas visitadas montadas):
     // a marca é conferida a cada exibição.
     if (wasSpoken(key)) return;

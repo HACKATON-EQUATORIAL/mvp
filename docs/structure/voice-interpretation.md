@@ -232,8 +232,9 @@ jornada, sugestões das telas e serviços disponíveis).
 
 **Falas de abertura e som:**
 - `useIntroSpeech(texto, chave)` abre balão e voz uma vez por sessão (`sessionStorage`,
-  `digitaliza:fala:<chave>`), se o som estiver ligado. Navegar e voltar não repete; o F5
-  apaga as marcas (navegação `reload`). A marca é gravada logo depois de abrir, para não
+  `digitaliza:fala:<chave>`), se o som estiver ligado. Navegar dentro do app e voltar não
+  repete. Carregar a página (endereço, link ou F5; navegação diferente de `back_forward`)
+  apaga as marcas. A marca é gravada logo depois de abrir, para não
   falhar no Strict Mode nem repetir quando o Next reexibe uma tela já montada.
 - Trocar de tela só corta a voz de resposta do assistente (`mascotVoice`). A voz do
   balão para quando a tela dona limpa a fala.

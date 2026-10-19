@@ -33,7 +33,7 @@ export function ChannelChoice() {
   const bundle = useGetBundle(TRACK_ID);
 
   // Ao abrir, o Eletriquinho avisa que é treino.
-  useIntroSpeech(CHANNEL_INTRO);
+  useIntroSpeech(CHANNEL_INTRO, "canal");
 
   if (!bundle.data)
     return (

@@ -38,7 +38,7 @@ const icons: Record<string, LucideIcon> = {
 export function TrackSelection() {
   const query = useGetTracks();
   // Boas-vindas ao entrar no site: explica rapidamente o que dá para fazer aqui.
-  useIntroSpeech(HOME_INTRO);
+  useIntroSpeech(HOME_INTRO, "inicio");
   const tracks = query.data ?? [];
   const voiceContext: VoicePageContext = {
     id: "home-tracks",

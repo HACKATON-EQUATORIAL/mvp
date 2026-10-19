@@ -145,6 +145,10 @@ export function VoiceAssistantHost() {
   const locationKey = `${pathname}:${context?.id}`;
   const idle = useIdle(IDLE_TIP_MS, locationKey);
   const previousLocation = useRef(locationKey);
+  // A voz atual é a do balão (abertura, dica pedida)? Ela tem dono próprio: para
+  // quando a tela que a criou limpa a fala. Trocar de tela só corta a resposta
+  // do assistente (a troca registra o contexto depois e cortava a abertura).
+  const mascotVoice = useRef(false);
 
   const transcriptionHandler = useRef<((text: string) => void) | null>(null);
   const transcriptionHandled = useRef(false);
@@ -175,7 +179,7 @@ export function VoiceAssistantHost() {
     previousLocation.current = locationKey;
     interpretation.reset();
     speech.dismissCapture();
-    tts.cancel();
+    if (!mascotVoice.current) tts.cancel();
     setPendingActionId(null);
     setOpen(false);
     assistant.reset();
@@ -220,7 +224,10 @@ export function VoiceAssistantHost() {
     const before = spokenSpeech.current;
     spokenSpeech.current = mascotSpeech;
     if (mascotSpeech?.speak) {
-      if (getSoundEnabled()) speakNow(mascotSpeech.text);
+      if (getSoundEnabled()) {
+        mascotVoice.current = true;
+        speakNow(mascotSpeech.text);
+      }
     } else if (before?.speak) cancelSpeech();
   }, [mascotSpeech, speakNow, cancelSpeech]);
 
@@ -436,7 +443,9 @@ export function VoiceAssistantHost() {
 
   function speakReply(text: string) {
     // Lê o valor atual: respostas assíncronas não usam o do render que as iniciou.
-    if (getSoundEnabled()) tts.speak(text);
+    if (!getSoundEnabled()) return;
+    mascotVoice.current = false;
+    tts.speak(text);
   }
 
   function listenAgain(text: string) {
@@ -452,7 +461,10 @@ export function VoiceAssistantHost() {
     const next = !getSoundEnabled();
     setSoundEnabled(next);
     if (!next) tts.cancel();
-    else if (text) tts.speak(text);
+    else if (text) {
+      mascotVoice.current = true;
+      tts.speak(text);
+    }
   }
 
   function toggleVoiceReplies() {

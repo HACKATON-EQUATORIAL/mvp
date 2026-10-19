@@ -231,8 +231,12 @@ O script pré-gera essas respostas e as duas falas de cada destino possível (de
 jornada, sugestões das telas e serviços disponíveis).
 
 **Falas de abertura e som:**
-- `useIntroSpeech(texto)` mostra o balão e fala a cada entrada na tela, se o som estiver
-  ligado.
+- `useIntroSpeech(texto, chave)` abre balão e voz uma vez por sessão (`sessionStorage`,
+  `digitaliza:fala:<chave>`), se o som estiver ligado. Navegar e voltar não repete; o F5
+  apaga as marcas (navegação `reload`). A marca é gravada logo depois de abrir, para não
+  falhar no Strict Mode nem repetir quando o Next reexibe uma tela já montada.
+- Trocar de tela só corta a voz de resposta do assistente (`mascotVoice`). A voz do
+  balão para quando a tela dona limpa a fala.
 - Sem interação anterior na página, o navegador bloqueia o som. Então o balão não
   aparece até o primeiro clique ou tecla (fora de link e do assistente), e aí balão e
   voz abrem juntos. São `click`/`keydown` porque no celular o som só é liberado no fim

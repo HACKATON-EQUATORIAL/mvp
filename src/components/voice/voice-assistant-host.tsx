@@ -37,10 +37,7 @@ import {
   localVoiceOptions,
   type VoiceAction,
 } from "@/lib/assistant/journey";
-import {
-  setMascotSpeech,
-  useMascotSpeech,
-} from "@/lib/assistant/mascot-speech";
+import { useMascotSpeech } from "@/lib/assistant/mascot-speech";
 import {
   type ConversationTurn,
   type InterpretationRequest,
@@ -449,15 +446,9 @@ export function VoiceAssistantHost() {
 
   /**
    * Botão de som do balão: muta/desmuta o app (mesma preferência do alto-falante
-   * do assistente). Desmutar volta a ler o balão. Fala de abertura esperando o
-   * primeiro toque (som bloqueado pelo navegador): o toque no botão a libera.
+   * do assistente). Desmutar volta a ler o balão.
    */
   function toggleCornerSound(text?: string) {
-    if (mascotSpeech?.waitTap) {
-      setSoundEnabled(true);
-      setMascotSpeech({ ...mascotSpeech, speak: true, waitTap: false });
-      return;
-    }
     const next = !getSoundEnabled();
     setSoundEnabled(next);
     if (!next) tts.cancel();
@@ -633,7 +624,7 @@ export function VoiceAssistantHost() {
             // da tela só quando a pessoa fica um tempo parada.
             text={cornerText}
             hidden={open}
-            holdOpen={tts.speaking || !!mascotSpeech?.waitTap}
+            holdOpen={tts.speaking}
             soundOn={voiceReplies}
             onSound={() => toggleCornerSound(cornerText)}
             compact={!!practice}
@@ -641,6 +632,7 @@ export function VoiceAssistantHost() {
             <DrawerTrigger
               render={
                 <MascotButton
+                  data-assistant-trigger
                   aria-label="Abrir assistente Eletriquinho"
                   aria-expanded={open}
                   mood={mascotSpeech?.mood ?? "happy"}

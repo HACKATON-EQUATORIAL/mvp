@@ -3,30 +3,40 @@
 import { useEffect } from "react";
 import { setMascotSpeech } from "@/lib/assistant/mascot-speech";
 
+// Toques que não devem disparar a fala de abertura: link (leva a outra tela) e
+// o próprio assistente (abrir o Eletriquinho já é outra conversa).
+const IGNORE =
+  "a, [data-sound-toggle], [data-assistant-trigger], .voice-drawer-popup";
+
 /**
- * Fala de abertura do Eletriquinho numa tela: ao entrar, o balão aparece e a
- * voz toca (como na etapa 1), se o som estiver ligado; quem não quiser, muta
- * pelo botão do balão. Sem nenhum toque antes na página (link direto,
- * recarregar), o navegador bloqueia o som: o balão fica aberto e a voz sai no
- * primeiro toque que não seja num link (tocar num link leva a outra tela). O
- * botão de som do balão trata esse caso sozinho (ver o host).
+ * Fala de abertura do Eletriquinho numa tela: ao entrar, balão e voz juntos
+ * (como na etapa 1), se o som estiver ligado; quem não quiser, muta pelo botão
+ * do balão. Sem nenhuma interação antes na página (link direto, recarregar), o
+ * navegador bloqueia o som: nada aparece até o primeiro clique ou tecla, e aí
+ * balão e voz abrem juntos (sem balão mudo esperando). `click`/`keydown` porque
+ * no celular o som só é liberado no fim do toque, não no `pointerdown`.
  */
 export function useIntroSpeech(text: string) {
   useEffect(() => {
+    const open = () => setMascotSpeech({ text, mood: "happy", speak: true });
     if (navigator.userActivation?.hasBeenActive !== false) {
-      setMascotSpeech({ text, mood: "happy", speak: true });
+      open();
       return () => setMascotSpeech(null);
     }
-    setMascotSpeech({ text, mood: "happy", speak: false, waitTap: true });
-    const onFirstTap = (event: PointerEvent) => {
-      if ((event.target as Element | null)?.closest("a, [data-sound-toggle]"))
-        return;
-      document.removeEventListener("pointerdown", onFirstTap, true);
-      setMascotSpeech({ text, mood: "happy", speak: true });
+    const onFirst = (event: Event) => {
+      if (event instanceof KeyboardEvent && event.key === "Escape") return;
+      if ((event.target as Element | null)?.closest?.(IGNORE)) return;
+      stop();
+      open();
     };
-    document.addEventListener("pointerdown", onFirstTap, true);
+    const stop = () => {
+      document.removeEventListener("click", onFirst, true);
+      document.removeEventListener("keydown", onFirst, true);
+    };
+    document.addEventListener("click", onFirst, true);
+    document.addEventListener("keydown", onFirst, true);
     return () => {
-      document.removeEventListener("pointerdown", onFirstTap, true);
+      stop();
       setMascotSpeech(null);
     };
   }, [text]);

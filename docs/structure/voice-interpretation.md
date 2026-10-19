@@ -233,9 +233,10 @@ jornada, sugestões das telas e serviços disponíveis).
 **Falas de abertura e som:**
 - `useIntroSpeech(texto)` mostra o balão e fala a cada entrada na tela, se o som estiver
   ligado.
-- Sem toque anterior na página, o navegador bloqueia o som. O balão fica aberto
-  (`waitTap`) até o primeiro toque fora de um link, ou até o toque no botão de som, que
-  libera a fala.
+- Sem interação anterior na página, o navegador bloqueia o som. Então o balão não
+  aparece até o primeiro clique ou tecla (fora de link e do assistente), e aí balão e
+  voz abrem juntos. São `click`/`keydown` porque no celular o som só é liberado no fim
+  do toque.
 - O balão do Eletriquinho sempre tem o botão de som (`MascotCorner` `soundOn`/`onSound`),
   que muta ou desmuta o app (`setSoundEnabled`, a mesma preferência do alto-falante do
   assistente). Mudo corta a fala; desmutar lê o balão.

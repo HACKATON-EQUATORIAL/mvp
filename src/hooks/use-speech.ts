@@ -186,20 +186,21 @@ export function useSpeech() {
         if (error.name === "AbortError") return;
         if (error.name === "NotAllowedError") {
           // Página aberta sem toque antes (link direto, recarregar): o navegador
-          // bloqueia o som. A fala toca no primeiro toque, se ainda for a atual.
+          // bloqueia o som. A fala toca no primeiro clique ou tecla (no celular o
+          // som só é liberado no fim do toque), se ainda for a atual.
           setSpeaking(false);
           setBlocked(true);
           const retry = () => {
+            document.removeEventListener("click", retry, true);
+            document.removeEventListener("keydown", retry, true);
             if (id !== request.current) return;
             setSpeaking(true);
             audio.play().catch(() => {
               if (id === request.current) setSpeaking(false);
             });
           };
-          document.addEventListener("pointerdown", retry, {
-            once: true,
-            capture: true,
-          });
+          document.addEventListener("click", retry, true);
+          document.addEventListener("keydown", retry, true);
           return;
         }
         fallback();

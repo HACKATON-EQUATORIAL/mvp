@@ -262,3 +262,12 @@ O celular não muda; tudo abaixo vale a partir de 768px, salvo onde indicado.
     campo nas 3 etapas, sem botões de opção, igual à demonstração.
   - Na demonstração, o dedo toca a opção ou, no documento, o enviar com o exemplo
     preenchido.
+
+## Deixar claro que é treino (DEC-EQT-043)
+
+- Cards de serviço e de canal levam a etiqueta “Treino” (`ChoiceCard` `tag`) e textos
+  “Aprenda a…”/“Treinar no…”. Nunca descrever o serviço real como se o card o abrisse.
+- A escolha de canal tem eyebrow “TREINO”, intro que explica “treina aqui, depois faz de
+  verdade” e a linha das etapas no card disponível.
+- O Eletriquinho avisa “Aqui é treino…” ao abrir a escolha de canal (e dá boas-vindas na
+  home), com voz a cada entrada. O botão de som do balão muta e desmuta.

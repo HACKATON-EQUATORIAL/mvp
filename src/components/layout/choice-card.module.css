@@ -96,6 +96,31 @@ a.card:focus-visible {
   font-size: 1.0625rem;
 }
 
+.text .title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+
+/* Etiqueta “Treino”: lida antes do resto, separa o simulado do atendimento real. */
+.text .tag {
+  padding: 1px 8px;
+  border-radius: var(--radius-full);
+  background: var(--primary-50);
+  color: var(--primary-500);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-bold);
+  line-height: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.card[aria-disabled="true"] .tag {
+  background: var(--surface-muted);
+  color: var(--text-muted);
+}
+
 .text span {
   color: var(--text-muted);
   font-size: 0.9375rem;

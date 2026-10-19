@@ -173,20 +173,51 @@
   margin: 0;
 }
 
-.speechClose {
+/* Fechar em cima, “Ouvir” embaixo, sem roubar largura do texto. */
+.speechTools {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin: -8px -4px -6px 0;
+}
+
+.speechClose,
+.speechListen {
   pointer-events: auto;
   display: grid;
   flex: none;
   place-items: center;
   width: 36px;
   height: 36px;
-  margin: -8px -4px 0 0;
+  margin: 0;
   padding: 0;
   border: 0;
   border-radius: 50%;
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
+}
+
+.speechListen {
+  color: var(--primary-500);
+}
+
+.speechListen:hover,
+.speechClose:hover {
+  background: var(--primary-50);
+}
+
+/* Mudo: ícone riscado e cor neutra. */
+.speechListen[data-muted] {
+  color: var(--text-muted);
+}
+
+.speechListen:focus-visible,
+.speechClose:focus-visible {
+  outline: 3px solid var(--primary-400);
+  outline-offset: 1px;
 }
 
 /* Telas de chat (lição em andamento): mascote menor para não cobrir a conversa. */

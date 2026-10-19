@@ -8,6 +8,8 @@ export type MascotSpeech = {
   text: string;
   mood?: EletriquinhoMood;
   speak?: boolean;
+  /** Fala de abertura esperando o primeiro toque: o balão não fecha sozinho. */
+  waitTap?: boolean;
 } | null;
 
 let speech: MascotSpeech = null;
@@ -17,7 +19,8 @@ export function setMascotSpeech(next: MascotSpeech) {
   if (
     next?.text === speech?.text &&
     next?.mood === speech?.mood &&
-    next?.speak === speech?.speak
+    next?.speak === speech?.speak &&
+    next?.waitTap === speech?.waitTap
   )
     return;
   speech = next;

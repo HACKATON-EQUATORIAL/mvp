@@ -16,7 +16,9 @@ import { ChoiceCard, choiceCardStyles } from "@/components/layout/choice-card";
 import { JourneyPage } from "@/components/layout/journey-page";
 import { Button } from "@/components/ui/button";
 import type { VoicePageContext } from "@/components/voice/voice-page-context";
+import { useIntroSpeech } from "@/hooks/use-intro-speech";
 import { useGetTracks } from "@/http/track/get-tracks";
+import { HOME_INTRO } from "@/lib/tts/fixed-phrases";
 import type { TrackSummary } from "@/schemas/http/track";
 import styles from "./track-selection.module.css";
 import { TrackSelectionSkeleton } from "./track-selection-skeleton";
@@ -35,6 +37,8 @@ const icons: Record<string, LucideIcon> = {
 
 export function TrackSelection() {
   const query = useGetTracks();
+  // Boas-vindas ao entrar no site: explica rapidamente o que dá para fazer aqui.
+  useIntroSpeech(HOME_INTRO);
   const tracks = query.data ?? [];
   const voiceContext: VoicePageContext = {
     id: "home-tracks",
@@ -103,11 +107,13 @@ export function TrackSelection() {
   );
 }
 
+// Descrevem o treino, não o serviço real (as pessoas achavam que iriam direto
+// para o atendimento).
 const descriptions: Record<string, string> = {
-  "segunda-via": "Peça a outra via da sua conta de luz.",
-  "consultar-debitos": "Veja se há contas em aberto.",
-  "falta-de-energia": "Avise quando a luz cair.",
-  "tarifa-social": "Desconto na conta para quem tem direito.",
+  "segunda-via": "Aprenda a pedir a outra via da sua conta de luz.",
+  "consultar-debitos": "Aprenda a ver se há contas em aberto.",
+  "falta-de-energia": "Aprenda a avisar quando a luz cair.",
+  "tarifa-social": "Aprenda a pedir o desconto na conta, se tiver direito.",
 };
 
 function TrackItem({ track }: { track: TrackSummary }) {
@@ -127,10 +133,11 @@ function TrackItem({ track }: { track: TrackSummary }) {
           available
             ? started
               ? `Continuar · ${energy} de ${ENERGY_MAX} kWh`
-              : "Comece em 2 minutos"
+              : "Treino com conta de exemplo · 2 min"
             : undefined
         }
         progress={available && started ? energy / ENERGY_MAX : undefined}
+        tag="Treino"
       />
     </li>
   );

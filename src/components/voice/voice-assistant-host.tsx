@@ -27,13 +27,20 @@ import { useVoiceAssistant } from "@/hooks/use-voice-assistant";
 import { useVoiceCatalog } from "@/hooks/use-voice-catalog";
 import { useVoiceInterpretation } from "@/hooks/use-voice-interpretation";
 import { useGetBundle } from "@/http/track/get-bundle";
+import {
+  leaveConfirmation,
+  NO_ANSWER_FALLBACK,
+} from "@/lib/assistant/fixed-replies";
 import { isInternalVoiceHref } from "@/lib/assistant/interpret-client";
 import {
   buildVoiceActions,
   localVoiceOptions,
   type VoiceAction,
 } from "@/lib/assistant/journey";
-import { useMascotSpeech } from "@/lib/assistant/mascot-speech";
+import {
+  setMascotSpeech,
+  useMascotSpeech,
+} from "@/lib/assistant/mascot-speech";
 import {
   type ConversationTurn,
   type InterpretationRequest,
@@ -60,14 +67,6 @@ import { VoiceInterpretationStep } from "./voice-interpretation-step";
 import { VoiceChips, VoiceStep } from "./voice-step";
 import { VoiceSuggestionConfirmation } from "./voice-suggestion-confirmation";
 import { VoiceWelcomeStep } from "./voice-welcome-step";
-
-function leaveConfirmation(label: string) {
-  const activity = getPracticeActivity();
-  const where = activity
-    ? `Você está na pergunta ${activity.current} de ${activity.total}. `
-    : "";
-  return `${where}Se sair agora, pode continuar a prática depois de onde parou. Quer ir para ${label.toLocaleLowerCase("pt-BR")}?`;
-}
 
 const sameScreen: InterpretationResult = {
   type: "information",
@@ -101,9 +100,7 @@ function withoutAnswer(
   if (!normalize(result.message).includes(expected)) return result;
   return {
     ...result,
-    message:
-      activity.hint ??
-      "Leia a mensagem da Clara com calma e escolha a opção que combina com o seu pedido.",
+    message: activity.hint ?? NO_ANSWER_FALLBACK,
   };
 }
 
@@ -323,7 +320,7 @@ export function VoiceAssistantHost() {
     const local: InterpretationResult = {
       type: "help",
       message,
-      optionIds: optionIds.filter((id) => id !== here?.id).slice(0, 2),
+      optionIds: optionIds.filter((id) => id !== here?.id).slice(0, 3),
       actionId: null,
       showCatalog: false,
     };
@@ -339,6 +336,8 @@ export function VoiceAssistantHost() {
   /** Ajuda local: dica do item, instrução do passo ou o que a tela ensina. */
   function localHelp() {
     const activity = getPracticeActivity();
+    // Dica dada numa prática conta como apoio (mesma regra da resposta da LLM).
+    if (activity && activity.mode !== "demo") notifyAssistantHelp();
     showLocal(
       (activity && activity.mode !== "demo"
         ? activity.hint
@@ -346,6 +345,8 @@ export function VoiceAssistantHost() {
         context?.screen?.teaches ??
         context?.tip ??
         DEFAULT_HELP,
+      // Depois da ajuda, os mesmos caminhos da tela continuam à mão.
+      options.map((item) => item.id),
     );
   }
 
@@ -368,16 +369,14 @@ export function VoiceAssistantHost() {
     );
   }
 
-  /** Atalho “Me explica esta tela” / “Me dá uma dica”: pede ajuda sem precisar falar. */
+  /**
+   * Atalho “Me explica esta tela” / “Me dá uma dica”: o pedido já é conhecido,
+   * então responde com a ajuda local (dica, lição ou o que a tela ensina, com
+   * áudio pré-gerado), sem transcrição nem LLM. Só a fala no microfone vai à IA.
+   */
   function explainScreen() {
-    if (!assistantAiEnabled) return localHelp();
-    const text =
-      practice && practice.mode !== "demo"
-        ? "Me dá uma dica para esta pergunta, sem dizer a resposta."
-        : "Não entendi esta tela. Me explica o que faço aqui?";
     tts.prime();
-    assistant.completeTranscript(text);
-    void interpretTranscript(text);
+    localHelp();
   }
 
   function cancelCapture() {
@@ -446,6 +445,23 @@ export function VoiceAssistantHost() {
   function listenAgain(text: string) {
     if (tts.speaking) tts.cancel();
     else speakReply(text);
+  }
+
+  /**
+   * Botão de som do balão: muta/desmuta o app (mesma preferência do alto-falante
+   * do assistente). Desmutar volta a ler o balão. Fala de abertura esperando o
+   * primeiro toque (som bloqueado pelo navegador): o toque no botão a libera.
+   */
+  function toggleCornerSound(text?: string) {
+    if (mascotSpeech?.waitTap) {
+      setSoundEnabled(true);
+      setMascotSpeech({ ...mascotSpeech, speak: true, waitTap: false });
+      return;
+    }
+    const next = !getSoundEnabled();
+    setSoundEnabled(next);
+    if (!next) tts.cancel();
+    else if (text) tts.speak(text);
   }
 
   function toggleVoiceReplies() {
@@ -609,13 +625,17 @@ export function VoiceAssistantHost() {
     >
       {(() => {
         // O Eletriquinho fica no canto do conteúdo (âncora da tela) e fala pelo balão.
+        const cornerText =
+          mascotSpeech?.text ?? (idle ? context.tip : undefined);
         const corner = (
           <MascotCorner
             // Fala viva (narração, dica pedida, comemoração) aparece na hora; a dica
             // da tela só quando a pessoa fica um tempo parada.
-            text={mascotSpeech?.text ?? (idle ? context.tip : undefined)}
+            text={cornerText}
             hidden={open}
-            holdOpen={!!mascotSpeech?.speak && tts.speaking}
+            holdOpen={tts.speaking || !!mascotSpeech?.waitTap}
+            soundOn={voiceReplies}
+            onSound={() => toggleCornerSound(cornerText)}
             compact={!!practice}
           >
             <DrawerTrigger

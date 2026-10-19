@@ -1,6 +1,15 @@
 import "server-only";
 import { z } from "zod";
 import {
+  CANCEL_OPEN,
+  CATALOG_ERROR,
+  CATALOG_NONE,
+  CATALOG_ONE,
+  CONFIRM_OPEN,
+  didYouMean,
+  NO_OTHER_SCREEN,
+} from "@/lib/assistant/fixed-replies";
+import {
   INTERPRET_PROVIDER_TIMEOUT_MS,
   type InterpretationRequest,
   interpretationResultSchema,
@@ -134,14 +143,14 @@ function quickReply(input: InterpretationRequest) {
     return {
       ...base,
       type: "confirmation" as const,
-      message: "Combinado, abrindo.",
+      message: CONFIRM_OPEN,
       actionId: input.pendingActionId,
     };
   if (words.length <= 3 && noPattern.test(text))
     return {
       ...base,
       type: "cancellation" as const,
-      message: "Tudo bem, não vou abrir. Posso ajudar com outra coisa?",
+      message: CANCEL_OPEN,
       actionId: null,
     };
   return null;
@@ -317,8 +326,7 @@ async function interpretWithModel(
           ? {
               type: "information" as const,
               actionId: null,
-              message:
-                "Não encontrei outra tela que combine com isso. Tente explicar de outro jeito ou escolha uma opção.",
+              message: NO_OTHER_SCREEN,
             }
           : {}),
         optionIds,
@@ -334,7 +342,7 @@ async function interpretWithModel(
       result.data = {
         ...result.data,
         type: "confirmation_request",
-        message: `Você quis dizer: ${action.label.toLocaleLowerCase("pt-BR")}?`,
+        message: didYouMean(action.label),
         optionIds: [],
       };
   }
@@ -346,10 +354,10 @@ async function interpretWithModel(
       ...result.data,
       message:
         count === 1
-          ? "Este é o serviço disponível para aprender:"
+          ? CATALOG_ONE
           : input.catalog.state === "ready"
-            ? "Não há serviços disponíveis para acessar no momento."
-            : "Não consegui consultar os serviços agora. Tente novamente.",
+            ? CATALOG_NONE
+            : CATALOG_ERROR,
     };
   }
   return result.data;

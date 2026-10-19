@@ -16,6 +16,7 @@ export function ChoiceCard({
   description,
   meta,
   progress,
+  tag,
 }: {
   /** Sem `href`, o card aparece como “Em breve”. */
   href?: string;
@@ -27,6 +28,8 @@ export function ChoiceCard({
   meta?: string;
   /** Fração de 0 a 1 para a barra de progresso. */
   progress?: number;
+  /** Etiqueta curta ao lado do título (ex.: “Treino”: deixa claro que não é o atendimento real). */
+  tag?: string;
 }) {
   const content = (
     <>
@@ -38,7 +41,10 @@ export function ChoiceCard({
         <Icon size={28} />
       </span>
       <span className={styles.text}>
-        <strong>{title}</strong>
+        <span className={styles.title}>
+          <strong>{title}</strong>
+          {tag && <span className={styles.tag}>{tag}</span>}
+        </span>
         <span>{description}</span>
         {meta && <span className={styles.meta}>{meta}</span>}
         {progress !== undefined && (

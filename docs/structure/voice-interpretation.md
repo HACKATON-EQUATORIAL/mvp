@@ -214,6 +214,32 @@ real.
 - **Proteção:** a rota recusa outras origens (`Sec-Fetch-Site`) e aceita até 400
   caracteres.
 
+**Botões não usam IA:** "Me explica esta tela" / "Me dá uma dica" respondem com a ajuda local:
+- conteúdo: dica do item, lição ou `teaches` da tela, com áudio pré-gerado;
+- sem transcrição falsa, STT ou LLM;
+- numa prática, a dica conta como apoio (`notifyAssistantHelp`).
+
+Só a fala no microfone vai à IA.
+
+**Respostas fixas do assistente** ficam em `lib/assistant/fixed-replies.ts`:
+- “Combinado, abrindo.”, “Tudo bem, não vou abrir…”, as do catálogo e o texto sem
+  gabarito;
+- `didYouMean(label)` e `leaveConfirmation(label)`. A confirmação de saída não diz
+  mais “pergunta X de Y”, para ter uma fala só por botão.
+
+O script pré-gera essas respostas e as duas falas de cada destino possível (destinos da
+jornada, sugestões das telas e serviços disponíveis).
+
+**Falas de abertura e som:**
+- `useIntroSpeech(texto)` mostra o balão e fala a cada entrada na tela, se o som estiver
+  ligado.
+- Sem toque anterior na página, o navegador bloqueia o som. O balão fica aberto
+  (`waitTap`) até o primeiro toque fora de um link, ou até o toque no botão de som, que
+  libera a fala.
+- O balão do Eletriquinho sempre tem o botão de som (`MascotCorner` `soundOn`/`onSound`),
+  que muta ou desmuta o app (`setSoundEnabled`, a mesma preferência do alto-falante do
+  assistente). Mudo corta a fala; desmutar lê o balão.
+
 **Som bloqueado:** sem toque anterior na página, o navegador recusa tocar (`NotAllowedError`). O hook
 expõe `blocked` e toca a fala atual no primeiro toque. A demonstração não começa sozinha
 nesse caso (`navigator.userActivation.hasBeenActive === false`): espera o ▶ (“Toque em ▶ para

@@ -1,6 +1,6 @@
 "use client";
 
-import { X } from "lucide-react";
+import { Volume2, VolumeX, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
   type ComponentProps,
@@ -45,12 +45,20 @@ export function MascotCorner({
   hidden,
   compact,
   holdOpen,
+  soundOn,
+  onSound,
   children,
 }: {
   text?: string;
   hidden?: boolean;
   /** Enquanto a fala é lida em voz alta, o balão não fecha sozinho. */
   holdOpen?: boolean;
+  /**
+   * Botão de som do balão: muta ou desmuta o app. Na primeira visita também é o
+   * toque que o navegador exige antes de tocar som.
+   */
+  soundOn?: boolean;
+  onSound?: () => void;
   /** Telas de chat: mascote menor. */
   compact?: boolean;
   children: ReactNode;
@@ -63,6 +71,11 @@ export function MascotCorner({
   useEffect(() => {
     setDismissed(null);
   }, [text]);
+  // Voz começou (ex.: liberada pelo primeiro toque, que também “tocou fora”):
+  // o balão reabre para acompanhar a fala.
+  useEffect(() => {
+    if (holdOpen) setDismissed(null);
+  }, [holdOpen]);
   const show = !!text && !hidden && dismissed !== text;
 
   // O balão some sozinho e ao tocar fora dele, para não atrapalhar a tela.
@@ -103,14 +116,32 @@ export function MascotCorner({
             transition={{ type: "spring", stiffness: 380, damping: 26 }}
           >
             <p>{text}</p>
-            <button
-              type="button"
-              className={brand.speechClose}
-              aria-label="Fechar dica"
-              onClick={() => setDismissed(text ?? null)}
-            >
-              <X size={16} aria-hidden="true" />
-            </button>
+            <span className={brand.speechTools}>
+              <button
+                type="button"
+                className={brand.speechClose}
+                aria-label="Fechar dica"
+                onClick={() => setDismissed(text ?? null)}
+              >
+                <X size={16} aria-hidden="true" />
+              </button>
+              {onSound && (
+                <button
+                  type="button"
+                  className={brand.speechListen}
+                  data-sound-toggle
+                  data-muted={!soundOn || undefined}
+                  aria-label={soundOn ? "Desligar o som" : "Ligar o som"}
+                  onClick={onSound}
+                >
+                  {soundOn ? (
+                    <Volume2 size={18} aria-hidden="true" />
+                  ) : (
+                    <VolumeX size={18} aria-hidden="true" />
+                  )}
+                </button>
+              )}
+            </span>
           </motion.div>
         )}
       </AnimatePresence>

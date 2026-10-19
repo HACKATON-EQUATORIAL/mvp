@@ -14,6 +14,9 @@ import { join } from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
 import { fileURLToPath } from "node:url";
 import { PARTS, partTeaches } from "@/app/servicos/segunda-via/_lib/steps";
+import { secondCopyTargets } from "@/app/servicos/segunda-via/_lib/voice-target";
+import { ASSISTANT_PHRASES, labelPhrases } from "@/lib/assistant/fixed-replies";
+import { homeTarget } from "@/lib/assistant/journey";
 import { MAX_TTS_CHARS } from "@/lib/tts/constants";
 import {
   parseElevenLabsEnv,
@@ -29,26 +32,52 @@ const PUBLIC_DIR = join(ROOT, "public", "voz");
 const MANIFEST = join(ROOT, "src", "lib", "tts", "voice-manifest.json");
 const TRACKS = ["segunda-via"];
 
-/** `teaches` das telas (texto literal) e o das partes da etapa 2. */
-async function screenPhrases() {
+/** Código-fonte de todas as telas (arquivos .tsx em src/app). */
+async function appSources() {
   const app = join(ROOT, "src", "app");
   const files = (await readdir(app, { recursive: true })).filter((file) =>
     file.endsWith(".tsx"),
   );
+  return Promise.all(files.map((file) => readFile(join(app, file), "utf8")));
+}
+
+/**
+ * Nomes dos botões do assistente: destinos da jornada, sugestões das telas
+ * (`label` seguido de `confirmation`) e serviços disponíveis do backend. Cada um
+ * vira “Você quis dizer…?” e a confirmação de saída da prática.
+ */
+async function actionLabels(api: string) {
+  const labels = [homeTarget.label, ...secondCopyTargets.map((t) => t.label)];
+  for (const source of await appSources())
+    for (const match of source.matchAll(
+      /label:\s*"((?:[^"\\]|\\.)*)",\s*confirmation:/g,
+    ))
+      labels.push(JSON.parse(`"${match[1]}"`));
+  const response = await fetch(`${api}/tracks`);
+  if (response.ok)
+    for (const track of (await response.json()) as {
+      title: string;
+      status: string;
+    }[])
+      if (track.status === "available") labels.push(track.title);
+  return [...new Set(labels)];
+}
+
+/** `teaches` das telas (texto literal) e o das partes da etapa 2. */
+async function screenPhrases() {
   const found: string[] = [];
-  for (const file of files) {
-    const source = await readFile(join(app, file), "utf8");
+  for (const source of await appSources())
     for (const match of source.matchAll(/teaches:\s*"((?:[^"\\]|\\.)*)"/g))
       found.push(JSON.parse(`"${match[1]}"`));
-  }
   return [
     ...found,
     ...PARTS.map((part, index) => partTeaches(index + 1, part.label)),
   ];
 }
 
+const api = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
+
 async function bundleTexts() {
-  const api = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
   if (!api) throw new Error("Defina NEXT_PUBLIC_API_URL (com /api/v1).");
   const texts: string[] = [];
   for (const track of TRACKS) {
@@ -92,7 +121,13 @@ if (!env.success) {
 
 const phrases = [
   ...new Set(
-    [...FRONT_PHRASES, ...(await screenPhrases()), ...(await bundleTexts())]
+    [
+      ...FRONT_PHRASES,
+      ...ASSISTANT_PHRASES,
+      ...(await screenPhrases()),
+      ...(await bundleTexts()),
+      ...labelPhrases(await actionLabels(api)),
+    ]
       .map(normalizePhrase)
       .filter((text) => text.length > 0 && text.length <= MAX_TTS_CHARS),
   ),

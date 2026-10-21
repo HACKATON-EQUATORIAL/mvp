@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Eletriquinho espiando do fundo azul Equatorial: corpo, olhos e raio do mascote. -->
+  <defs>
+    <clipPath id="tile">
+      <rect width="64" height="64" rx="14" />
+    </clipPath>
+    <clipPath id="body">
+      <rect x="10" y="21" width="44" height="60" rx="22" />
+    </clipPath>
+  </defs>
+  <g clip-path="url(#tile)">
+    <rect width="64" height="64" fill="#0414A1" />
+    <rect x="11" y="9" width="5" height="5" rx="1.2" fill="#FFE066" transform="rotate(45 13.5 11.5)" />
+    <rect x="48.5" y="6.5" width="4" height="4" rx="1" fill="#FFE066" transform="rotate(45 50.5 8.5)" />
+    <path
+      d="M33.2 2 L23.6 16.4 L30.8 16.4 L27.2 24.8 L40.4 9.2 L33.2 9.2 L36.8 2 Z"
+      fill="#FF8A00"
+      stroke="#FF8A00"
+      stroke-width="3"
+      stroke-linejoin="round"
+    />
+    <g clip-path="url(#body)">
+      <rect x="10" y="21" width="44" height="60" fill="#FFD43B" />
+      <circle cx="68" cy="52" r="22" fill="#F5B700" />
+    </g>
+    <circle cx="24.5" cy="38" r="7.5" fill="#FFFFFF" />
+    <circle cx="39.5" cy="38" r="7.5" fill="#FFFFFF" />
+    <circle cx="25.5" cy="38.5" r="4.5" fill="#0B1F5C" />
+    <circle cx="40.5" cy="38.5" r="4.5" fill="#0B1F5C" />
+    <circle cx="27" cy="36.8" r="1.6" fill="#FFFFFF" />
+    <circle cx="42" cy="36.8" r="1.6" fill="#FFFFFF" />
+    <path
+      d="M26 50 Q32 56 38 50"
+      fill="none"
+      stroke="#0B1F5C"
+      stroke-width="3.5"
+      stroke-linecap="round"
+    />
+  </g>
+</svg>

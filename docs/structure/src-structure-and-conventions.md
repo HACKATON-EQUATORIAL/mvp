@@ -9,7 +9,9 @@ src/
 │   ├── page.tsx                         # Rota server; compõe seleção client de trilhas
 │   ├── _components/track-selection.tsx   # Primeiro consumidor React Query
 │   ├── globals.css
-│   ├── favicon.ico
+│   ├── favicon.ico                      # Eletriquinho 16/32/48 px (legado)
+│   ├── icon.svg                         # Fonte do ícone: Eletriquinho no azul Equatorial
+│   ├── apple-icon.png                   # 180 px sem cantos (o iOS aplica a máscara)
 │   ├── servicos/
 │   │   ├── _components/service-page.tsx  # Apresentação comum dos serviços
 │   │   ├── segunda-via/                 # Páginas, conteúdo e prática exclusivos

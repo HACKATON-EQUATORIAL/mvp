@@ -17,6 +17,11 @@ institucional nas partes de serviço real.
   assistente (microfone e ajuda) ficam fora dessa regra e mantêm o amarelo.
 - **Eletriquinho** (`components/brand/eletriquinho.tsx`): guia da trilha em SVG, humores `happy`,
   `cheer` e `think`; `FaiscaTip` mostra uma dica em balão. Decorativa (`aria-hidden`).
+- **Ícone do site** (`app/icon.svg`): rosto do Eletriquinho (olhos, sorriso e raio,
+  com duas faíscas) surgindo da base de um quadrado azul Equatorial (`--header-bg`),
+  legível em 16px e com contraste em abas claras e escuras. `favicon.ico` (16/32/48) e
+  `apple-icon.png` (180, sem cantos) são renderizados a partir dele; ao mudar o SVG,
+  gerar os dois de novo. O Next publica os três pelas convenções de arquivo de `app`.
 - **Celebração** (`components/brand/celebration.tsx`): faíscas curtas no acerto e na
   conclusão. Desligada com `prefers-reduced-motion`.
 - **Energia** (`_lib/progress.ts` `energyOf`, `EnergyMeter`): 10 kWh pela demonstração,
